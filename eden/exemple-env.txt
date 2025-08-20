@@ -1,0 +1,20 @@
+SECRET_KEY='django-insecure-xf9n$s_6%i_x=vp)fr%r9(!e40$&d0m!uvh1mqt0uan%+^$47^'
+DEBUG=True
+MFA=False #indique s'il faut appliquer le mfa
+BASE='PREPROD'
+ENVIRONMENT='DEV'
+ALLOWED_HOSTS='127.0.0.1'
+
+#Mamp
+DATABASE_HOST='127.0.0.1'
+DATABASE_NAME='eden_2_db'
+DATABASE_USER='root'
+DATABASE_PWD='root'
+DATABASE_PORT='8889'
+
+#MySQL
+DATABASE_HOST='127.0.0.1'
+DATABASE_NAME='eden_2_db'
+DATABASE_USER='root'
+DATABASE_PWD=''
+DATABASE_PORT='3306'

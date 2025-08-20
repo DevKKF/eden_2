@@ -1,0 +1,65 @@
+# Environnement virtuel Python
+.venv/
+venv/
+env/
+
+# Fichiers temporaires Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.log
+*.pot
+
+# Base de données SQLite
+*.sqlite3
+*.db
+
+# Fichiers temporaires système
+.DS_Store
+Thumbs.db
+
+# Fichiers de configuration personnels
+.env
+.env.*
+
+# Médias uploadés par les utilisateurs
+/media/
+
+# Dossier static compilé (optionnel si généré automatiquement)
+staticfiles/
+static_root/
+collected_static/
+
+# Fichiers de cache
+*.log
+*.tmp
+
+# Fichiers de migration (optionnel si tu veux garder que les bons)
+**/migrations/__pycache__/
+**/migrations/*.pyc
+
+# Fichiers JetBrains (PyCharm, PhpStorm...)
+.idea/
+
+# VSCode
+.vscode/
+
+# Fichiers d'erreur générés
+*.mo
+*.swp
+*.bak
+*~
+
+# Fichiers auto-générés
+coverage.xml
+htmlcov/
+.tox/
+dist/
+build/
+*.egg-info/
+
+# Fichiers perso
+
+
