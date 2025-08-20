@@ -1,47 +1,44 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="fr" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Smarthr - Bootstrap Admin Template">
-		<meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">
-        <meta name="author" content="Dreamguys - Bootstrap Admin Template">
-        <title>EDEN 2 | {% block title %} {% endblock %}</title>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>VASES D'HONNEUR CENTRE INFLUENCE EDEN 2 | {% block title %} {% endblock %}</title>
+  <link rel="shortcut icon" href="{% static 'dist/img/logo/vh_favicon.png" type="image/png">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
+  <link rel="stylesheet" href="{% static 'bower_components/Ionicons/css/ionicons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/iCheck/square/blue.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
-		<!-- Favicon -->
-        <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.png' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <img src="{% static 'dist/img/logo/logo.png' %}" width="" alt="VASES D'HONNEUR CENTRE INFLUENCE EDEN 2">
+  </div>
+  <div class="login-box-body">
+    {% block content %} {% endblock %}
+  </div>
+</div>
 
-		<!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
-
-		<!-- Fontawesome CSS -->
-        <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
-    	<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
-
-		<!-- Lineawesome CSS -->
-        <link rel="stylesheet" href="{% static 'assets/css/line-awesome.min.css' %}">
-		<link rel="stylesheet" href="{% static 'assets/css/material.css' %}">
-
-		<!-- Lineawesome CSS -->
-		<link rel="stylesheet" href="{% static 'assets/css/line-awesome.min.css' %}">
-
-		<!-- Main CSS -->
-        <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
-
-    </head>
-    <body class="account-page">
-
-		{% block content %} {% endblock %}
-
-		<!-- jQuery -->
-       <script src="{% static 'assets/js/jquery-3.7.0.min.js' %}"></script>
-
-		<!-- Bootstrap Core JS -->
-        <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
-
-		<!-- Custom JS -->
-		<script src="{% static 'assets/js/app.js' %}"></script>
-
-    </body>
+<script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
+<script>
+  $(function () {
+    $('input').iCheck({
+      checkboxClass: 'icheckbox_square-blue',
+      radioClass: 'iradio_square-blue',
+      increaseArea: '20%'
+    });
+  });
+</script>
+</body>
 </html>
