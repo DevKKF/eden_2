@@ -56,7 +56,7 @@ collected_static/
 coverage.xml
 htmlcov/
 .tox/
-dist/
+#dist/
 build/
 *.egg-info/
 
