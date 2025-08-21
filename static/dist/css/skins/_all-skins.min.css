@@ -1,5 +1,5 @@
 .skin-blue .main-header .navbar {
-	background-color: #006C68
+	background-color: #222D32
 }
 
 .skin-blue .main-header .navbar .nav>li>a {
@@ -49,9 +49,9 @@
 }
 
 .skin-blue .main-header .logo {
-	background-color: #CFAE1F;
+	background-color: #006C68;
 	color: #fff;
-	border-bottom: 0 solid transparent
+	border-bottom: 0 solid transparent;
 }
 
 .skin-blue .main-header .logo:hover {

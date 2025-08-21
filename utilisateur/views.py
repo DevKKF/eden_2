@@ -66,14 +66,14 @@ def Login(request):
 
 # Page des tableaux de bord
 @login_required
-def home(request):
+def Home(request):
     user = request.user
     if user is not None:
         login(request, user)
         departements = Departement.objects.all()
         return render(request, 'home.html', {'departements': departements})
     else:
-        return render(request, 'auth/login.html')
+        return redirect('login')
 
 
 # Déconnexion

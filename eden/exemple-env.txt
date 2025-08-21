@@ -4,6 +4,7 @@ MFA=False #indique s'il faut appliquer le mfa
 BASE='PREPROD'
 ENVIRONMENT='DEV'
 ALLOWED_HOSTS='127.0.0.1'
+SESSION_COOKIE_AGE=86400  # Durée en secondes (24 Heures)
 
 #Mamp
 DATABASE_HOST='127.0.0.1'

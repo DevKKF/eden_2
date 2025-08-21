@@ -9,7 +9,6 @@ from environ import environ
 env = environ.Env()
 environ.Env.read_env(env_file=str(BASE_DIR / "eden" / ".env"))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -21,6 +20,9 @@ DEBUG = env.bool("DEBUG", True)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 BASE = env("BASE")  # PROD OU PREPROD
+
+NAME_APP = env.str("NAME_APP")
+VERSION_APP = env.str("VERSION_APP")
 
 
 # Application definition
@@ -64,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'eden.context_processors.app_info',
             ],
         },
     },
@@ -137,18 +140,23 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # Authentication
 AUTH_USER_MODEL = 'utilisateur.Utilisateur'
 
+LOGIN_URL = '/dashboard/login/'
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Durée de la session
+SESSION_COOKIE_AGE = env.int('SESSION_COOKIE_AGE', default=86400)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = env.bool('SESSION_EXPIRE_AT_BROWSER_CLOSE', default=True)
 
 # Configuration du paramètre de mailing
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'koffikf25@gmail.com'
-EMAIL_HOST_PASSWORD = 'lrdgfnvwtikergga'
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-DEFAULT_FROM_NAME_APP = "EDEN 2"
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)
+DEFAULT_FROM_NAME_APP = env("DEFAULT_FROM_NAME_APP", default="EDEN 2")
