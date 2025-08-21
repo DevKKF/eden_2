@@ -9,11 +9,18 @@ Conçu pour le centre influence, ce projet de Vases d'Honneur est destiné à ê
 - <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/github-icon.svg" alt="" width="10"> GitHub
 - <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/visual-studio-code-icon.svg" alt="" width="10"> Visual Studio Code
 - <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/pycharm-icon.svg" alt="" width="10"> PyCharm
+  
+## Bases de données un au moins
+- <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/mysql-icon.svg" alt="" width="10"> MySQL
+- <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/mariadb-icon.svg" alt="" width="10"> MariaDB
+- <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/postgresql-icon.svg" alt="" width="10"> PostgreSQL
+  
+## Langages et Frameworks
+- <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/python-programming-language-icon.svg" alt="" width="10"> Python
+- <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/django-icon.svg" alt="" width="10"> Django
 - <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/html-icon.png" alt="" width="10"> HTML
 - <img src="https://uxwing.com/wp-content/themes/uxwing/download/file-and-folder-type/css-file-format-icon.png" alt="" width="10"> CSS
 - <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/javascript-programming-language-icon.png" alt="" width="10"> JavaScript
-- <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/python-programming-language-icon.svg" alt="" width="10"> Python
-- <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/django-icon.svg" alt="" width="10"> Framework Django
 
 ## Installation
 Pour installer le projet, il vous suffit de cloner le dépôt GitHub en utilisant la commande suivante dans votre terminal :
