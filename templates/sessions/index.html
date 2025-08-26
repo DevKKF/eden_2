@@ -1,4 +1,4 @@
-{% extends 'layouts/backend.html' %}
+{% extends 'layouts/app.html' %}
 {% load static %}
 
 {% block title %}
@@ -6,5 +6,210 @@
 {% endblock %}
 
 {% block content %}
+<section class="content-header">
+  <h1 class="f-bold">
+    Liste des sessions de formation
+  </h1>
+  <ol class="breadcrumb">
+    <li><span class="btn btn-info centre_influence_degrade" data-toggle="modal" data-target="#modal-add_session"><i class="fa fa-plus-circle"></i> Nouvelle session</span></li>
+  </ol>
+</section>
+<section class="content mt-5">
+  <div class="row">
+    <div class="col-xs-12">
+        <div class="box box-warning">
+            <div class="box-header with-border">
+              <h3 class="box-title"><i class="fa fa-search"></i> Recherche de session</h3>
+            </div>
+            <div class="box-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Date début</label>
+                    <input type="text" class="form-control" name="date_deb" id="date_deb" placeholder="Date début">
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Date fin</label>
+                    <input type="text" class="form-control" name="date_fn" id="date_fn" placeholder="Date fin">
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Statut</label>
+                    <select name="statut_session" id="statut_session" class="form-control select2" style="width: 100%;">
+                      <option value="" selected="selected">Choisir</option>
+                      <option value="{{ statut_session.ENATTENTE }}">{{ statut_session.ENATTENTE }}</option>
+                      <option value="{{ statut_session.ENCOURS }}">{{ statut_session.ENCOURS }}</option>
+                      <option value="{{ statut_session.TERMINE }}">{{ statut_session.TERMINE }}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group" style="float: right;">
+                    <label style="margin-top:40px"></label>
+                    <button type="button" class="btn btn-info mr-10" id="btn_search_sessions"><i class="fa fa-search"></i> Rechercher</button>
+                    <a href="{% url 'sessions' %}" class="btn btn-success"><i class="fa fa-spinner"></i> Réactualiser</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      <div class="box box-success">
+        <div class="box-header with-border">
+          <h3 class="box-title"><i class="fa fa-list"></i> Liste des sessions</h3>
+        </div>
+        <div class="box-body table-responsive">
+          <div id="loader" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; margin:auto; text-align: center;">
+            <img src="{% static 'dist/img/coeur-de-chargement.gif' %}" alt="Chargement en cours...">
+          </div>
+          <table id="sessions_datatables" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>Nom de la session</th>
+              <th>Date de publication</th>
+              <th>Date début</th>
+              <th>Date fin</th>
+              <th>Nombre d'inscrit</th>
+              <th>Statut</th>
+              <th class="text-center button_action">Actions</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% include 'partials/add_session_modal.html' %}
+<script>
+    $(document).ready(function() {
+        let ajaxTimeout;
+        let countdownInterval;
 
+        const dataTable = $('#sessions_datatables').DataTable({
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+            },
+            "serverSide": true,
+            "ajax": function(data, callback, settings) {
+                // Afficher le loader avec compteur
+                showLoaderWithCountdown();
+
+                // Préparer les données
+                data.page = data.start / data.length + 1;
+                data.date_deb = $('#date_deb').val();
+                data.date_fn = $('#date_fn').val();
+                data.statut_session = $('#statut_session').val();
+
+                // Attendre 5 secondes avant de lancer la requête AJAX
+                ajaxTimeout = setTimeout(function() {
+                    // Arrêter le compteur et afficher "Chargement..."
+                    clearInterval(countdownInterval);
+                    $('#countdown-text').text('Chargement en cours...');
+
+                    $.ajax({
+                        url: "{% url 'ajax_datatable_session' %}",
+                        type: 'GET',
+                        data: data,
+                        success: function(response) {
+                            hideLoader();
+                            callback(response);
+                        },
+                        error: function(xhr, error, code) {
+                            console.error('Erreur lors du chargement des données:', error);
+                            hideLoader();
+                            callback({
+                                data: [],
+                                recordsTotal: 0,
+                                recordsFiltered: 0
+                            });
+                        }
+                    });
+                }, 1000);
+            },
+            "columns": [
+                {"data": "nom", "orderable": false},
+                {"data": "date_publication", "orderable": false},
+                {"data": "date_debut", "orderable": false},
+                {"data": "date_fin", "orderable": false},
+                {"data": "nombre_inscrit", "orderable": false},
+                {"data": "statut", "orderable": false},
+                {"data": "actions", "orderable": false, "searchable": false},
+            ],
+            "order": [[0, "desc"]],
+            "paging": true,
+            "lengthMenu": [[50, 100, 200, 500, 1000, -1], [50, 100, 200, 500, 1000, "Tout"]],
+            "pageLength": 50,
+            "processing": false,
+            "searching": false
+        });
+
+        // Fonction pour afficher le loader avec compteur
+        function showLoaderWithCountdown() {
+            $('#sessions_datatables').addClass('loading');
+            $('body').addClass('loading-cursor');
+
+            // Ajouter le compteur au loader s'il n'existe pas
+            if ($('#countdown-text').length === 0) {
+                $('#loader').append('<div id="countdown-text" style="text-align: center; margin-top: 10px; font-weight: bold;"></div>');
+            }
+
+            $('#loader').show();
+
+            let seconds = 0;
+            // $('#countdown-text').text(`Chargement dans ${seconds} secondes...`);
+            $('#countdown-text').text(`Chargement en cours...`);
+
+            countdownInterval = setInterval(function() {
+                seconds--;
+                if (seconds > 0) {
+                    // $('#countdown-text').text(`Chargement dans ${seconds} secondes...`);
+                    $('#countdown-text').text(`Chargement en cours...`);
+                } else {
+                    $('#countdown-text').text('Chargement en cours...');
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        }
+
+        // Fonction pour masquer le loader
+        function hideLoader() {
+            $('#loader').hide();
+            $('#sessions_datatables').removeClass('loading');
+            $('body').removeClass('loading-cursor');
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+        }
+
+        // Rafraîchissement manuel quand on clique sur le bouton
+        $('#btn_search_sessions').on('click', function(e) {
+            e.preventDefault();
+            // Annuler le timeout et compteur précédents
+            if (ajaxTimeout) {
+                clearTimeout(ajaxTimeout);
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            hideLoader();
+            dataTable.ajax.reload();
+        });
+
+        // Fonction globale pour annuler le chargement
+        window.cancelDataTableLoading = function() {
+            if (ajaxTimeout) {
+                clearTimeout(ajaxTimeout);
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            hideLoader();
+            console.log('Chargement annulé');
+        };
+    });
+</script>
 {% endblock %}

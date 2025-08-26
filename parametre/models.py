@@ -1,9 +1,11 @@
+import uuid
 from django.db import models
 
 from shared.models.base import TimeStampedAuditModel
 
 
 class Quartier(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     libelle = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
@@ -15,6 +17,7 @@ class Quartier(TimeStampedAuditModel):
         verbose_name_plural = "Quartiers"
 
 class Departement(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     libelle = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
@@ -26,6 +29,7 @@ class Departement(TimeStampedAuditModel):
         verbose_name_plural = "Departements"
 
 class Tribu(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     libelle = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
@@ -37,6 +41,7 @@ class Tribu(TimeStampedAuditModel):
         verbose_name_plural = "Tribus"
 
 class TypeCours(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     libelle = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):

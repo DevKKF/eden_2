@@ -1,0 +1,51 @@
+<div class="modal fade" id="modal-add_session" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form action="{% url 'add_session' %}" method="post" enctype="multipart/form-data" id="form_add_session">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title f-bold"><i class="fa fa-plus-circle"></i> Crèation d'une nouvelle session de formation</h4>
+                </div>
+                <div class="modal-body">
+                  <div class="alert alert-danger alert-dismissible hidden" style="background-color: #FFF1F2 !important; border-color: #FAD4D6 !important; color: #000 !important;">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <h4><i class="icon fa fa-ban"></i> Erreur !</h4>
+                    <span class="message"></span>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-12 mb-5">
+                          <div class="form-group">
+                              <label>Nom de la session <span class="required">*</span></label>
+                              <input type="text" name="nom" class="form-control pull-right nom" id="nom">
+                          </div>
+                      </div>
+                      <div class="col-md-6 mb-5">
+                          <div class="form-group">
+                              <label>Date début <span class="required">*</span></label>
+                              <input type="date" name="date_debut" class="form-control pull-right date_debut" id="date_debut">
+                          </div>
+                      </div>
+                      <div class="col-md-6 mb-5">
+                          <div class="form-group">
+                              <label>Date fin <span class="required">*</span></label>
+                              <input type="date" name="date_fin" class="form-control pull-right date_fin" id="date_fin">
+                          </div>
+                      </div>
+                      <div class="col-md-12 mb-5">
+                          <div class="form-group">
+                              <label>Description</label>
+                              <textarea name="description" class="form-control description" id="description" cols="30" rows="10"></textarea>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger pull-left" data-dismiss="modal"><i class="fa fa-remove"></i> Fermer</button>
+                    <button type="button" class="btn btn-success" id="btn_save_session"><i class="fa fa-check-circle"></i> Enregistrer</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

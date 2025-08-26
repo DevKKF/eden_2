@@ -1,4 +1,3 @@
-/*ESPACEMENT DES BOUTONS*/
 .mt-2 {
     margin-top: 2px;
 }
@@ -33,6 +32,54 @@
 
 .mb-10{
     margin-bottom: 10px;
+}
+
+.mr-2{
+    margin-right: 2px;
+}
+
+.mr-3{
+    margin-right: 3px;
+}
+
+.mr-4{
+    margin-right: 4px;
+}
+
+.mr-5{
+    margin-right: 5px;
+}
+
+.mr-6{
+    margin-right: 6px;
+}
+
+.mr-10{
+    margin-right: 10px;
+}
+
+.ml-2{
+    margin-left: 2px;
+}
+
+.ml-3{
+    margin-left: 3px;
+}
+
+.ml-4{
+    margin-left: 4px;
+}
+
+.ml-5{
+    margin-left: 5px;
+}
+
+.ml-6{
+    margin-left: 6px;
+}
+
+.ml-10{
+    margin-left: 10px;
 }
 
 .required {
@@ -99,4 +146,117 @@ p, textarea {
 
 .btn_remove_question{
     margin-right: 5px;
+}
+
+.error-text{
+    color: red;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.has-error .form-control {
+    border-color: #dc3545 !important;
+}
+
+.error-text {
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.alert .message {
+    display: block;
+    white-space: normal;
+}
+
+
+.badge-info {
+    background-color: #17a2b8;
+}
+
+.badge-success, .badge-terminé {
+    background-color: #28a745;
+}
+
+.badge-warning, .badge-en-cours {
+    background-color: #ffc107;
+    color: #fff;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+}
+
+.badge-secondary, .badge-en-attente {
+    background-color: #6c757d;
+}
+
+.badge-primary {
+    background-color: #007bff;
+}
+
+/* Styles pour le loader */
+#loader {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Optionnel : Assombrir l'arrière-plan pendant le chargement */
+body.loading-cursor {
+    cursor: wait;
+}
+
+body.loading-cursor::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    pointer-events: none;
+}
+
+/* Optionnel : Style pour le tableau pendant le chargement */
+#sessions_datatables.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Animation du loader */
+#loader img {
+    max-width: 50px;
+    max-height: 50px;
+    margin: auto !important;
+}
+
+/* Alternative si vous n'avez pas d'image de loader */
+.loader-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.modal-header h4{
+    text-transform: uppercase !important;
 }

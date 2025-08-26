@@ -27,6 +27,7 @@ class StatutCertificat(models.TextChoices):
 
 
 class SessionStatut(models.TextChoices):
+    ENATTENTE = 'En attente'
     ENCOURS = 'En cours'
     TERMINE = 'Terminé'
 

@@ -19,5 +19,6 @@ urlpatterns = [
     #path('admin/', admin.site.urls),
     path('',views.Accueil, name="accueil"),
     path('dashboard/', include('utilisateur.urls')),
+    path('dashboard/sessions/', include('session.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

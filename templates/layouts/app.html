@@ -1,504 +1,391 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{{ NAME_APP }} | {% block title %} {% endblock %}</title>
-  <link rel="shortcut icon" href="{% static 'dist/img/logo/vh_favicon.png' %}" type="image/png">
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
-  <link rel="stylesheet" href="{% static 'bower_components/Ionicons/css/ionicons.min.css' %}">
-  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
-  <link rel="stylesheet" href="{% static 'dist/css/eden_2.css' %}">
-  <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
-  <link rel="stylesheet" href="{% static 'bower_components/morris.js/morris.css' %}">
-  <link rel="stylesheet" href="{% static 'bower_components/jvectormap/jquery-jvectormap.css' %}">
-  <link rel="stylesheet" href="{% static 'bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}">
-  <link rel="stylesheet" href="{% static 'bower_components/bootstrap-daterangepicker/daterangepicker.css' %}">
-  <link rel="stylesheet" href="{% static 'plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css' %}">
-  <link rel="stylesheet" href="{% static 'bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'plugins/iCheck/all.css' %}">
-  <link rel="stylesheet" href="{% static 'bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css' %}">
-  <link rel="stylesheet" href="{% static 'plugins/timepicker/bootstrap-timepicker.min.css' %}">
-  <link rel="stylesheet" href="{% static 'bower_components/select2/dist/css/select2.min.css' %}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-  <!-- Google Font -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-</head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title>{{ NAME_APP }} | {% block title %} {% endblock %}</title>
+      <link rel="shortcut icon" href="{% static 'dist/img/logo/vh_favicon.png' %}" type="image/png">
+      <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-  <header class="main-header">
-    <a href="{% url 'home' %}" class="logo">
-      <span class="logo-mini" style="font-size: 11px;"><img src="{% static 'dist/img/logo/logo.png' %}" alt="LOGO"></span>
-      <span class="logo-lg"><b><img src="{% static 'dist/img/logo/logo.png' %}" alt="LOGO"></span>
-    </a>
-    <nav class="navbar navbar-static-top">
-      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-        <span class="sr-only">Toggle navigation</span>
-      </a>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
-      <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-          <li class="dropdown messages-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-envelope-o"></i>
-              <span class="label label-success">4</span>
+      <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+      <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
+      <link rel="stylesheet" href="{% static 'bower_components/Ionicons/css/ionicons.min.css' %}">
+      <link rel="stylesheet" href="{% static 'bower_components/select2/dist/css/select2.min.css' %}">
+      <link rel="stylesheet" href="{% static 'bower_components/morris.js/morris.css' %}">
+      <link rel="stylesheet" href="{% static 'bower_components/jvectormap/jquery-jvectormap.css' %}">
+      <link rel="stylesheet" href="{% static 'bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}">
+      <link rel="stylesheet" href="{% static 'bower_components/bootstrap-daterangepicker/daterangepicker.css' %}">
+      <link rel="stylesheet" href="{% static 'bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css' %}">
+      <link rel="stylesheet" href="{% static 'bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css' %}">
+
+      <link rel="stylesheet" href="{% static 'plugins/iCheck/all.css' %}">
+      <link rel="stylesheet" href="{% static 'plugins/timepicker/bootstrap-timepicker.min.css' %}">
+      <link rel="stylesheet" href="{% static 'plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css' %}">
+
+      <link rel="stylesheet" href="{% static 'dist/css/eden.min.css' %}">
+      <link rel="stylesheet" href="{% static 'dist/css/eden_2.css' %}">
+      <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
+      <link rel="stylesheet" href="{% static 'dist/css/krakPopup.css' %}" type="text/css">
+
+      <!-- jQuery en premier -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <!-- toastr CSS -->
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+      <!-- toastr JS -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+      <!-- CSRF Token -->
+      <meta name="csrf-token" content="csrf_token">
+    </head>
+    <body class="hold-transition skin-blue sidebar-mini">
+        <div class="wrapper">
+
+          <header class="main-header">
+            <a href="{% url 'home' %}" class="logo">
+              <span class="logo-mini" style="font-size: 11px;"><img src="{% static 'dist/img/logo/logo.png' %}" alt="LOGO"></span>
+              <span class="logo-lg"><img src="{% static 'dist/img/logo/logo.png' %}" alt="LOGO"></span>
             </a>
-            <ul class="dropdown-menu">
-              <li class="header">You have 4 messages</li>
-              <li>
-                <ul class="menu">
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Support Team
-                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
+            <nav class="navbar navbar-static-top">
+              <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+              </a>
+
+              <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                  <li class="dropdown messages-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      <i class="fa fa-envelope-o"></i>
+                      <span class="label label-success">4</span>
                     </a>
+                    <ul class="dropdown-menu">
+                      <li class="header">You have 4 messages</li>
+                      <li>
+                        <ul class="menu">
+                          <li>
+                            <a href="#">
+                              <div class="pull-left">
+                                <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle" alt="User Image">
+                              </div>
+                              <h4>
+                                Support Team
+                                <small><i class="fa fa-clock-o"></i> 5 mins</small>
+                              </h4>
+                              <p>Why not buy a new awesome theme?</p>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <div class="pull-left">
+                                <img src="{% static 'dist/img/user3-128x128.jpg' %}" class="img-circle" alt="User Image">
+                              </div>
+                              <h4>
+                                AdminLTE Design Team
+                                <small><i class="fa fa-clock-o"></i> 2 hours</small>
+                              </h4>
+                              <p>Why not buy a new awesome theme?</p>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <div class="pull-left">
+                                <img src="{% static 'dist/img/user4-128x128.jpg' %}" class="img-circle" alt="User Image">
+                              </div>
+                              <h4>
+                                Developers
+                                <small><i class="fa fa-clock-o"></i> Today</small>
+                              </h4>
+                              <p>Why not buy a new awesome theme?</p>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <div class="pull-left">
+                                <img src="{% static 'dist/img/user3-128x128.jpg' %}" class="img-circle" alt="User Image">
+                              </div>
+                              <h4>
+                                Sales Department
+                                <small><i class="fa fa-clock-o"></i> Yesterday</small>
+                              </h4>
+                              <p>Why not buy a new awesome theme?</p>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <div class="pull-left">
+                                <img src="{% static 'dist/img/user4-128x128.jpg' %}" class="img-circle" alt="User Image">
+                              </div>
+                              <h4>
+                                Reviewers
+                                <small><i class="fa fa-clock-o"></i> 2 days</small>
+                              </h4>
+                              <p>Why not buy a new awesome theme?</p>
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li class="footer"><a href="#">See All Messages</a></li>
+                    </ul>
                   </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        AdminLTE Design Team
-                        <small><i class="fa fa-clock-o"></i> 2 hours</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
+                  <li class="dropdown notifications-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      <i class="fa fa-bell-o"></i>
+                      <span class="label label-warning">10</span>
                     </a>
+                    <ul class="dropdown-menu">
+                      <li class="header">You have 10 notifications</li>
+                      <li>
+                        <ul class="menu">
+                          <li>
+                            <a href="#">
+                              <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <i class="fa fa-warning text-yellow"></i> Very long description here that may not fit into the
+                              page and may cause design problems
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <i class="fa fa-users text-red"></i> 5 new members joined
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <i class="fa fa-shopping-cart text-green"></i> 25 sales made
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <i class="fa fa-user text-red"></i> You changed your username
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li class="footer"><a href="#">View all</a></li>
+                    </ul>
                   </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Developers
-                        <small><i class="fa fa-clock-o"></i> Today</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
+                  <li class="dropdown tasks-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      <i class="fa fa-flag-o"></i>
+                      <span class="label label-danger">9</span>
                     </a>
+                    <ul class="dropdown-menu">
+                      <li class="header">You have 9 tasks</li>
+                      <li>
+                        <ul class="menu">
+                          <li>
+                            <a href="#">
+                              <h3>
+                                Design some buttons
+                                <small class="pull-right">20%</small>
+                              </h3>
+                              <div class="progress xs">
+                                <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar"
+                                     aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                  <span class="sr-only">20% Complete</span>
+                                </div>
+                              </div>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <h3>
+                                Create a nice theme
+                                <small class="pull-right">40%</small>
+                              </h3>
+                              <div class="progress xs">
+                                <div class="progress-bar progress-bar-green" style="width: 40%" role="progressbar"
+                                     aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                  <span class="sr-only">40% Complete</span>
+                                </div>
+                              </div>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <h3>
+                                Some task I need to do
+                                <small class="pull-right">60%</small>
+                              </h3>
+                              <div class="progress xs">
+                                <div class="progress-bar progress-bar-red" style="width: 60%" role="progressbar"
+                                     aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                  <span class="sr-only">60% Complete</span>
+                                </div>
+                              </div>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <h3>
+                                Make beautiful transitions
+                                <small class="pull-right">80%</small>
+                              </h3>
+                              <div class="progress xs">
+                                <div class="progress-bar progress-bar-yellow" style="width: 80%" role="progressbar"
+                                     aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                  <span class="sr-only">80% Complete</span>
+                                </div>
+                              </div>
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li class="footer">
+                        <a href="#">View all tasks</a>
+                      </li>
+                    </ul>
                   </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Sales Department
-                        <small><i class="fa fa-clock-o"></i> Yesterday</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
+                  <li class="dropdown user user-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="user-image" alt="User Image">
+                      <span class="hidden-xs">{{ user.nom }} {{ user.prenoms }}</span>
                     </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Reviewers
-                        <small><i class="fa fa-clock-o"></i> 2 days</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
+                    <ul class="dropdown-menu">
+                      <li class="user-header">
+                        <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle" alt="User Image">
+                        <p>
+                          {{ user.nom }} {{ user.prenoms }}
+                          <small>Dernière connexion Nov. 2012</small>
+                        </p>
+                      </li>
+                      <li class="user-footer">
+                        <div class="pull-left">
+                          <a href="#" class="btn btn-default btn-flat"><i class="fa fa-user"></i> Profil</a>
+                        </div>
+                        <div class="pull-right">
+                          <a href="{% url 'logout' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-default btn-flat"><i class="fa fa-key"></i> Se déconnecter
+                          <form id="logout-form" action="{% url 'logout' %}" method="POST" class="d-none">
+                            {% csrf_token %}
+                          </form>
+                          </a>
+                        </div>
+                      </li>
+                    </ul>
                   </li>
                 </ul>
-              </li>
-              <li class="footer"><a href="#">See All Messages</a></li>
-            </ul>
-          </li>
-          <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="header">You have 10 notifications</li>
-              <li>
-                <ul class="menu">
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-warning text-yellow"></i> Very long description here that may not fit into the
-                      page and may cause design problems
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-red"></i> 5 new members joined
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-shopping-cart text-green"></i> 25 sales made
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-user text-red"></i> You changed your username
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="footer"><a href="#">View all</a></li>
-            </ul>
-          </li>
-          <li class="dropdown tasks-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-flag-o"></i>
-              <span class="label label-danger">9</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="header">You have 9 tasks</li>
-              <li>
-                <ul class="menu">
-                  <li>
-                    <a href="#">
-                      <h3>
-                        Design some buttons
-                        <small class="pull-right">20%</small>
-                      </h3>
-                      <div class="progress xs">
-                        <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar"
-                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                          <span class="sr-only">20% Complete</span>
-                        </div>
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <h3>
-                        Create a nice theme
-                        <small class="pull-right">40%</small>
-                      </h3>
-                      <div class="progress xs">
-                        <div class="progress-bar progress-bar-green" style="width: 40%" role="progressbar"
-                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                          <span class="sr-only">40% Complete</span>
-                        </div>
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <h3>
-                        Some task I need to do
-                        <small class="pull-right">60%</small>
-                      </h3>
-                      <div class="progress xs">
-                        <div class="progress-bar progress-bar-red" style="width: 60%" role="progressbar"
-                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                          <span class="sr-only">60% Complete</span>
-                        </div>
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <h3>
-                        Make beautiful transitions
-                        <small class="pull-right">80%</small>
-                      </h3>
-                      <div class="progress xs">
-                        <div class="progress-bar progress-bar-yellow" style="width: 80%" role="progressbar"
-                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                          <span class="sr-only">80% Complete</span>
-                        </div>
-                      </div>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="footer">
-                <a href="#">View all tasks</a>
-              </li>
-            </ul>
-          </li>
-          <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs">{{ user.nom }} {{ user.prenoms }}</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="user-header">
-                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                <p>
-                  {{ user.nom }} {{ user.prenoms }}
-                  <small>Dernière connexion Nov. 2012</small>
-                </p>
-              </li>
-              <li class="user-footer">
-                <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat"><i class="fa fa-user"></i> Profil</a>
+              </div>
+            </nav>
+          </header>
+          <aside class="main-sidebar">
+            <section class="sidebar">
+              <div class="user-panel">
+                <div class="pull-left image">
+                  <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle" alt="User Image">
                 </div>
-                <div class="pull-right">
-                  <a href="{% url 'logout' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-default btn-flat"><i class="fa fa-key"></i> Se déconnecter
-                  <form id="logout-form" action="{% url 'logout' %}" method="POST" class="d-none">
-                    {% csrf_token %}
-                  </form>
-                  </a>
-                </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-  <aside class="main-sidebar">
-    <section class="sidebar">
-      <div class="user-panel">
-        <div class="pull-left image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-        </div>
-        <div class="pull-left info">
-          <p>{{ user.nom }} {{ user.prenoms }}</p>
-          <a href="#"><i class="fa fa-circle text-success"></i></a>
-        </div>
-      </div>
-      <form action="#" method="get" class="sidebar-form">
-        <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="Rerchercher...">
-          <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-        </div>
-      </form>
-
-      <ul class="sidebar-menu" data-widget="tree">
-        <li class="active animate__animated animate__bounceIn">
-          <a href="index.html">
-            <i class="fa fa-dashboard"></i> <span>Tableau de bord</span>
-          </a>
-        </li>
-        <li class="animate__animated animate__bounceIn">
-          <a href="pages/sessions.html">
-            <i class="fa fa-cubes"></i> <span>Sessions de cours</span>
-          </a>
-        </li>
-        <li class="animate__animated animate__bounceIn">
-          <a href="pages/vue_360.html">
-            <i class="fa fa-eye"></i> <span>Vue 360</span>
-          </a>
-        </li>
-        <li class="animate__animated animate__bounceIn">
-          <a href="pages/utilisateur.html">
-            <i class="fa fa-users"></i> <span>Utilisateurs</span>
-          </a>
-        </li>
-      </ul>
-    </section>
-  </aside>
-
-  <div class="content-wrapper">
-    <section class="content-header">
-      <h1>Bienvenue sur le tableau de bord</h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Tableau de bord</li>
-      </ol>
-    </section>
-
-    <section class="content">
-      <div class="row">
-        <div class="col-lg-3 col-xs-6 animate__animated animate__backInLeft">
-          <div class="small-box bg-aqua">
-            <div class="inner">
-              <h3>150</h3>
-
-              <p>Cheminants du mois en cours</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-bag"></i>
-            </div>
-            <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <div class="col-lg-3 col-xs-6 animate__animated animate__backInLeft">
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-              <p>Cheminements ayant abouti</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-stats-bars"></i>
-            </div>
-            <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <div class="col-lg-3 col-xs-6 animate__animated animate__backInRight">
-          <div class="small-box bg-yellow">
-            <div class="inner">
-              <h3>44</h3>
-
-              <p>Cheminements interrompu</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-person-add"></i>
-            </div>
-            <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <div class="col-lg-3 col-xs-6 animate__animated animate__backInRight">
-          <div class="small-box bg-red">
-            <div class="inner">
-              <h3>65</h3>
-              <p>Cheminements abandonnés</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-pie-graph"></i>
-            </div>
-            <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-8">
-          <div class="box">
-            <div class="box-header">
-              <h3 class="box-title"><i class="fa fa-users"></i> Les derniers inscrits</h3>
-
-              <div class="box-tools">
-                <div class="input-group input-group-sm hidden-xs" style="width: 270px;">
-                  <input type="text" name="table_search" class="form-control pull-right" placeholder="Rechercher...">
-                  <div class="input-group-btn">
-                    <button type="submit" class="btn btn-default centre_influence_degrade"><i class="fa fa-search"></i></button>
-                  </div>
+                <div class="pull-left info">
+                  <p>{{ user.nom }} {{ user.prenoms }}</p>
+                  <a href="#"><i class="fa fa-circle text-success"></i></a>
                 </div>
               </div>
-            </div>
-            <div class="box-body table-responsive no-padding">
-              <table class="table table-hover">
-                <tr>
-                  <th></th>
-                  <th>Nom & Prénoms</th>
-                  <th>Téléphone</th>
-                  <th>Date inscription</th>
-                  <th>Statut</th>
-                  <th class="text-center button_action">Actions</th>
-                </tr>
-                <tr>
-                  <td><img src="dist/img/user2-160x160.jpg" class="img-circle" width="25" alt="User Image"></td>
-                  <td>Jean Dupont</td>
-                  <td>+33 6 12 34 56 78</td>
-                  <td>01/06/2025</td>
-                  <td><span class="label label-success">Actif</span></td>
-                  <td class="text-center">
-                    <a href="#" class="btn btn-info btn-xs"><i class="fa fa-eye"></i></a>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="box">
-            <div class="box-header with-border">
-              <i class="fa fa-puzzle-piece"></i>
-              <h3 class="box-title">Derinières actions</h3>
-            </div>
-            <div class="box-body">
-              <ul class="timeline timeline-inverse">
-                <li>
-                  <i class="fa fa-envelope bg-blue"></i>
-                  <div class="timeline-item">
-                    <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
-                    <h3 class="timeline-header"><a href="#">Support Team</a></h3>
-                  </div>
+              <form action="#" method="get" class="sidebar-form">
+                <div class="input-group">
+                  <input type="text" name="q" class="form-control" placeholder="Rerchercher...">
+                  <span class="input-group-btn">
+                        <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                        </button>
+                      </span>
+                </div>
+              </form>
+
+              <ul class="sidebar-menu" data-widget="tree">
+                <!--li class="active treeview">
+                  <a href="#">
+                    <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+                    <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                  </a>
+                  <ul class="treeview-menu">
+                    <li class="active"><a href="{% url 'home' %}"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
+                    <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+                  </ul>
+                </li-->
+                <li class="active animate__animated animate__bounceIn">
+                  <a href="{% url 'home' %}">
+                    <i class="fa fa-dashboard"></i> <span>Tableau de bord</span>
+                  </a>
                 </li>
-                <li>
-                  <i class="fa fa-user bg-aqua"></i>
-                  <div class="timeline-item">
-                    <span class="time"><i class="fa fa-clock-o"></i> 5 mins ago</span>
-                    <h3 class="timeline-header no-border"><a href="#">Sarah Young</a></h3>
-                  </div>
+                <li class="animate__animated animate__bounceIn">
+                  <a href="{% url 'sessions' %}">
+                    <i class="fa fa-users"></i> <span>Sessions de cours</span>
+                  </a>
                 </li>
-                <li>
-                  <i class="fa fa-comments bg-yellow"></i>
-                  <div class="timeline-item">
-                    <span class="time"><i class="fa fa-clock-o"></i> 27 mins ago</span>
-                    <h3 class="timeline-header"><a href="#">Jay White</a></h3>
-                  </div>
+                <li class="animate__animated animate__bounceIn">
+                  <a href="pages/vue_360.html">
+                    <i class="fa fa-eye"></i> <span>Vue 360</span>
+                  </a>
                 </li>
-                <li>
-                  <i class="fa fa-camera bg-purple"></i>
-                  <div class="timeline-item">
-                    <span class="time"><i class="fa fa-clock-o"></i> 2 days ago</span>
-                    <h3 class="timeline-header"><a href="#">Mina Lee</a></h3>
-                  </div>
+                <li class="animate__animated animate__bounceIn">
+                  <a href="pages/utilisateur.html">
+                    <i class="fa fa-users"></i> <span>Utilisateurs</span>
+                  </a>
                 </li>
               </ul>
-            </div>
+            </section>
+          </aside>
+
+          <div class="content-wrapper">
+            {% block content %} {% endblock %}
           </div>
+          <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+              <b>Version</b> {{ VERSION_APP }}
+            </div>
+            <strong>Copyright &copy; 2025 <a href="#">Vases d'Honneur Centre Influence Eden 2</a>.</strong> Tous droits réservés
+          </footer>
+
+          <div class="control-sidebar-bg"></div>
+          <div id="eden_std_dialog_box"></div>
         </div>
-      </div>
-    </section>
 
-  </div>
-  <footer class="main-footer">
-    <div class="pull-right hidden-xs">
-      <b>Version</b> {{ VERSION_APP }}
-    </div>
-    <strong>Copyright &copy; 2025 <a href="#">Vases d'Honneur Centre Influence Eden 2</a>.</strong> Tous droits réservés
-  </footer>
+        <script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+        <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'bower_components/jquery-slimscroll/jquery.slimscroll.min.js' %}"></script>
+        <script src="{% static 'bower_components/fastclick/lib/fastclick.js' %}"></script>
+        <script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+        <script src="{% static 'bower_components/select2/dist/js/select2.full.min.js' %}"></script>
+        <script src="{% static 'bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js' %}"></script>
+        <script src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
+        <script src="{% static 'bower_components/raphael/raphael.min.js' %}"></script>
+        <script src="{% static 'bower_components/morris.js/morris.min.js' %}"></script>
+        <script src="{% static 'bower_components/jquery-sparkline/dist/jquery.sparkline.min.js' %}"></script>
+        <script src="{% static 'bower_components/jquery-knob/dist/jquery.knob.min.js' %}"></script>
+        <script src="{% static 'bower_components/moment/min/moment.min.js' %}"></script>
+        <script src="{% static 'bower_components/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+        <script src="{% static 'bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script>
 
+        <script src="{% static 'plugins/input-mask/jquery.inputmask.js' %}"></script>
+        <script src="{% static 'plugins/input-mask/jquery.inputmask.date.extensions.js' %}"></script>
+        <script src="{% static 'plugins/input-mask/jquery.inputmask.extensions.js' %}"></script>
+        <script src="{% static 'plugins/timepicker/bootstrap-timepicker.min.js' %}"></script>
+        <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
+        <script src="{% static 'plugins/jvectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+        <script src="{% static 'plugins/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+        <script src="{% static 'plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js' %}"></script>
 
-  <div class="control-sidebar-bg"></div>
-</div>
+        <script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+        <script src="{% static 'dist/js/demo.js' %}"></script>
+        <script src="{% static 'dist/js/pages/dashboard.js' %}"></script>
+        <script src="{% static 'dist/js/datatables.js' %}"></script>
+        <script src="{% static 'dist/js/date_format.js' %}"></script>
+        <script src="{% static 'dist/js/custom_js.js' %}"></script>
+        <script src="{% static 'dist/js/kraksoft.js' %}"></script>
+        <script src="{% static 'dist/js/jquery.krakPopup.js' %}"></script>
+        <script src="{% static 'dist/js/noty/jquery.noty.js' %}"></script>
+        <script src="{% static 'dist/js/noty/layouts/bottomCenter.js' %}"></script>
+        <script src="{% static 'dist/js/noty/layouts/topRight.js' %}"></script>
+        <script src="{% static 'dist/js/noty/layouts/top.js' %}"></script>
+        <script src="{% static 'dist/js/noty/layouts/center.js' %}"></script>
+        <script src="{% static 'dist/js/noty/themes/default.js' %}"></script>
 
-<script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
-<script src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
-<script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'bower_components/raphael/raphael.min.js' %}"></script>
-<script src="{% static 'bower_components/morris.js/morris.min.js' %}"></script>
-<script src="{% static 'bower_components/jquery-sparkline/dist/jquery.sparkline.min.js' %}"></script>
-<script src="{% static 'plugins/jvectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
-<script src="{% static 'plugins/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
-<script src="{% static 'bower_components/jquery-knob/dist/jquery.knob.min.js' %}"></script>
-<script src="{% static 'bower_components/moment/min/moment.min.js' %}"></script>
-<script src="{% static 'bower_components/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
-<script src="{% static 'bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script>
-<script src="{% static 'plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js' %}"></script>
-<script src="{% static 'bower_components/jquery-slimscroll/jquery.slimscroll.min.js' %}"></script>
-<script src="{% static 'bower_components/fastclick/lib/fastclick.js' %}"></script>
-<script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
-<script src="{% static 'bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
-<script src="{% static 'bower_components/select2/dist/js/select2.full.min.js' %}"></script>
-<script src="{% static 'plugins/input-mask/jquery.inputmask.js' %}"></script>
-<script src="{% static 'plugins/input-mask/jquery.inputmask.date.extensions.js' %}"></script>
-<script src="{% static 'plugins/input-mask/jquery.inputmask.extensions.js' %}"></script>
-<script src="{% static 'bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js' %}"></script>
-<script src="{% static 'plugins/timepicker/bootstrap-timepicker.min.js' %}"></script>
-<script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
-<script src="{% static 'dist/js/adminlte.min.js' %}"></script>
-<script src="{% static 'dist/js/pages/dashboard.js' %}"></script>
-<script src="{% static 'dist/js/demo.js' %}"></script>
-<script src="{% static 'dist/js/datatables.js' %}"></script>
-<script src="{% static 'dist/js/date_format.js' %}"></script>
-<script src="{% static 'dist/js/custom_jd.js' %}"></script>
-
-
-
-<script>
-  $.widget.bridge('uibutton', $.ui.button);
-</script>
-
-</body>
+        <input type="hidden" id="eco_base_url" name="eco_base_url" value="{% if request.is_secure %} https://{{ request.get_host }}/ {% else %} http://{{ request.get_host }}/ {% endif %}">
+    </body>
 </html>

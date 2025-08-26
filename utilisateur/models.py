@@ -1,3 +1,4 @@
+import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 import datetime
@@ -15,6 +16,7 @@ def upload_photo(instance, filename):
 
 
 class Utilisateur(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=20, blank=True, default=None, null=True)
     prenoms = models.CharField(max_length=80, blank=True, default=None, null=True)
     telephone = models.CharField(max_length=20, blank=True, null=True)

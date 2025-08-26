@@ -6,5 +6,144 @@
 {% endblock %}
 
 {% block content %}
+<section class="content-header">
+  <h1>Bienvenue sur le tableau de bord</h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Tableau de bord</li>
+  </ol>
+</section>
+<section class="content">
+  <div class="row">
+    <div class="col-lg-3 col-xs-6 animate__animated animate__backInLeft">
+      <div class="small-box bg-aqua">
+        <div class="inner">
+          <h3>150</h3>
 
+          <p>Cheminants du mois en cours</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-bag"></i>
+        </div>
+        <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    <div class="col-lg-3 col-xs-6 animate__animated animate__backInLeft">
+      <div class="small-box bg-green">
+        <div class="inner">
+          <h3>53<sup style="font-size: 20px">%</sup></h3>
+          <p>Cheminements ayant abouti</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-stats-bars"></i>
+        </div>
+        <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    <div class="col-lg-3 col-xs-6 animate__animated animate__backInRight">
+      <div class="small-box bg-yellow">
+        <div class="inner">
+          <h3>44</h3>
+          <p>Cheminements interrompu</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-person-add"></i>
+        </div>
+        <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    <div class="col-lg-3 col-xs-6 animate__animated animate__backInRight">
+      <div class="small-box bg-red">
+        <div class="inner">
+          <h3>65</h3>
+          <p>Cheminements abandonnés</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-pie-graph"></i>
+        </div>
+        <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title"><i class="fa fa-users"></i> Les derniers inscrits</h3>
+
+          <div class="box-tools">
+            <div class="input-group input-group-sm hidden-xs" style="width: 270px;">
+              <input type="text" name="table_search" class="form-control pull-right" placeholder="Rechercher...">
+              <div class="input-group-btn">
+                <button type="submit" class="btn btn-default centre_influence_degrade"><i class="fa fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box-body table-responsive no-padding">
+          <table class="table table-hover">
+            <tr>
+              <th></th>
+              <th>Nom & Prénoms</th>
+              <th>Téléphone</th>
+              <th>Date inscription</th>
+              <th>Statut</th>
+              <th class="text-center button_action">Actions</th>
+            </tr>
+            <tr>
+              <td><img src="dist/img/user2-160x160.jpg" class="img-circle" width="25" alt="User Image"></td>
+              <td>Jean Dupont</td>
+              <td>+33 6 12 34 56 78</td>
+              <td>01/06/2025</td>
+              <td><span class="label label-success">Actif</span></td>
+              <td class="text-center">
+                <a href="#" class="btn btn-info btn-xs"><i class="fa fa-eye"></i></a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="box">
+        <div class="box-header with-border">
+          <i class="fa fa-puzzle-piece"></i>
+          <h3 class="box-title">Derinières actions</h3>
+        </div>
+        <div class="box-body">
+          <ul class="timeline timeline-inverse">
+            <li>
+              <i class="fa fa-envelope bg-blue"></i>
+              <div class="timeline-item">
+                <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
+                <h3 class="timeline-header"><a href="#">Support Team</a></h3>
+              </div>
+            </li>
+            <li>
+              <i class="fa fa-user bg-aqua"></i>
+              <div class="timeline-item">
+                <span class="time"><i class="fa fa-clock-o"></i> 5 mins ago</span>
+                <h3 class="timeline-header no-border"><a href="#">Sarah Young</a></h3>
+              </div>
+            </li>
+            <li>
+              <i class="fa fa-comments bg-yellow"></i>
+              <div class="timeline-item">
+                <span class="time"><i class="fa fa-clock-o"></i> 27 mins ago</span>
+                <h3 class="timeline-header"><a href="#">Jay White</a></h3>
+              </div>
+            </li>
+            <li>
+              <i class="fa fa-camera bg-purple"></i>
+              <div class="timeline-item">
+                <span class="time"><i class="fa fa-clock-o"></i> 2 days ago</span>
+                <h3 class="timeline-header"><a href="#">Mina Lee</a></h3>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

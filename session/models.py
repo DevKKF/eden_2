@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 import datetime
 
@@ -8,11 +9,12 @@ from utilisateur.models import Utilisateur
 
 
 class Session(TimeStampedAuditModel):
-    nom = models.CharField(max_length=50, blank=True, null=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    nom = models.TextField(blank=True)
     description = models.TextField(blank=True, null=True)
     date_publication = models.DateField(blank=True, null=True, auto_now=False)
-    date_debut = models.DateField(blank=True, null=True, auto_now=False)
-    date_fin = models.DateField(blank=True, null=True, auto_now=False)
+    date_debut = models.DateField(blank=True)
+    date_fin = models.DateField(blank=True)
     statut_session = models.fields.CharField(choices=SessionStatut.choices, default=SessionStatut.ENCOURS, max_length=20, null=True)
 
     def __str__(self):
@@ -25,6 +27,7 @@ class Session(TimeStampedAuditModel):
 
 
 class Certificat(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     numero_certificat = models.CharField(max_length=50, blank=True, null=True, unique=True)
     date_debut_validite = models.DateField(blank=True, null=True, auto_now=False)
     date_fin_validite = models.DateField(blank=True, null=True, auto_now=False)
@@ -66,6 +69,7 @@ def upload_textes(instance, filename):
 
 
 class Cours(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     titre = models.CharField(max_length=50, blank=True, null=True)
     sous_titre = models.CharField(max_length=50, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
@@ -87,6 +91,7 @@ class Cours(TimeStampedAuditModel):
 
 
 class Question(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     libelle = models.CharField(max_length=50, blank=True, null=True)
     date_publication = models.DateField(blank=True, null=True, auto_now=False)
     point = models.IntegerField(null=True)
@@ -103,6 +108,7 @@ class Question(TimeStampedAuditModel):
 
 
 class Reponse(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     libelle = models.CharField(max_length=50, blank=True, null=True)
     date_publication = models.DateField(blank=True, null=True, auto_now=False)
     question = models.ForeignKey(Question, null=True, on_delete=models.RESTRICT, related_name="questions")
@@ -118,6 +124,7 @@ class Reponse(TimeStampedAuditModel):
 
 
 class Inscription(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     utilisateur = models.ForeignKey(Utilisateur, null=True, on_delete=models.RESTRICT, related_name="utilisateur")
     session = models.ForeignKey(Session, null=True, on_delete=models.RESTRICT, related_name="inscription_sessions")
     certificat = models.ForeignKey(Certificat, null=True, on_delete=models.RESTRICT, related_name="inscription_certificats")
@@ -133,6 +140,7 @@ class Inscription(TimeStampedAuditModel):
 
 
 class ParticipationCours(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     utilisateur = models.ForeignKey(Utilisateur, null=True, on_delete=models.RESTRICT, related_name="participation_utilisateurs")
     cours = models.ForeignKey(Cours, null=True, on_delete=models.RESTRICT, related_name="inscription_cours")
     statut_participation = models.fields.CharField(choices=SessionStatut.choices, default=SessionStatut.ENCOURS, max_length=20, null=True)
@@ -147,6 +155,7 @@ class ParticipationCours(TimeStampedAuditModel):
 
 
 class ReponseUtilisateur(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_heure_debut = models.DateTimeField(blank=True, null=True, auto_now=False)
     date_heure_fin = models.DateTimeField(blank=True, null=True, auto_now=False)
     point_acquis = models.IntegerField(null=True)
