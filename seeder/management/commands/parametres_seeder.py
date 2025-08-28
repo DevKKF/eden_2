@@ -3,7 +3,11 @@ from django.utils import timezone
 from parametre.models import Departement, Tribu, Quartier, TypeCours
 
 
-def run():
+def run_parametres(created_by_user):
+    """
+    Insère les données de base pour les paramètres, en utilisant l'utilisateur fourni
+    pour le champ 'created_by'.
+    """
     # Exemple pour les departements
     departement_data = [
         {"libelle": "Portiers"},
@@ -15,7 +19,11 @@ def run():
         {"libelle": "Sono"},
     ]
     for data in departement_data:
-        Departement.objects.get_or_create(libelle=data["libelle"], created_at=timezone.now())
+        Departement.objects.get_or_create(
+            libelle=data["libelle"],
+            created_by=created_by_user.pk,
+            created_at=timezone.now()
+        )
 
     # Exemple pour les tribus
     tribus = [
@@ -33,7 +41,11 @@ def run():
         {"libelle": "Issacar"},
     ]
     for data in tribus:
-        Tribu.objects.get_or_create(libelle=data["libelle"], created_at=timezone.now())
+        Tribu.objects.get_or_create(
+            libelle=data["libelle"],
+            created_by=created_by_user.pk,
+            created_at=timezone.now()
+        )
 
     # Exemple pour les quartiers
     quartier_data = [
@@ -41,15 +53,24 @@ def run():
         {"libelle": "Dokui - Petit Marché"},
     ]
     for data in quartier_data:
-        Quartier.objects.get_or_create(libelle=data["libelle"], created_at=timezone.now())
+        Quartier.objects.get_or_create(
+            libelle=data["libelle"],
+            created_by=created_by_user.pk,
+            created_at=timezone.now()
+        )
 
     # Exemple pour les types de cours
     type_cours_data = [
-        {"libelle": "Vidéos"},
-        {"libelle": "Audios"},
-        {"libelle": "Textes"},
+        {"code": "VIDEOS", "libelle": "Vidéos"},
+        {"code": "AUDIOS", "libelle": "Audios"},
+        {"code": "TEXTES", "libelle": "Textes"},
     ]
     for type_cours in type_cours_data:
-        TypeCours.objects.get_or_create(libelle=type_cours["libelle"], created_at=timezone.now())
+        TypeCours.objects.get_or_create(
+            code=type_cours["code"],
+            libelle=type_cours["libelle"],
+            created_by=created_by_user.pk,
+            created_at=timezone.now()
+        )
 
     print("✅  Paramètres insérés avec succès.")

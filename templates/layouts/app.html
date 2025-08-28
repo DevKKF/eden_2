@@ -33,10 +33,6 @@
 
       <!-- jQuery en premier -->
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <!-- toastr CSS -->
-      <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
-      <!-- toastr JS -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
       <!-- CSRF Token -->
       <meta name="csrf-token" content="csrf_token">
@@ -377,7 +373,6 @@
         <script src="{% static 'dist/js/datatables.js' %}"></script>
         <script src="{% static 'dist/js/date_format.js' %}"></script>
         <script src="{% static 'dist/js/custom_js.js' %}"></script>
-        <script src="{% static 'dist/js/kraksoft.js' %}"></script>
         <script src="{% static 'dist/js/jquery.krakPopup.js' %}"></script>
         <script src="{% static 'dist/js/noty/jquery.noty.js' %}"></script>
         <script src="{% static 'dist/js/noty/layouts/bottomCenter.js' %}"></script>
@@ -385,7 +380,29 @@
         <script src="{% static 'dist/js/noty/layouts/top.js' %}"></script>
         <script src="{% static 'dist/js/noty/layouts/center.js' %}"></script>
         <script src="{% static 'dist/js/noty/themes/default.js' %}"></script>
+        <script>
+            function isInputNumber(evt){
 
+                var ch = String.fromCharCode(evt.which);
+
+                if(!(/[0-9]/.test(ch))){
+                   evt.preventDefault();
+                }
+            }
+
+            function formatQuantite(input) {
+                var quantite = input.value.replace(/\D/g, '');
+
+                quantite = addSpacesForThousands(quantite);
+
+                input.value = quantite;
+            }
+
+            // Fonction pour ajouter un espace comme séparateur pour les milliers
+            function addSpacesForThousands(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            }
+        </script>
         <input type="hidden" id="eco_base_url" name="eco_base_url" value="{% if request.is_secure %} https://{{ request.get_host }}/ {% else %} http://{{ request.get_host }}/ {% endif %}">
     </body>
 </html>

@@ -15,28 +15,28 @@
                     <span class="message"></span>
                   </div>
                   <div class="row">
-                      <div class="col-md-12 mb-5">
+                      <div class="col-md-12 mb-10">
                           <div class="form-group">
                               <label>Nom de la session <span class="required">*</span></label>
                               <input type="text" name="nom" class="form-control pull-right" id="edit_nom" value="{{ session.nom }}">
                           </div>
                       </div>
-                      <div class="col-md-6 mb-5">
+                      <div class="col-md-6 mb-10">
                           <div class="form-group">
                               <label>Date début <span class="required">*</span></label>
                               <input type="date" name="date_debut" class="form-control pull-right edit_date_debut" id="edit_date_debut" value="{{ session.date_debut|date:'Y-m-d' }}">
                           </div>
                       </div>
-                      <div class="col-md-6 mb-5">
+                      <div class="col-md-6 mb-10">
                           <div class="form-group">
                               <label>Date fin <span class="required">*</span></label>
                               <input type="date" name="date_fin" class="form-control pull-right edit_date_fin" id="edit_date_fin" value="{{ session.date_fin|date:'Y-m-d' }}">
                           </div>
                       </div>
-                      <div class="col-md-12 mb-5">
+                      <div class="col-md-12 mb-10">
                           <div class="form-group">
                               <label>Description</label>
-                              <textarea name="description" class="form-control" id="edit_description" cols="30" rows="10"></textarea>
+                              <textarea name="description" class="form-control" id="edit_description" cols="30" rows="10">{{ session.description }}</textarea>
                           </div>
                       </div>
                   </div>

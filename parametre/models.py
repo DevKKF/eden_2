@@ -16,6 +16,7 @@ class Quartier(TimeStampedAuditModel):
         verbose_name = 'Quartiers'
         verbose_name_plural = "Quartiers"
 
+
 class Departement(TimeStampedAuditModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     libelle = models.CharField(max_length=50, blank=True, null=True)
@@ -27,6 +28,7 @@ class Departement(TimeStampedAuditModel):
         db_table = 'departements'
         verbose_name = 'Departements'
         verbose_name_plural = "Departements"
+
 
 class Tribu(TimeStampedAuditModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -40,8 +42,10 @@ class Tribu(TimeStampedAuditModel):
         verbose_name = 'Tribus'
         verbose_name_plural = "Tribus"
 
+
 class TypeCours(TimeStampedAuditModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    code = models.CharField(max_length=50, blank=True, null=True, unique=True)
     libelle = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):

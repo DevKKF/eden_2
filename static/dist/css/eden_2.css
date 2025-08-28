@@ -199,6 +199,7 @@ p, textarea {
 
 /* Styles pour le loader */
 #loader {
+    margin:auto;
     display: none;
     position: fixed;
     top: 50%;
@@ -259,4 +260,12 @@ body.loading-cursor::before {
 
 .modal-header h4{
     text-transform: uppercase !important;
+}
+
+.d-none{
+    display: none !important;
+}
+
+.text-white{
+    color: white !important;
 }

@@ -10,27 +10,41 @@
   <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
   <link rel="stylesheet" href="{% static 'bower_components/Ionicons/css/ionicons.min.css' %}">
-  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/css/eden.min.css' %}">
   <link rel="stylesheet" href="{% static 'plugins/iCheck/square/blue.css' %}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <style>
+    /* This only changes this particular animation duration */
+    .animate__animated.animate__bounce {
+      --animate-duration: 10s;
+    }
+
+    /* This changes all the animations globally */
+    :root {
+      --animate-duration: 800ms;
+      --animate-delay: 0.9s;
+    }
+  </style>
+
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <img src="{% static 'dist/img/logo/logo.png' %}" width="" alt="{{ NAME_APP }}">
+    <a href="{% url 'login' %}"><img src="{% static '/dist/img/logo/logo.png' %}" class="animate__animated animate__pulse" alt="{{ NAME_APP }}"></a>
   </div>
   <div class="login-box-body">
-    {% block content %} {% endblock %}
+    {% block content %}{% endblock %}
   </div>
 </div>
 
-<script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
-<script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
+<script src="{% static '/bower_components/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static '/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static '/plugins/iCheck/icheck.min.js' %}"></script>
 <script>
   $(function () {
     $('input').iCheck({

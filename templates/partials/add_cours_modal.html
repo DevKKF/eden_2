@@ -1,0 +1,76 @@
+<div class="modal fade" id="modal-add_cours" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title f-bold"><i class="fa fa-hourglass-2"></i> CREER UN COURS</h4>
+        </div>
+        <form action="{% url 'add_session_cours' session.id %}" method="post" enctype="multipart/form-data" id="form_add_cours">
+            {% csrf_token %}
+            <input type="hidden" name="session_id" id="session_id" value="{{ session.id }}">
+            <div class="modal-body">
+                <div class="alert alert-danger alert-dismissible hidden" style="background-color: #FFF1F2 !important; border-color: #FAD4D6 !important; color: #000 !important;">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <h4><i class="icon fa fa-ban"></i> Erreur !</h4>
+                    <span class="message"></span>
+                </div>
+              <div class="row">
+                <div class="col-md-12 mb-10">
+                  <div class="form-group">
+                      <label>Titre <span class="required">*</span></label>
+                      <input type="text" name="titre" id="titre" class="form-control pull-right">
+                  </div>
+                </div>
+                <div class="col-md-12 mb-10">
+                  <div class="form-group">
+                      <label>Sous-titre</label>
+                      <input type="text" name="sous_titre" id="sous_titre" class="form-control pull-right">
+                  </div>
+                </div>
+                <div class="col-md-6 mb-10">
+                  <div class="form-group">
+                    <label>Format du cours <span class="required">*</span></label>
+                    <select class="form-control" name="type_cours_id" id="type_cours_id">
+                        <option value="">Choisir</option>
+                        {% for type in type_cours %}
+                          <option value="{{ type.id }}" data-type_cours_code="{{ type.code }}">{{ type.libelle }}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-10 if_cours_video">
+                  <div class="form-group">
+                    <label>Vidéo <span class="required">*</span></label>
+                    <input type="file" name="cours_video" id="cours_video" class="form-control pull-right" accept="video/*">
+                  </div>
+                </div>
+                <div class="col-md-6 mb-10 if_cours_audio">
+                  <div class="form-group">
+                    <label>Audio <span class="required">*</span></label>
+                    <input type="file" name="cours_audio" id="cours_audio" class="form-control pull-right" accept="audio/*">
+                  </div>
+                </div>
+                <div class="col-md-6 mb-10 if_cours_texte">
+                  <div class="form-group">
+                    <label>Texte <span class="required">*</span></label>
+                    <input type="file" name="cours_texte" id="cours_texte" class="form-control pull-right" accept=".docx, .pdf, .ppt">
+                  </div>
+                </div>
+                <div class="col-md-12 mb-10">
+                  <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" class="form-control" id="description" cols="20" rows="5"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger pull-left" data-dismiss="modal"><i class="fa fa-remove"></i> Fermer</button>
+              <button type="button" class="btn btn-success" id="btn_save_cours"><i class="fa fa-check-circle"></i> Enregistrer</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>

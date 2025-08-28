@@ -149,8 +149,8 @@ AUTHENTICATION_BACKENDS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Durée de la session
-SESSION_COOKIE_AGE = env.int('SESSION_COOKIE_AGE', default=86400)
-SESSION_EXPIRE_AT_BROWSER_CLOSE = env.bool('SESSION_EXPIRE_AT_BROWSER_CLOSE', default=True)
+SESSION_COOKIE_AGE = 86400  # 10 jours
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Configuration du paramètre de mailing
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
@@ -173,26 +173,5 @@ CACHES = {
     }
 }
 
-# Pagination optimisée
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
-DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440  # 2.5 MB
 
-# Optimisations QuerySet globales
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': 'django_sql.log',
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'handlers': ['file'],
-            'level': 'DEBUG' if DEBUG else 'INFO',
-            'propagate': True,
-        },
-    },
-}
+

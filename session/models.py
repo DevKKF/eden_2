@@ -20,6 +20,14 @@ class Session(TimeStampedAuditModel):
     def __str__(self):
         return self.nom
 
+    def nombre_certificats(self):
+        nombre = Certificat.objects.count()
+        return nombre
+
+    def nombre_cours(self):
+        nombre = Cours.objects.count()
+        return nombre
+
     class Meta:
         db_table = 'sessions'
         verbose_name = 'Sessions'
@@ -70,19 +78,25 @@ def upload_textes(instance, filename):
 
 class Cours(TimeStampedAuditModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    titre = models.CharField(max_length=50, blank=True, null=True)
-    sous_titre = models.CharField(max_length=50, blank=True, null=True)
+    numero_cours = models.CharField(max_length=50, blank=True, null=True, unique=True)
+    titre = models.TextField(blank=True, null=True)
+    sous_titre = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     date_publication = models.DateField(blank=True, null=True, auto_now=False)
-    cours_video = models.ImageField(upload_to=upload_videos, null=True, blank=True)
-    cours_audio = models.ImageField(upload_to=upload_audios, null=True, blank=True)
-    cours_texte = models.ImageField(upload_to=upload_textes, null=True, blank=True)
+    date_activation = models.DateField(blank=True, null=True, auto_now=False)
+    cours_video = models.FileField(upload_to=upload_videos, null=True, blank=True)
+    cours_audio = models.FileField(upload_to=upload_audios, null=True, blank=True)
+    cours_texte = models.FileField(upload_to=upload_textes, null=True, blank=True)
     type_cours = models.ForeignKey(TypeCours, null=True, on_delete=models.RESTRICT)
     session = models.ForeignKey(Session, null=True, on_delete=models.RESTRICT, related_name="sessions")
-    statut_cours = models.fields.CharField(choices=SessionStatut.choices, default=SessionStatut.ENCOURS, max_length=20, null=True)
+    statut_cours = models.fields.CharField(choices=SessionStatut.choices, default=SessionStatut.ENATTENTE, max_length=20, null=True)
 
     def __str__(self):
         return self.titre
+
+    def nombre_questions(self):
+        nombre = Question.objects.count()
+        return nombre
 
     class Meta:
         db_table = 'cours'

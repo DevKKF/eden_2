@@ -5,7 +5,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.apps import apps
 from django.contrib.auth.models import Permission
 
+
 def ajouter_permissions_app_au_groupe(nom_app, groupe):
+    """
+    Ajoute toutes les permissions d'une application à un groupe.
+    """
     models = apps.get_app_config(nom_app).get_models()
     for model in models:
         content_type = ContentType.objects.get_for_model(model)
@@ -13,7 +17,12 @@ def ajouter_permissions_app_au_groupe(nom_app, groupe):
         groupe.permissions.add(*permissions)
     print(f"✅  Permissions de l'app '{nom_app}' ajoutées au groupe '{groupe.name}'.")
 
-def run():
+
+def run_utilisateurs():
+    """
+    Crée ou récupère l'utilisateur administrateur et le groupe SUPERADMIN.
+    Retourne l'objet utilisateur créé.
+    """
     # Créer ou récupérer l'utilisateur pasteurtanoh@gmail.com
     user, created = Utilisateur.objects.get_or_create(username='pasteurtanoh@gmail.com')
     if created:
@@ -42,4 +51,6 @@ def run():
     # Lier l'utilisateur au groupe
     user.groups.add(group)
     print("✅  Utilisateur lié au groupe SUPERADMIN.")
+
+    return user
 
