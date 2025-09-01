@@ -5,7 +5,6 @@ import datetime
 from parametre.models import TypeCours
 from shared.enum import SessionStatut, StatutGeneral, ReponseEnum, StatutCertificat
 from shared.models.base import TimeStampedAuditModel
-from utilisateur.models import Utilisateur
 
 
 class Session(TimeStampedAuditModel):
@@ -50,6 +49,30 @@ class Certificat(TimeStampedAuditModel):
         db_table = 'certificats'
         verbose_name = 'Certificats'
         verbose_name_plural = "Certificats"
+
+
+def upload_modele_certificat(instance, filename):
+    filebase, extension = filename.rsplit('.', 1)
+    file_name = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+    if filename.startswith('modele_certificat_'):
+        return f'certificat/modeles/{filename}'
+    return 'certificats/%s.%s' % (file_name, extension)
+
+
+class ModeleCertificat(TimeStampedAuditModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    nom_modele = models.TextField(blank=True, null=True)
+    date_publication = models.DateField(blank=True, null=True, auto_now=False)
+    modele_certificat = models.FileField(upload_to=upload_modele_certificat, null=True, blank=True)
+    session = models.ForeignKey(Session, null=True, on_delete=models.RESTRICT, related_name="modele_certificat_sessions")
+
+    def __str__(self):
+        return self.nom_modele
+
+    class Meta:
+        db_table = 'modele_certificats'
+        verbose_name = 'Modeles Certificats'
+        verbose_name_plural = "Modeles Certificats"
 
 
 def upload_videos(instance, filename):
@@ -139,7 +162,7 @@ class Reponse(TimeStampedAuditModel):
 
 class Inscription(TimeStampedAuditModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    utilisateur = models.ForeignKey(Utilisateur, null=True, on_delete=models.RESTRICT, related_name="utilisateur")
+    utilisateur = models.ForeignKey("utilisateur.Utilisateur", null=True, on_delete=models.RESTRICT, related_name="utilisateur")
     session = models.ForeignKey(Session, null=True, on_delete=models.RESTRICT, related_name="inscription_sessions")
     certificat = models.ForeignKey(Certificat, null=True, on_delete=models.RESTRICT, related_name="inscription_certificats")
     statut_inscription = models.fields.CharField(choices=SessionStatut.choices, default=SessionStatut.ENCOURS, max_length=20, null=True)
@@ -155,7 +178,7 @@ class Inscription(TimeStampedAuditModel):
 
 class ParticipationCours(TimeStampedAuditModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    utilisateur = models.ForeignKey(Utilisateur, null=True, on_delete=models.RESTRICT, related_name="participation_utilisateurs")
+    utilisateur = models.ForeignKey("utilisateur.Utilisateur", null=True, on_delete=models.RESTRICT, related_name="participation_utilisateurs")
     cours = models.ForeignKey(Cours, null=True, on_delete=models.RESTRICT, related_name="inscription_cours")
     statut_participation = models.fields.CharField(choices=SessionStatut.choices, default=SessionStatut.ENCOURS, max_length=20, null=True)
 
@@ -173,7 +196,7 @@ class ReponseUtilisateur(TimeStampedAuditModel):
     date_heure_debut = models.DateTimeField(blank=True, null=True, auto_now=False)
     date_heure_fin = models.DateTimeField(blank=True, null=True, auto_now=False)
     point_acquis = models.IntegerField(null=True)
-    utilisateur = models.ForeignKey(Utilisateur, null=True, on_delete=models.RESTRICT, related_name="reponse_utilisateurs")
+    utilisateur = models.ForeignKey("utilisateur.Utilisateur", null=True, on_delete=models.RESTRICT, related_name="reponse_utilisateurs")
     question = models.ForeignKey(Question, null=True, on_delete=models.RESTRICT, related_name="question_reponses")
     reponse = models.ForeignKey(Reponse, null=True, on_delete=models.RESTRICT, related_name="reponse_questions")
 

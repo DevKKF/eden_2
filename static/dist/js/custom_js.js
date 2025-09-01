@@ -110,6 +110,31 @@ $(document).ready(function () {
         });
     }
 
+    function notifyInfo(message, fnCallback) {
+        if (my_noty) {
+            my_noty.close();
+        }
+
+        my_noty = noty({
+            text: message,
+            type: 'info',
+            dismissQueue: true,
+            layout: 'center',
+            theme: 'defaultTheme',
+            buttons: [
+                {
+                    addClass: 'btn btn-info', text: 'OK', onClick: function ($noty) {
+
+                        if (typeof fnCallback === 'function') fnCallback();
+
+                        $noty.close();
+                    }
+                }
+            ]
+        });
+
+    }
+
     // Using jQuery
     function getCookie(name) {
         let cookieValue = null;
@@ -739,7 +764,6 @@ $(document).ready(function () {
                                 formData.append(coursFichierInput.attr('name'), files[0]);
                             }
 
-                            console.log('formData : ', formData);
                             $.ajax({
                                 type: 'post',
                                 url: href,
@@ -909,13 +933,11 @@ $(document).ready(function () {
                                         formData.append(obj.name, obj.value);
                                     });
 
-                                    console.log('files : ', files);
                                     // Ajout du fichier correctement
                                     if (files.length > 0) {
                                         formData.append(coursFichierInput.attr('name'), files[0]);
                                     }
 
-                                    console.log('formData : ', formData);
                                     $.ajax({
                                         type: 'post',
                                         url: href,
@@ -1069,6 +1091,569 @@ $(document).ready(function () {
         });
     });
     /* TODO COURS DE LA SESSION DE FORMATION FIN */
+
+    /* TODO CHEMINANTS DE LA SESSION DE FORMATION DEBUT */
+    $(document).on('click', "#btn_save_cheminant", function () {
+        let formulaire = $('#form_add_cheminant');
+        let href = formulaire.attr('action');
+
+        // Déclaration de formData au niveau de la portée de la fonction
+        let formData = new FormData();
+
+        let cheminantFichierInput = $('#form_add_cheminant #photo');
+
+        let files = [];
+        if (cheminantFichierInput.length > 0) {
+            files = cheminantFichierInput[0].files;
+        }
+
+        // Validation manuelle des champs requis
+        let certificat_id = $('#certificat_id').val().trim();
+        let nom = $('#nom').val().trim();
+        let prenoms = $('#prenoms').val().trim();
+        let sexe = $('#sexe').val().trim();
+        let telephone = $('#telephone').val().trim();
+        let situation_matrimoniale = $('#situation_matrimoniale').val().trim();
+        let departement_id = $('#departement_id').val().trim();
+        let date_naissance = $('#date_naissance').val().trim();
+        let tribu_id = $('#tribu_id').val().trim();
+        let quartier_id = $('#quartier_id').val().trim();
+
+        // Variable pour vérifier si tout est valide
+        let is_valid = true;
+
+        // Masquer toutes les erreurs et enlever les classes d'erreur
+        $('.form-group').removeClass('has-error');
+
+        if (certificat_id === '') {
+            $('#certificat_id').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (nom === '') {
+            $('#nom').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (prenoms === '') {
+            $('#prenoms').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (sexe === '') {
+            $('#sexe').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (telephone === '') {
+            $('#telephone').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (situation_matrimoniale === '') {
+            $('#situation_matrimoniale').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (departement_id === '') {
+            $('#departement_id').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (date_naissance === '') {
+            $('#date_naissance').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (tribu_id === '') {
+            $('#tribu_id').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (quartier_id === '') {
+            $('#quartier_id').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+
+        if (is_valid) {
+            let n = noty({
+                text: 'Voulez-vous vraiment enregistrer ce cheminant ?',
+                type: 'warning',
+                dismissQueue: true,
+                layout: 'center',
+                theme: 'defaultTheme',
+                buttons: [
+                    {
+                        addClass: 'btn btn-primary', text: 'Valider', onClick: function ($noty) {
+                            $noty.close();
+
+                            // Use serializeArray() which is more reliable
+                            let form_data_array = formulaire.serializeArray();
+                            $.each(form_data_array, function (index, obj) {
+                                formData.append(obj.name, obj.value);
+                            });
+
+                            // Ajout du fichier correctement
+                            if (files.length > 0) {
+                                formData.append(cheminantFichierInput.attr('name'), files[0]);
+                            }
+
+                            $.ajax({
+                                type: 'post',
+                                url: href,
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                success: function (response) {
+                                    if (response.statut == 1) {
+                                        resetFields('#' + formulaire.attr('id'));
+                                        notifySuccess(response.message, function () {
+                                            location.reload();
+                                        });
+                                    }
+                                    if (response.statut == 0) {
+                                        let errors_list_to_display = '';
+
+                                        for (let field in response.errors) {
+                                            let messages = response.errors[field].join('<br/>');
+                                            errors_list_to_display += `<br/><i class="fa fa-arrow-circle-right"></i> ${messages}`;
+
+                                            // Mettre en rouge le champ concerné
+                                            $('#' + field).addClass('is-invalid');
+                                        }
+
+                                        // Afficher les erreurs dans l'alerte
+                                        $('#modal-add_cheminant .alert .message').html(errors_list_to_display);
+                                        $('#modal-add_cheminant .alert').removeClass('hidden').show();
+                                        console.log('errors_list_to_display : ', errors_list_to_display);
+                                    }
+                                },
+                                error: function (request, status, error) {
+                                    notifyWarning("Erreur lors de l'enregistrement");
+                                }
+                            });
+                        }
+                    },
+                    {
+                        addClass: 'btn btn-danger', text: 'Annuler', onClick: function ($noty) {
+                            $noty.close();
+                        }
+                    }
+                ]
+            });
+        } else {
+            notifyWarning('Veuillez renseigner correctement le formulaire');
+        }
+    });
+
+    $(document).on('click', '.btn_modifier_cheminant', function () {
+        let model_name = $(this).attr('data-model_name');
+        let modal_title = $(this).attr('data-modal_title');
+        let href = $(this).attr('data-href');
+
+        $('#eden_std_dialog_box').load(href, function () {
+
+            manage_update_type_cours_change()
+
+            $('#modal-modification_cheminant').attr('data-backdrop', 'static').attr('data-keyboard', false);
+
+            $('#modal-modification_cheminant').find('#btn_valider').attr({ 'data-model_name': model_name, 'data-href': href });
+            $('#modal-modification_cheminant').find('.modal-dialog');
+
+            //
+            $('#modal-modification_cheminant').modal();
+
+            //gestion du clique sur valider les modifications
+            $("#btn_save_modification_cheminant").on('click', function () {
+                let formulaire = $('#form_update_cheminant');
+                let href = formulaire.attr('action');
+
+                // Déclaration de formData au niveau de la portée de la fonction
+                let formData = new FormData();
+
+                let certificat_id = $('#edit_certificat_id').val().trim();
+                let nom = $('#edit_nom').val().trim();
+                let prenoms = $('#edit_prenoms').val().trim();
+                let sexe = $('#edit_sexe').val().trim();
+                let telephone = $('#edit_telephone').val().trim();
+                let situation_matrimoniale = $('#edit_situation_matrimoniale').val().trim();
+                let departement_id = $('#edit_departement_id').val().trim();
+                let date_naissance = $('#edit_date_naissance').val().trim();
+                let tribu_id = $('#edit_tribu_id').val().trim();
+                let quartier_id = $('#edit_quartier_id').val().trim();
+
+                let is_valid = true;
+
+                $('.form-group').removeClass('has-error');
+                $('.error-text').hide().text('');
+
+                if (nom === '') {
+                    $('#edit_nom').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (prenoms === '') {
+                    $('#edit_prenoms').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (sexe === '') {
+                    $('#edit_sexe').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (telephone === '') {
+                    $('#edit_telephone').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (situation_matrimoniale === '') {
+                    $('#edit_situation_matrimoniale').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (departement_id === '') {
+                    $('#edit_departement_id').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (date_naissance === '') {
+                    $('#edit_date_naissance').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (tribu_id === '') {
+                    $('#edit_tribu_id').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (quartier_id === '') {
+                    $('#edit_quartier_id').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+
+                // Récupérer le bon input file en fonction du type choisi
+                let CheminantFichierInput = $('#form_update_cheminant #edit_photo');
+
+                let files = [];
+                if (CheminantFichierInput.length > 0) {
+                    files = CheminantFichierInput[0].files;
+                }
+
+                if (is_valid) {
+                    let n = noty({
+                        text: 'Voulez-vous vraiment enregistrer modifier ce cheminant ?',
+                        type: 'warning',
+                        dismissQueue: true,
+                        layout: 'center',
+                        theme: 'defaultTheme',
+                        buttons: [
+                            {
+                                addClass: 'btn btn-primary', text: 'Valider', onClick: function ($noty) {
+                                    $noty.close();
+
+                                    // Use serializeArray() which is more reliable
+                                    let form_data_array = formulaire.serializeArray();
+                                    $.each(form_data_array, function (index, obj) {
+                                        formData.append(obj.name, obj.value);
+                                    });
+
+                                    // Ajout du fichier correctement
+                                    if (files.length > 0) {
+                                        formData.append(CheminantFichierInput.attr('name'), files[0]);
+                                    }
+
+                                    $.ajax({
+                                        type: 'post',
+                                        url: href,
+                                        data: formData,
+                                        processData: false,
+                                        contentType: false,
+                                        success: function (response) {
+                                            if (response.statut == 1) {
+                                                resetFields('#' + formulaire.attr('id'));
+                                                notifySuccess(response.message, function () {
+                                                    location.reload();
+                                                });
+                                            }
+                                            if (response.statut == 0) {
+                                                let errors_list_to_display = '';
+
+                                                for (let field in response.errors) {
+                                                    let messages = response.errors[field].join('<br/>');
+                                                    errors_list_to_display += `<br/><i class="fa fa-arrow-circle-right"></i> ${messages}`;
+                                                    $('#' + field).addClass('is-invalid');
+                                                }
+
+                                                $('#modal-modification_cheminant .alert .message').html(errors_list_to_display);
+                                                $('#modal-modification_cheminant .alert').removeClass('hidden').show();
+                                            }
+                                        },
+                                        error: function (request, status, error) {
+                                            notifyWarning("Erreur lors de l'enregistrement");
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                addClass: 'btn btn-danger', text: 'Annuler', onClick: function ($noty) {
+                                    $noty.close();
+                                }
+                            }
+                        ]
+                    });
+                } else {
+                    notifyWarning('Veuillez renseigner correctement le formulaire');
+                }
+            });
+
+        });
+    });
+
+    $(document).on('click', '.btn_supprimer_cheminant', function () {
+        let cheminant_id = $(this).data('cheminant_id');
+
+        let n = noty({
+            text: 'Voulez-vous vraiment supprimer ce cheminant ?',
+            type: 'warning',
+            dismissQueue: true,
+            layout: 'center',
+            theme: 'defaultTheme',
+            buttons: [
+                {
+                    addClass: 'btn btn-primary', text: 'Supprimer', onClick: function ($noty) {
+                        $noty.close();
+
+                        //effectuer la suppression
+                        $.ajax({
+                            url: '/dashboard/sessions/cheminants/delete',
+                            type: 'post',
+                            data: { cheminant_id: cheminant_id },
+                            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                            success: function (response) {
+                                if (response.statut == 1) {
+                                    notifySuccess(response.message, function () {
+                                        location.reload();
+                                    });
+                                }
+                            },
+                            error: function () {
+                                notifyWarning('Erreur lors de la suppression');
+                            }
+                        });
+
+                    }
+                },
+                {
+                    addClass: 'btn btn-danger', text: 'Annuler', onClick: function ($noty) {
+                        //annuler la suppression
+                        $noty.close();
+                    }
+                }
+            ]
+        });
+    });
+    /* TODO CHEMINANTS DE LA SESSION DE FORMATION FIN */
+
+    /* TODO QCM DU COURS DEBUT */
+    let questionCounter = 0; // Compteur global pour les questions
+
+    /**
+     * Ajouter une nouvelle question
+     */
+    function addQuestion(containerId) {
+        let container = document.getElementById(containerId);
+        let firstBlock = container.querySelector(".question_block");
+        if (!firstBlock) return;
+
+        let qcmClone = firstBlock.cloneNode(true);
+
+        questionCounter++;
+
+        // Mise à jour des noms avec l'index
+        let questionInput = qcmClone.querySelector(".questions");
+        questionInput.name = `questions[${questionCounter}]`;
+        questionInput.id = `questions_${questionCounter}`;
+        questionInput.value = "";
+
+        // Mise à jour des inputs/réponses
+        let tbody = qcmClone.querySelector("tbody");
+        tbody.id = `table_body_${questionCounter}`;
+        let table = qcmClone.querySelector("table");
+        table.id = `table_reponses_${questionCounter}`;
+
+        tbody.querySelectorAll("tr").forEach((tr) => {
+            tr.querySelectorAll("input, select").forEach((input) => {
+                if (input.classList.contains("reponses")) {
+                    input.name = `reponses[${questionCounter}][]`;
+                }
+                if (input.classList.contains("type_reponses")) {
+                    input.name = `type_reponses[${questionCounter}][]`;
+                }
+                if (input.classList.contains("points")) {
+                    input.name = `points[${questionCounter}][]`;
+                }
+                input.value = "";
+            });
+        });
+
+        container.appendChild(qcmClone);
+    }
+
+    /**
+     * Ajouter une réponse dans un tbody donné
+     */
+    function addReponse(tbody) {
+        let firstTr = tbody.querySelector("tr");
+        if (!firstTr) return;
+
+        let trClone = firstTr.cloneNode(true);
+
+        trClone.querySelectorAll("input, select").forEach((input) => {
+            input.value = "";
+        });
+
+        tbody.appendChild(trClone);
+    }
+
+    /**
+     * Supprimer une réponse
+     */
+    function removeReponse(btn) {
+        let tbody = btn.closest("tbody");
+        if (tbody && tbody.childElementCount > 1) {
+            btn.closest("tr").remove();
+        } else {
+            console.log("Impossible de supprimer la dernière réponse !");
+        }
+    }
+
+    /**
+     * Supprimer une question
+     */
+    function removeQuestion(btn) {
+        let container = document.getElementById("questions_reponses");
+        if (container.querySelectorAll(".question_block").length > 1) {
+            btn.closest(".question_block").remove();
+        } else {
+            console.log("Impossible de supprimer la dernière question !");
+        }
+    }
+
+    /* =======================
+       GESTION DES ÉVÉNEMENTS
+    ======================= */
+    $(document).on("click", ".btn_add_question", function () {
+        addQuestion("questions_reponses");
+    });
+
+    $(document).on("click", ".btn_remove_question", function () {
+        removeQuestion(this);
+    });
+
+    $(document).on("click", ".action_container .btn-success", function () {
+        let tbody = $(this).closest("table").find("tbody")[0];
+        addReponse(tbody);
+    });
+
+    $(document).on("click", ".action_container .btn-danger", function () {
+        removeReponse(this);
+    });
+
+    /* =======================
+       VALIDATION RÉPONSE : Faux => 0 et max 20
+    ======================= */
+    $(document).on("change", ".type_reponses", function () {
+        let tr = $(this).closest("tr");
+        let pointsInput = tr.find(".points");
+
+        if ($(this).val().toLowerCase() === "faux") {
+            pointsInput.val(0).prop("readonly", true).addClass("bg-light");
+        } else {
+            pointsInput.prop("readonly", false).removeClass("bg-light");
+            pointsInput.val("");
+        }
+    });
+
+    $(document).on("input", ".points", function () {
+        let val = parseInt($(this).val(), 10);
+        if (val > 20) $(this).val(20);
+        if (val < 0 || isNaN(val)) $(this).val("");
+    });
+
+    $(document).on('click', "#btn_save_question_reponse", function () {
+        let formulaire = $('#form_add_question_reponse');
+        let href = formulaire.attr('action');
+
+        // Déclaration de formData au niveau de la portée de la fonction
+        let formData = new FormData();
+
+        // Validation manuelle des champs requis
+        let cours_id = $('#cours_id').val().trim();
+
+        // Variable pour vérifier si tout est valide
+        let is_valid = true;
+
+        // Masquer toutes les erreurs et enlever les classes d'erreur
+        $('.form-group').removeClass('has-error');
+        $('.error-text').hide().text('');
+
+        if (cours_id === '') {
+            $('#cours_id').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+
+        if (is_valid) {
+            let n = noty({
+                text: 'Voulez-vous vraiment enregistrer les QCM du cours ?',
+                type: 'warning',
+                dismissQueue: true,
+                layout: 'center',
+                theme: 'defaultTheme',
+                buttons: [
+                    {
+                        addClass: 'btn btn-primary', text: 'Valider', onClick: function ($noty) {
+                            $noty.close();
+
+                            let data_serialized = formulaire.serialize();
+                            $.each(data_serialized.split('&'), function (index, elem) {
+                                let vals = elem.split('=');
+                                let key = vals[0];
+                                let valeur = decodeURIComponent(vals[1].replace(/\+/g, '  '));
+                                formData.append(key, valeur);
+                            });
+
+                            $.ajax({
+                                type: 'post',
+                                url: href,
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                success: function (response) {
+                                    if (response.statut == 1) {
+                                        resetFields('#' + formulaire.attr('id'));
+                                        notifySuccess(response.message, function () {
+                                            location.reload();
+                                        });
+                                    }
+                                    if (response.statut == 0) {
+                                        let errors_list_to_display = '';
+
+                                        for (let field in response.errors) {
+                                            let messages = response.errors[field].join('<br/>');
+                                            errors_list_to_display += `<br/><i class="fa fa-arrow-circle-right"></i> ${messages}`;
+
+                                            // Mettre en rouge le champ concerné
+                                            $('#' + field).addClass('is-invalid');
+                                        }
+
+                                        // Afficher les erreurs dans l'alerte
+                                        $('#modal-add_question_reponse .alert .message').html(errors_list_to_display);
+                                        $('#modal-add_question_reponse .alert').removeClass('hidden').show();
+                                        console.log('errors_list_to_display : ', errors_list_to_display);
+                                    }
+                                },
+                                error: function (request, status, error) {
+                                    notifyWarning("Erreur lors de l'enregistrement");
+                                }
+                            });
+                        }
+                    },
+                    {
+                        addClass: 'btn btn-danger', text: 'Annuler', onClick: function ($noty) {
+                            $noty.close();
+                        }
+                    }
+                ]
+            });
+        } else {
+            notifyWarning('Veuillez renseigner correctement le formulaire');
+        }
+    });
+    /* TODO QCM DU COURS FIN */
 
 
     // Écouteur d'événement pour retirer la bordure rouge et le message d'erreur, dès que l'utilisateur commence à taper dans le champ.

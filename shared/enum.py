@@ -10,6 +10,7 @@ class StatutGeneral(models.TextChoices):
 
 class SituationMatrimoniale(models.TextChoices):
     CELIBATAIRE = 'Célibataire'
+    FIANCE = 'Fiancé(e)'
     CONCUBINAGE = 'Concubinage'
     DIVORCE = 'Divorcé(e)'
     MARIE = 'Marié(e)'
@@ -37,3 +38,8 @@ class UserCompteStatut(models.TextChoices):
     DESACTIVE = 'Désactivé'
     FERME = 'Fermé'
     BLOQUE = 'Bloqué'
+
+
+class Genre(models.TextChoices):
+    FEMME = 'Femme'
+    HOMME = 'Homme'

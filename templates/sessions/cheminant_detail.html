@@ -1,0 +1,316 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+
+{% block title %}
+    {{ session.nom }}
+{% endblock %}
+
+{% block content %}
+<section class="content-header mb-5">
+  <h1 class="f-bold">
+    Vue 360° cheminant{% if cheminant.sexe == "Femme" %}e{% endif %} - {{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}
+  </h1>
+  <ol class="breadcrumb">
+    <a href="{% url 'cheminant_session' cheminant.session.id %}" class="btn btn-info"><i class="fa fa-reply"></i> Retour</a>
+  </ol>
+</section>
+<section class="content">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="box box-primary">
+        <div class="box-body box-profile">
+          <img class="profile-user-img img-responsive img-circle" src="{{cheminant.photo.url|default_if_none:''}}" alt="{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}">
+
+          <h3 class="profile-username text-center">{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}</h3>
+
+          <p class="text-muted text-center f-bold">{{ cheminant.numero_utilisateur|default_if_none:'' }}</p>
+
+          <ul class="list-group list-group-unbordered">
+            <li class="list-group-item">
+              <b>Tribu</b> <a class="pull-right">{{ cheminant.tribu.libelle|default_if_none:'' }}</a>
+            </li>
+            <li class="list-group-item">
+              <b>Département</b> <a class="pull-right">{{ cheminant.departement.libelle|default_if_none:'' }}</a>
+            </li>
+            <li class="list-group-item">
+              <b>Quartier</b> <a class="pull-right">{{ cheminant.quartier.libelle|default_if_none:'' }}</a>
+            </li>
+            <li class="list-group-item">
+              <b>Téléphone</b> <a class="pull-right">{{ cheminant.telephone|default_if_none:'' }}</a>
+            </li>
+            <li class="list-group-item">
+              <b>Sexe</b> <a class="pull-right">{{ cheminant.sexe|default_if_none:'' }}</a>
+            </li>
+            <li class="list-group-item">
+              <b>Situation Matrimoniale</b> <a class="pull-right">{{ cheminant.situation_matrimoniale|default_if_none:'' }}</a>
+            </li>
+            <li class="list-group-item">
+              <b>Date de naissance</b> <a class="pull-right">{{ cheminant.date_naissance|date:'d/m/Y' }}</a>
+            </li>
+            <li class="list-group-item">
+              <b>Date inscription</b> <a class="pull-right">{{ cheminant.date_joined|date:'d/m/Y' }}</a>
+            </li>
+            <li class="list-group-item">
+              <b>Statut</b> <a class="pull-right"><span class="badge badge-{{ cheminant.statut_compte|lower|slugify }}">{{ cheminant.statut_compte }}</span></a>
+            </li>
+          </ul>
+          <span class="btn btn-primary btn-block"><b><i class="fa fa-file-pdf-o"></i> Imprimer certificat</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs text-uppercase f-bold">
+          <li class="active"><a href="#statistiques" data-toggle="tab">Statistiques</a></li>
+          <li><a href="#coordonnees" data-toggle="tab">Coordonnées</a></li>
+          <li><a href="#compte" data-toggle="tab">Compte</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="active tab-pane" id="statistiques">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="box">
+                    <div class="box-header with-border">
+                      <h3 class="box-title"><i class="fa fa-area-chart"></i> Rapport de récapitulatif des cours</h3>
+
+                      <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="box-body">
+                      <div class="row">
+                        <div class="col-md-7">
+                          <p class="text-center">
+                            <strong>Cours du : 1 Jan, 2014 - 30 Jul, 2014</strong>
+                          </p>
+
+                          <div class="chart">
+                            <canvas id="salesChart" style="height: 180px;"></canvas>
+                          </div>
+                        </div>
+                        <div class="col-md-5">
+                          <p class="text-center">
+                            <strong>Compilations des cours</strong>
+                          </p>
+
+                          <div class="progress-group">
+                            <span class="progress-text">Add Products to Cart</span>
+                            <span class="progress-number"><b>160</b>/200</span>
+
+                            <div class="progress sm">
+                              <div class="progress-bar progress-bar-aqua" style="width: 80%"></div>
+                            </div>
+                          </div>
+                          <div class="progress-group">
+                            <span class="progress-text">Complete Purchase</span>
+                            <span class="progress-number"><b>310</b>/400</span>
+
+                            <div class="progress sm">
+                              <div class="progress-bar progress-bar-red" style="width: 80%"></div>
+                            </div>
+                          </div>
+                          <div class="progress-group">
+                            <span class="progress-text">Visit Premium Page</span>
+                            <span class="progress-number"><b>480</b>/800</span>
+
+                            <div class="progress sm">
+                              <div class="progress-bar progress-bar-green" style="width: 80%"></div>
+                            </div>
+                          </div>
+                          <div class="progress-group">
+                            <span class="progress-text">Send Inquiries</span>
+                            <span class="progress-number"><b>250</b>/500</span>
+
+                            <div class="progress sm">
+                              <div class="progress-bar progress-bar-yellow" style="width: 80%"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="box-footer">
+                      <div class="row">
+                        <div class="col-sm-3 col-xs-6">
+                          <div class="description-block border-right">
+                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 17%</span>
+                            <h5 class="description-header">$35,210.43</h5>
+                            <span class="description-text">TOTAL REVENUE</span>
+                          </div>
+                        </div>
+                        <div class="col-sm-3 col-xs-6">
+                          <div class="description-block border-right">
+                            <span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>
+                            <h5 class="description-header">$10,390.90</h5>
+                            <span class="description-text">TOTAL COST</span>
+                          </div>
+                        </div>
+                        <div class="col-sm-3 col-xs-6">
+                          <div class="description-block border-right">
+                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 20%</span>
+                            <h5 class="description-header">$24,813.53</h5>
+                            <span class="description-text">TOTAL PROFIT</span>
+                          </div>
+                        </div>
+                        <div class="col-sm-3 col-xs-6">
+                          <div class="description-block">
+                            <span class="description-percentage text-red"><i class="fa fa-caret-down"></i> 18%</span>
+                            <h5 class="description-header">1200</h5>
+                            <span class="description-text">Complétion des objectifs</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="tab-pane" id="coordonnees">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title"><i class="fa fa-edit"></i> Modifier les informations {% if cheminant.sexe == "Femme" %}de la{% else %} du {% endif %} cheminant{% if cheminant.sexe == "Femme" %}e{% endif %}</h3>
+                  <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="box-body">
+                  <div class="row">
+                    <form class="">
+                        <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Certificat <span class="required">*</span></label>
+                        <input type="hidden" name="certificat_id" id="certificat_id" class="form-control" value="{{ cheminant.certificat.id }}" readonly>
+                        <input type="text" id="edit_certificat_id" class="form-control" value="{{ cheminant.certificat.numero_certificat|default_if_none:'' }}" readonly>
+                      </div>
+                      <div class="form-group">
+                        <label>Nom <span class="required">*</span></label>
+                        <input type="text" name="nom" id="edit_nom" class="form-control" value="{{ cheminant.nom|default_if_none:'' }}">
+                      </div>
+                      <div class="form-group">
+                        <label>Téléphone <span class="required">*</span></label>
+                        <input type="text" name="telephone" id="edit_telephone" class="form-control" value="{{ cheminant.telephone|default_if_none:'' }}">
+                      </div>
+                      <div class="form-group">
+                        <label>Situation matrimoniale <span class="required">*</span></label>
+                        <select class="form-control" name="situation_matrimoniale" id="edit_situation_matrimoniale">
+                            <option value="">Choisir</option>
+                            <option value="{{ situation_matrimoniale.CELIBATAIRE }}" {% if situation_matrimoniale.CELIBATAIRE == cheminant.situation_matrimoniale %} selected {% endif %}>{{ situation_matrimoniale.CELIBATAIRE }}</option>
+                            <option value="{{ situation_matrimoniale.FIANCE }}" {% if situation_matrimoniale.FIANCE == cheminant.situation_matrimoniale %} selected {% endif %}>{{ situation_matrimoniale.FIANCE }}</option>
+                            <option value="{{ situation_matrimoniale.CONCUBINAGE }}" {% if situation_matrimoniale.CONCUBINAGE == cheminant.situation_matrimoniale %} selected {% endif %}>{{ situation_matrimoniale.CONCUBINAGE }}</option>
+                            <option value="{{ situation_matrimoniale.DIVORCE }}" {% if situation_matrimoniale.DIVORCE == cheminant.situation_matrimoniale %} selected {% endif %}>{{ situation_matrimoniale.DIVORCE }}</option>
+                            <option value="{{ situation_matrimoniale.MARIE }}" {% if situation_matrimoniale.MARIE == cheminant.situation_matrimoniale %} selected {% endif %}>{{ situation_matrimoniale.MARIE }}</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label>Département <span class="required">*</span></label>
+                        <select class="form-control select2" style="width: 100%;" name="departement_id" id="edit_departement_id">
+                            <option value="">Choisir</option>
+                            {% for dp in departements %}
+                              <option value="{{ dp.id }}" {% if dp.id == cheminant.departement_id %} selected {% endif %}>{{ dp.libelle }}</option>
+                            {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label>Date de naissance <span class="required">*</span></label>
+                        <input type="date" name="date_naissance" id="edit_date_naissance" class="form-control" value="{{ cheminant.date_naissance|date:'Y-m-d' }}">
+                      </div>
+                    </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label>Sexe <span class="required">*</span></label>
+                            <select class="form-control" name="sexe" id="edit_sexe">
+                                <option value="">Choisir</option>
+                                <option value="{{ genre.FEMME }}" {% if genre.FEMME == cheminant.sexe %} selected {% endif %}>{{ genre.FEMME }}</option>
+                                <option value="{{ genre.HOMME }}" {% if genre.HOMME == cheminant.sexe %} selected {% endif %}>{{ genre.HOMME }}</option>
+                            </select>
+                          </div>
+                          <div class="form-group d-none">
+                            <label>Date atribution</label>
+                            <input type="date" name="date_utilisation" id="edit_date_utilisation" class="form-control" value="{{ cheminant.certificat.date_utilisation|date:'Y-m-d' }}" readonly>
+                          </div>
+                          <div class="form-group">
+                            <label>Prénoms <span class="required">*</span></label>
+                            <input type="text" name="prenoms" id="edit_prenoms" class="form-control" value="{{ cheminant.prenoms|default_if_none:'' }}">
+                          </div>
+                          <div class="form-group">
+                            <label>Autre téléphone</label>
+                            <input type="text" name="autre_telephone" id="edit_autre_telephone" class="form-control" value="{{ cheminant.autre_telephone|default_if_none:'' }}">
+                          </div>
+                          <div class="form-group">
+                            <label>Tribu <span class="required">*</span></label>
+                            <select class="form-control select2" style="width: 100%;" name="tribu_id" id="edit_tribu_id">
+                              <option value="">Choisir</option>
+                              {% for tb in tribus %}
+                                <option value="{{ tb.id }}" {% if tb.id == cheminant.tribu_id %} selected {% endif %}>{{ tb.libelle }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>Quartier <span class="required">*</span></label>
+                            <select class="form-control select2" style="width: 100%;" name="quartier_id" id="edit_quartier_id">
+                              <option value="">Choisir</option>
+                              {% for qt in quartiers %}
+                                <option value="{{ qt.id }}" {% if qt.id == cheminant.quartier_id %} selected {% endif %}>{{ qt.libelle }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>Photo</label>
+                            <input type="file" class="form-control" name="photo" id="edit_photo" accept=".png, .jpg, .jpeg">
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <button type="button" class="btn btn-success pull-right" id="btn_save_update_cheminant"><i class="fa fa-check-circle"></i> Enregistrer</button>
+                        </div>
+                     </form>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="compte">
+              <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title"><i class="fa fa-lock"></i> Modification du compte {% if cheminant.sexe == "Femme" %}de la{% else %} du {% endif %} cheminant{% if cheminant.sexe == "Femme" %}e{% endif %}</h3>
+                  <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="box-body">
+                  <div class="row">
+                      <form action="">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label>Nom utilisateur <span class="required">*</span></label>
+                            <input type="text" name="username" id="username" class="form-control">
+                          </div>
+                          <div class="form-group">
+                            <label>Mot de passe <span class="required">*</span></label>
+                            <input type="password" name="password1" id="password1" class="form-control">
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label>Email <span class="required">*</span></label>
+                            <input type="email" name="email" id="email" class="form-control">
+                          </div>
+                          <div class="form-group">
+                            <label>Confirme mot de passe <span class="required">*</span></label>
+                            <input type="password" name="password2" id="password2" class="form-control">
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <button type="button" class="btn btn-success pull-right" id="btn_save_update_compte"><i class="fa fa-check-circle"></i> Enregistrer</button>
+                        </div>
+                      </form>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

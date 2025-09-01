@@ -5,14 +5,16 @@ from django.urls import reverse
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.core.files.storage import default_storage
 import uuid
 import os
 
-from parametre.models import TypeCours
-from session.forms import SessionForm, CertificatForm, CoursForm
-from session.models import Session, Certificat, Cours
-from shared.enum import SessionStatut
+from parametre.models import TypeCours, Quartier, Tribu, Departement
+from session.forms import SessionForm, CertificatForm, CoursForm, CheminantForm, InscriptionForm
+from session.models import Session, Certificat, Cours, Inscription, Question, Reponse
+from shared.enum import SessionStatut, SituationMatrimoniale, Genre, StatutCertificat, ReponseEnum
 from shared.helpers import convert_date_any_format
+from utilisateur.models import Utilisateur
 
 
 @login_required
@@ -136,11 +138,35 @@ def detail_session(request, session_id):
     statut_session = session.statut_session if session.statut_session else "En attente"
     classe_css_statut = statut_session.lower().replace(' ', '-')
     type_cours = TypeCours.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    situation_matrimoniale = SituationMatrimoniale
+    genre = Genre
+    reponse = ReponseEnum
+    tribus = Tribu.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    quartiers = Quartier.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    departements = Departement.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    certificat_disponible = Certificat.objects.filter(session_id=session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
+    today = timezone.now().date()
+
+    cheminant_session = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).order_by('-numero_utilisateur')
+    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).count()
+
+    cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
     context = {
         'session': session,
         'classe_css_statut': classe_css_statut,
         'type_cours': type_cours,
+        'situation_matrimoniale': situation_matrimoniale,
+        'genre': genre,
+        'reponse': reponse,
+        'tribus': tribus,
+        'quartiers': quartiers,
+        'departements': departements,
+        'certificat_disponible': certificat_disponible,
+        'cours_qcm': cours_qcm,
+        'today': today,
+        'nombre_cheminants': nombre_cheminants,
+        'cheminant_session': cheminant_session,
     }
 
     return render(request, 'sessions/detail_session.html', context)
@@ -238,14 +264,39 @@ def certificats_session(request, session_id):
     statut_session = session.statut_session if session.statut_session else "En attente"
     classe_css_statut = statut_session.lower().replace(' ', '-')
     type_cours = TypeCours.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    situation_matrimoniale = SituationMatrimoniale
+    genre = Genre
+    reponse = ReponseEnum
+    tribus = Tribu.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    quartiers = Quartier.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    departements = Departement.objects.filter(deleted_at__isnull=True).order_by('libelle')
 
     certificat_session = Certificat.objects.filter(session_id=session.id, deleted_at__isnull=True).order_by('numero_certificat')
+
+    certificat_disponible = Certificat.objects.filter(session_id=session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
+    today = timezone.now().date()
+
+    cheminant_session = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).order_by('-numero_utilisateur')
+    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).count()
+
+    cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
     context = {
         'session': session,
         'classe_css_statut': classe_css_statut,
         'certificat_session': certificat_session,
         'type_cours': type_cours,
+        'situation_matrimoniale': situation_matrimoniale,
+        'genre': genre,
+        'reponse': reponse,
+        'tribus': tribus,
+        'quartiers': quartiers,
+        'departements': departements,
+        'certificat_disponible': certificat_disponible,
+        'cours_qcm': cours_qcm,
+        'today': today,
+        'nombre_cheminants': nombre_cheminants,
+        'cheminant_session': cheminant_session,
     }
 
     return render(request, 'sessions/certificats.html', context)
@@ -373,14 +424,38 @@ def cours_session(request, session_id):
     statut_session = session.statut_session if session.statut_session else "En attente"
     classe_css_statut = statut_session.lower().replace(' ', '-')
     type_cours = TypeCours.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    situation_matrimoniale = SituationMatrimoniale
+    genre = Genre
+    reponse = ReponseEnum
+    tribus = Tribu.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    quartiers = Quartier.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    departements = Departement.objects.filter(deleted_at__isnull=True).order_by('libelle')
 
     cours_session = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).order_by('-numero_cours')
+    certificat_disponible = Certificat.objects.filter(session_id=session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
+    today = timezone.now().date()
+
+    cheminant_session = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).order_by('-numero_utilisateur')
+    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).count()
+
+    cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
     context = {
         'session': session,
         'classe_css_statut': classe_css_statut,
         'cours_session': cours_session,
         'type_cours': type_cours,
+        'situation_matrimoniale': situation_matrimoniale,
+        'genre': genre,
+        'reponse': reponse,
+        'tribus': tribus,
+        'quartiers': quartiers,
+        'departements': departements,
+        'certificat_disponible': certificat_disponible,
+        'cours_qcm': cours_qcm,
+        'today': today,
+        'nombre_cheminants': nombre_cheminants,
+        'cheminant_session': cheminant_session,
     }
 
     return render(request, 'sessions/cours.html', context)
@@ -501,3 +576,336 @@ def activer_cours(request):
         return JsonResponse(response)
 
 
+@login_required
+@transaction.atomic
+def add_session_cheminant_0(request, session_id):
+    if request.method == "POST":
+        form = CheminantForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            utilisateur = form.save()
+
+            return JsonResponse({
+                "statut": 1,
+                "message": "Cheminant enregistré avec succès",
+            })
+
+        return JsonResponse({
+            "statut": 0,
+            "message": "Erreurs de validation",
+            "errors": form.errors,
+        })
+
+    return redirect("detail_session", session_id=session_id)
+
+
+@login_required
+@transaction.atomic
+def add_session_cheminant(request, session_id):
+    if request.method == "POST":
+        print(request.POST, request.FILES)
+        form = CheminantForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            utilisateur = form.save()
+
+            # Préfixe basé sur l'année courante (2025)
+            annee = timezone.now().year % 100  # Prend les deux derniers chiffres (25)
+            prefixe = f"CHEM{annee:02d}"
+
+            # Trouver le dernier numéro utilisé
+            last_utilisateur = Utilisateur.objects.filter(numero_utilisateur__startswith=prefixe).order_by('-numero_utilisateur').first()
+            start_num = 1
+            if last_utilisateur:
+                last_num = int(last_utilisateur.numero_utilisateur.replace(prefixe, '').lstrip('0') or '0')
+                start_num = last_num + 1
+
+            utilisateur.numero_utilisateur = f"{prefixe}{start_num:03d}"
+            utilisateur.save()
+
+            # Mettre à jour le certificat comme utilisé
+            certificat = Certificat.objects.get(id=utilisateur.certificat_id)
+            certificat.date_utilisation = timezone.now()
+            certificat.statut_certificat = StatutCertificat.NON_DISPONIBLE
+            certificat.save()
+
+            # Créer une inscription après la création de l'utilisateur
+            inscription_form = InscriptionForm({
+                'utilisateur': utilisateur.id,
+                'session': session_id,
+                'certificat': form.cleaned_data['certificat_id'].id,
+                'statut_inscription': SessionStatut.ENCOURS
+            })
+            if inscription_form.is_valid():
+                inscription_form.save()
+                return JsonResponse({
+                    "statut": 1,
+                    "message": "Cheminant et inscription enregistrés avec succès",
+                })
+            else:
+                print(inscription_form.errors.items())
+                return JsonResponse({
+                    "statut": 0,
+                    "message": "Erreurs lors de l'inscription",
+                    "errors": inscription_form.errors,
+                })
+
+        # Erreurs de validation → transformer en dict lisible
+        print(form.errors.items())
+        return JsonResponse({
+            "statut": 0,
+            "message": "Erreurs de validation",
+            "errors": form.errors,
+        })
+
+    return redirect("detail_session", session_id=session_id)
+
+
+@login_required
+def cheminant_session(request, session_id):
+    session = Session.objects.get(id=session_id)
+
+    if session is None:
+        return redirect('sessions')
+
+    statut_session = session.statut_session if session.statut_session else "En attente"
+    classe_css_statut = statut_session.lower().replace(' ', '-')
+    type_cours = TypeCours.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    situation_matrimoniale = SituationMatrimoniale
+    genre = Genre
+    reponse = ReponseEnum
+    tribus = Tribu.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    quartiers = Quartier.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    departements = Departement.objects.filter(deleted_at__isnull=True).order_by('libelle')
+
+    cours_session = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).order_by('-numero_cours')
+    certificat_disponible = Certificat.objects.filter(session_id=session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
+    today = timezone.now().date()
+
+    cheminant_session = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).order_by('-numero_utilisateur')
+    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).count()
+
+    cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
+
+    context = {
+        'session': session,
+        'classe_css_statut': classe_css_statut,
+        'cours_session': cours_session,
+        'type_cours': type_cours,
+        'situation_matrimoniale': situation_matrimoniale,
+        'genre': genre,
+        'reponse': reponse,
+        'tribus': tribus,
+        'quartiers': quartiers,
+        'departements': departements,
+        'certificat_disponible': certificat_disponible,
+        'cours_qcm': cours_qcm,
+        'today': today,
+        'nombre_cheminants': nombre_cheminants,
+        'cheminant_session': cheminant_session,
+    }
+
+    return render(request, 'sessions/cheminants.html', context)
+
+
+@login_required
+def detail_session_cheminant(request, utilisateur_id):
+    cheminant = Utilisateur.objects.get(id=utilisateur_id)
+
+    if cheminant is None:
+        return redirect('detail_session', cheminant.session.id)
+
+    session = Session.objects.filter(id=cheminant.session.id).first()
+    situation_matrimoniale = SituationMatrimoniale
+    genre = Genre
+    tribus = Tribu.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    quartiers = Quartier.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    departements = Departement.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    certificat_disponible = Certificat.objects.filter(session_id=cheminant.session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
+
+    context = {
+        'cheminant': cheminant,
+        'session': session,
+        'situation_matrimoniale': situation_matrimoniale,
+        'genre': genre,
+        'tribus': tribus,
+        'quartiers': quartiers,
+        'departements': departements,
+        'certificat_disponible': certificat_disponible,
+    }
+
+    return render(request, 'sessions/cheminant_detail.html', context)
+
+
+@login_required
+@transaction.atomic
+def update_session_cheminants(request, utilisateur_id):
+    try:
+        utilisateur = Utilisateur.objects.get(id=utilisateur_id)
+    except Utilisateur.DoesNotExist:
+        return JsonResponse({'statut': 0, 'message': "Cheminant non trouvé"})
+
+    if request.method == 'POST':
+        form = CheminantForm(request.POST, request.FILES, instance=utilisateur)
+        if form.is_valid():
+            utilisateur = form.save()
+            return JsonResponse({
+                'statut': 1,
+                'message': "Cheminant modifié avec succès !"
+            })
+
+        print(form.errors.items())
+        return JsonResponse({
+            'statut': 0,
+            'message': "Erreurs de validation",
+            'errors': form.errors
+        })
+
+    # GET : renvoyer le modal
+    cheminant = Utilisateur.objects.get(id=utilisateur_id)
+    session = Session.objects.filter(id=utilisateur.session.id).first()
+    situation_matrimoniale = SituationMatrimoniale
+    genre = Genre
+    tribus = Tribu.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    quartiers = Quartier.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    departements = Departement.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    certificat_disponible = Certificat.objects.filter(session_id=utilisateur.session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
+
+    context = {
+        'cheminant': cheminant,
+        'session': session,
+        'situation_matrimoniale': situation_matrimoniale,
+        'genre': genre,
+        'tribus': tribus,
+        'quartiers': quartiers,
+        'departements': departements,
+        'certificat_disponible': certificat_disponible,
+    }
+    return render(request, 'partials/update_cheminant_modal.html',context)
+
+
+@login_required
+def supprimer_cheminant(request):
+    if request.method == "POST":
+        cheminant_id = request.POST.get('cheminant_id')
+
+        try:
+            cheminant = Utilisateur.objects.get(id=cheminant_id)
+            if cheminant.pk is not None:
+                # Supprimer la photo si elle existe
+                if cheminant.photo and default_storage.exists(cheminant.photo.path):
+                    try:
+                        default_storage.delete(cheminant.photo.path)
+                        print(f"Photo supprimée : {cheminant.photo.path}")
+                    except Exception as e:
+                        print(f"Échec de la suppression de la photo : {e}")
+
+                # Supprimer son inscription
+                inscription = Inscription.objects.get(utilisateur_id=cheminant.id)
+                inscription.delete()
+
+                # Supprimer son certificat
+                certificat = Certificat.objects.get(id=cheminant.certificat.id)
+                certificat.delete()
+
+                # Supprimer l'utilisateur
+                cheminant.delete()
+
+                response = {
+                    'statut': 1,
+                    'message': "Cheminant supprimé avec succès !",
+                }
+            else:
+                response = {
+                    'statut': 0,
+                    'message': "Cheminant non trouvé !",
+                }
+        except Utilisateur.DoesNotExist:
+            response = {
+                'statut': 0,
+                'message': "Cheminant non trouvé !",
+            }
+
+        return JsonResponse(response)
+
+
+@login_required
+@transaction.atomic
+def add_qcm_cours_session_0(request, session_id):
+    if request.method == "POST":
+        print(request.POST)
+        form = ''
+
+        if form.is_valid():
+            pass
+
+        # Erreurs de validation → transformer en dict lisible
+        print(form.errors.items())
+        return JsonResponse({
+            "statut": 0,
+            "message": "Erreurs de validation",
+            "errors": form.errors,
+        })
+
+    return redirect("detail_session", session_id=session_id)
+
+@login_required
+@transaction.atomic
+def add_qcm_cours_session(request, session_id):
+    print(request.POST)
+    if request.method == "POST":
+        try:
+            cours_id = request.POST.get("cours_id")
+            if not cours_id:
+                return JsonResponse({"statut": 0, "errors": {"cours_id": ["Cours obligatoire"]}})
+
+            cours = Cours.objects.get(id=cours_id)
+
+            # Extraire toutes les clés "questions[x]"
+            questions_dict = {
+                key: value[0]  # value est une liste -> on prend le premier élément
+                for key, value in request.POST.lists()
+                if key.startswith("questions[")
+            }
+
+            for index, question_libelle in questions_dict.items():
+                if not question_libelle.strip():
+                    continue
+
+                # Récupérer les réponses, types et points pour cette question
+                reponses = request.POST.getlist(f"reponses[{index.split('[')[1][:-1]}][]")
+                types = request.POST.getlist(f"type_reponses[{index.split('[')[1][:-1]}][]")
+                points = request.POST.getlist(f"points[{index.split('[')[1][:-1]}][]")
+
+                # Calcul du total des points de la question (seulement les réponses Vrai)
+                total_points = 0
+                for t, p in zip(types, points):
+                    if t.lower() == "vrai" and p.strip():
+                        try:
+                            total_points += int(p)
+                        except ValueError:
+                            pass
+
+                # Création de la question
+                question = Question.objects.create(
+                    libelle=question_libelle.strip(),
+                    date_publication=timezone.now(),
+                    point=total_points,
+                    cours=cours,
+                )
+
+                # Création des réponses liées
+                for libelle, statut, point in zip(reponses, types, points):
+                    if not libelle.strip():
+                        continue
+                    Reponse.objects.create(
+                        libelle=libelle.strip(),
+                        date_publication=timezone.now(),
+                        question=question,
+                        statut_reponse=statut or "Faux",
+                    )
+
+            return JsonResponse({"statut": 1, "message": "QCM enregistré avec succès !"})
+
+        except Exception as e:
+            return JsonResponse({"statut": 0, "message": f"Erreur interne : {e}"})

@@ -7,115 +7,21 @@
 
 {% block content %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<section class="content-header">
+<section class="content-header mb-5">
   <h1 class="f-bold">
     Vue 360°
   </h1>
-  <ol class="breadcrumb" style="margin-top: -7px;">
+  <ol class="breadcrumb">
     <a href="{% url 'sessions' %}" class="btn btn-info"><i class="fa fa-reply"></i> Retour</a>
   </ol>
 </section>
 
 <section class="content">
-  <div class="row">
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box bg-aqua">
-        <span class="info-box-icon"><i class="fa fa-male"></i><i class="fa fa-female"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Cheminants du mois</span>
-          <span class="info-box-number">410</span>
-
-          <div class="progress">
-            <div class="progress-bar" style="width: 70%"></div>
-          </div>
-              <span class="progress-description">
-                Augmentation de 70 % en 30 jours
-              </span>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box bg-green">
-        <span class="info-box-icon"><i class="fa fa-male"></i><i class="fa fa-female"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Cheminements ayant abouti</span>
-          <span class="info-box-number">41 410</span>
-
-          <div class="progress">
-            <div class="progress-bar" style="width: 70%"></div>
-          </div>
-              <span class="progress-description">
-                Augmentation de 70 % en 30 jours
-              </span>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box bg-yellow">
-        <span class="info-box-icon"><i class="fa fa-pie-chart"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Cheminements interrompu</span>
-          <span class="info-box-number">4 110</span>
-
-          <div class="progress">
-            <div class="progress-bar" style="width: 70%"></div>
-          </div>
-              <span class="progress-description">
-                Augmentation de 70 % en 30 jours
-              </span>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box bg-red">
-        <span class="info-box-icon"><i class="fa fa-pie-chart"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Cheminements abandonnés</span>
-          <span class="info-box-number">10</span>
-
-          <div class="progress">
-            <div class="progress-bar" style="width: 70%"></div>
-          </div>
-            <span class="progress-description">
-              Augmentation de 70 % en 30 jours
-            </span>
-        </div>
-      </div>
-    </div>
-  </div>
+  {% include 'partials/suivi_chiffre_session.html' %}
   <div class="row">
     <div class="col-md-3">
-      <div class="box box-primary">
-        <div class="box-header with-border">
-          <h3 class="box-title text-center f-bold">{{ session.nom }}</h3>
-        </div>
-        <div class="box-body box-profile">
-          <ul class="list-group list-group-unbordered">
-            <li class="list-group-item">
-              <i class="fa fa-calendar-plus-o"></i> <b>Date publication</b> <a class="pull-right">{{ session.date_publication|date:'d/m/Y' }}</a>
-            </li>
-            <li class="list-group-item">
-              <i class="fa fa-calendar"></i> <b>Date début</b> <a class="pull-right">{{ session.date_debut|date:'d/m/Y' }}</a>
-            </li>
-            <li class="list-group-item">
-              <i class="fa fa-calendar"></i> <b>Date fin</b> <a class="pull-right">{{ session.date_fin|date:'d/m/Y' }}</a>
-            </li>
-            <li class="list-group-item">
-              <i class="fa fa-users"></i> <b>Nombre cheminents</b> <a class="pull-right"><span class="label label-success">67</span></a>
-            </li>
-            <li class="list-group-item">
-              <i class="fa fa-check-square-o"></i> <b>Statut</b> <a class="pull-right"><span class="badge badge-{{ classe_css_statut }}">{{ session.statut_session }}</span></a>
-            </li>
-          </ul>
-
-          <span class="btn btn-primary btn-block" data-toggle="modal" data-target="#modal-detail_session"><i class="fa fa-cubes"></i> <b>Fiche session complète</b></span>
-        </div>
-      </div>
-      <div class="box box-primary">
+      {% include 'partials/detail_session.html' %}
+      <div class="box box-success">
         <div class="box-body">
           <div class="box_button">
             {% include 'partials/sous_menu_session.html' %}
@@ -124,16 +30,16 @@
       </div>
     </div>
     <div class="col-md-9">
-      <div class="box box-default">
+      <div class="box box-success">
         <div class="box-body">
           <div class="row">
             <div class="col-md-12">
              <div class="box_button">
               <span class="btn btn-danger btn_supprimer_certificats mb-3"><i class="fa fa-trash"></i> Supprimer</span>
-              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_cheminant"><i class="fa fa-user-circle"></i> Créer un cheminent</span>
+              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_cheminant"><i class="fa fa-user-circle"></i> Créer un cheminant</span>
               <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_certificat"><i class="fa fa-graduation-cap"></i> Générer un certificat</span>
               <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_cours"><i class="fa fa-hourglass-2"></i> Créer un cours</span>
-              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_question_reponse"><i class="fa fa-comments-o"></i> Créer une quesstion & réponses</span>
+              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_question_reponse"><i class="fa fa-comments-o"></i> Créer des QCM</span>
               <span class="btn btn-warning mb-3" data-toggle="modal" data-target="#modal-extraction_certificats"><i class="fa fa-file-excel-o"></i> Extraire des certificats</span>
              </div>
             </div>
@@ -167,7 +73,7 @@
                               <span class="label label-danger">Non utilisé</span>
                             {% endif %}
                           </td>
-                          <td><span class="badge badge-">{{ certificat.statut_certificat }}</span></td>
+                          <td><span class="badge badge-{{ certificat.statut_certificat|lower|slugify }}">{{ certificat.statut_certificat }}</span></td>
                           <td class="text-center button_action">
                               <span class="btn btn-info btn-xs"><i class="fa fa-eye"></i></span>
                           </td>

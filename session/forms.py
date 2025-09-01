@@ -1,9 +1,14 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from datetime import datetime
+from django.utils import timezone
+from django.core.files.storage import default_storage
+import os
 
-from parametre.models import TypeCours
-from .models import Session, Cours
+from parametre.models import Tribu, Departement, Quartier
+from shared.enum import StatutCertificat, SessionStatut
+from utilisateur.models import Utilisateur
+from .models import Session, Cours, Certificat, Inscription
 
 
 class SessionForm(forms.ModelForm):
@@ -235,3 +240,162 @@ class CoursForm(forms.ModelForm):
         if commit:
             cours.save()
         return cours
+
+
+class CheminantForm(forms.ModelForm):
+    username = forms.CharField(required=False)
+    certificat_id = forms.UUIDField(required=True)
+    session_id = forms.UUIDField(required=True)
+    tribu_id = forms.UUIDField(required=True)
+    departement_id = forms.UUIDField(required=True)
+    quartier_id = forms.UUIDField(required=True)
+
+    class Meta:
+        model = Utilisateur
+        fields = [
+            "nom", "prenoms", "sexe", "telephone", "autre_telephone",
+            "indicatif_telephonique", "date_naissance", "situation_matrimoniale", "photo",
+        ]
+
+    def clean_telephone(self):
+        telephone = self.cleaned_data.get("telephone")
+        # Skip uniqueness check for the current instance during update
+        if self.instance and self.instance.pk and self.instance.telephone == telephone:
+            return telephone
+
+        if Utilisateur.objects.filter(telephone=telephone).exists():
+            raise ValidationError("Ce numéro de téléphone est déjà utilisé.")
+
+        if Utilisateur.objects.filter(username=telephone).exists():
+            raise ValidationError("Ce numéro de téléphone est déjà utilisé comme identifiant.")
+
+        return telephone
+
+    def clean_certificat_id(self):
+        certificat_id = self.cleaned_data.get("certificat_id")
+        try:
+            certificat = Certificat.objects.get(id=certificat_id)
+        except Certificat.DoesNotExist:
+            raise ValidationError("Certificat introuvable.")
+
+        # Ignorer la vérification d'utilisation pour l'instance actuelle pendant la mise à jour
+        if self.instance and self.instance.pk and self.instance.certificat_id == certificat_id:
+            return certificat
+
+        if certificat.date_utilisation is not None:
+            raise ValidationError("Ce certificat est déjà utilisé.")
+
+        return certificat
+
+    def clean_session_id(self):
+        session_id = self.cleaned_data.get("session_id")
+        try:
+            session = Session.objects.get(id=session_id)
+        except Session.DoesNotExist:
+            raise ValidationError("Session introuvable.")
+        return session
+
+    def clean_tribu_id(self):
+        tribu_id = self.cleaned_data.get("tribu_id")
+        try:
+            tribu = Tribu.objects.get(id=tribu_id)
+        except Tribu.DoesNotExist:
+            raise ValidationError("Tribu introuvable.")
+        return tribu
+
+    def clean_departement_id(self):
+        departement_id = self.cleaned_data.get("departement_id")
+        try:
+            departement = Departement.objects.get(id=departement_id)
+        except Departement.DoesNotExist:
+            raise ValidationError("Département introuvable.")
+        return departement
+
+    def clean_quartier_id(self):
+        quartier_id = self.cleaned_data.get("quartier_id")
+        try:
+            quartier = Quartier.objects.get(id=quartier_id)
+        except Quartier.DoesNotExist:
+            raise ValidationError("Quartier introuvable.")
+        return quartier
+
+    def save(self, commit=True):
+        utilisateur = super().save(commit=False)
+
+        # Définir les attributs utilisateur
+        utilisateur.username = self.cleaned_data["telephone"]
+        utilisateur.first_name = self.cleaned_data["nom"]
+        utilisateur.last_name = self.cleaned_data["prenoms"]
+        utilisateur.is_superuser = False
+        utilisateur.is_staff = True
+        utilisateur.is_active = True
+
+        # Cas modification
+        if self.instance.pk:
+            if 'photo' in self.files:
+                # Supprimer l'ancienne photo si elle existe
+                if self.instance.photo and default_storage.exists(self.instance.photo.path):
+                    try:
+                        default_storage.delete(self.instance.photo.path)
+                        print(f"Ancienne photo supprimée : {self.instance.photo.path}")
+                    except Exception as e:
+                        print(f"Erreur suppression ancienne photo : {e}")
+
+                # Remplacer par la nouvelle photo
+                utilisateur.photo = self.files['photo']
+        else:
+            utilisateur.set_password('12345678')
+            if 'photo' in self.files:
+                utilisateur.photo = self.files['photo']
+
+        # Assign related fields
+        certificat = self.cleaned_data["certificat_id"]
+        session = self.cleaned_data["session_id"]
+        tribu = self.cleaned_data["tribu_id"]
+        departement = self.cleaned_data["departement_id"]
+        quartier = self.cleaned_data["quartier_id"]
+
+        utilisateur.certificat = certificat
+        utilisateur.session = session
+        utilisateur.tribu = tribu
+        utilisateur.departement = departement
+        utilisateur.quartier = quartier
+
+        if commit:
+            utilisateur.save()
+
+        return utilisateur
+
+
+class InscriptionForm(forms.ModelForm):
+    utilisateur = forms.ModelChoiceField(
+        queryset=Utilisateur.objects.all(),
+        required=True,
+        label="Utilisateur"
+    )
+    session = forms.ModelChoiceField(
+        queryset=Session.objects.all(),
+        required=True,
+        label="Session"
+    )
+    certificat = forms.ModelChoiceField(
+        queryset=Certificat.objects.all(),
+        required=True,
+        label="Certificat"
+    )
+    statut_inscription = forms.ChoiceField(
+        choices=SessionStatut.choices,
+        required=True,
+        initial=SessionStatut.ENCOURS,
+        label="Statut de l'inscription"
+    )
+
+    class Meta:
+        model = Inscription
+        fields = ['utilisateur', 'session', 'certificat', 'statut_inscription']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Pré-remplir la session avec session_id si fourni
+        if 'session_id' in self.initial:
+            self.fields['session'].queryset = Session.objects.filter(id=self.initial['session_id'])

@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<section class="content-header">
+<section class="content-header mb-5">
   <h1 class="f-bold">
     Vue 360°
   </h1>
@@ -16,104 +16,10 @@
 </section>
 
 <section class="content">
-  <div class="row">
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box bg-aqua">
-        <span class="info-box-icon"><i class="fa fa-male"></i><i class="fa fa-female"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Cheminants du mois</span>
-          <span class="info-box-number">410</span>
-
-          <div class="progress">
-            <div class="progress-bar" style="width: 70%"></div>
-          </div>
-              <span class="progress-description">
-                Augmentation de 70 % en 30 jours
-              </span>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box bg-green">
-        <span class="info-box-icon"><i class="fa fa-male"></i><i class="fa fa-female"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Cheminements ayant abouti</span>
-          <span class="info-box-number">41 410</span>
-
-          <div class="progress">
-            <div class="progress-bar" style="width: 70%"></div>
-          </div>
-              <span class="progress-description">
-                Augmentation de 70 % en 30 jours
-              </span>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box bg-yellow">
-        <span class="info-box-icon"><i class="fa fa-pie-chart"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Cheminements interrompu</span>
-          <span class="info-box-number">4 110</span>
-
-          <div class="progress">
-            <div class="progress-bar" style="width: 70%"></div>
-          </div>
-              <span class="progress-description">
-                Augmentation de 70 % en 30 jours
-              </span>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box bg-red">
-        <span class="info-box-icon"><i class="fa fa-pie-chart"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Cheminements abandonnés</span>
-          <span class="info-box-number">10</span>
-
-          <div class="progress">
-            <div class="progress-bar" style="width: 70%"></div>
-          </div>
-            <span class="progress-description">
-              Augmentation de 70 % en 30 jours
-            </span>
-        </div>
-      </div>
-    </div>
-  </div>
+  {% include 'partials/suivi_chiffre_session.html' %}
   <div class="row">
     <div class="col-md-3">
-      <div class="box box-primary">
-        <div class="box-header with-border">
-          <h3 class="box-title text-center f-bold">{{ session.nom }}</h3>
-        </div>
-        <div class="box-body box-profile">
-          <ul class="list-group list-group-unbordered">
-            <li class="list-group-item">
-              <i class="fa fa-calendar-plus-o"></i> <b>Date publication</b> <a class="pull-right">{{ session.date_publication|date:'d/m/Y' }}</a>
-            </li>
-            <li class="list-group-item">
-              <i class="fa fa-calendar"></i> <b>Date début</b> <a class="pull-right">{{ session.date_debut|date:'d/m/Y' }}</a>
-            </li>
-            <li class="list-group-item">
-              <i class="fa fa-calendar"></i> <b>Date fin</b> <a class="pull-right">{{ session.date_fin|date:'d/m/Y' }}</a>
-            </li>
-            <li class="list-group-item">
-              <i class="fa fa-users"></i> <b>Nombre cheminents</b> <a class="pull-right"><span class="label label-success">67</span></a>
-            </li>
-            <li class="list-group-item">
-              <i class="fa fa-check-square-o"></i> <b>Statut</b> <a class="pull-right"><span class="badge badge-{{ classe_css_statut }}">{{ session.statut_session }}</span></a>
-            </li>
-          </ul>
-
-          <span class="btn btn-primary btn-block" data-toggle="modal" data-target="#modal-detail_session"><i class="fa fa-cubes"></i> <b>Fiche session complète</b></span>
-        </div>
-      </div>
+      {% include 'partials/detail_session.html' %}
       <div class="box box-primary">
         <div class="box-body">
           <div class="box_button">
@@ -128,20 +34,22 @@
           <div class="row">
             <div class="col-md-12">
              <div class="box_button">
-              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_cheminant"><i class="fa fa-user-circle"></i> Créer un cheminent</span>
+              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_cheminant"><i class="fa fa-user-circle"></i> Créer un cheminant</span>
               <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_certificat"><i class="fa fa-graduation-cap"></i> Générer un certificat</span>
               <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_cours"><i class="fa fa-hourglass-2"></i> Créer un cours</span>
-              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_question_reponse"><i class="fa fa-comments-o"></i> Créer une quesstion & réponses</span>
+              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_question_reponse"><i class="fa fa-comments-o"></i> Créer des QCM</span>
+              <span class="btn btn-warning mb-3" data-toggle="modal" data-target="#modal-extraction_cheminants"><i class="fa fa-file-excel-o"></i> Extraire des cheminants</span>
              </div>
             </div>
           <div class="col-md-12 table-responsive">
             <br>
-            <table id="example1" class="table table-bordered table-striped">
+            <table id="cheminant_sessions_datatables" class="table table-bordered table-striped">
               <thead>
                 <tr>
+                  <th class="d-none"></th>
                   <th></th>
+                  <th>Numero</th>
                   <th>Nom & Prénoms</th>
-                  <th>Téléphone</th>
                   <th>Tribu</th>
                   <th>Département</th>
                   <th>Date inscription</th>
@@ -150,20 +58,23 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><img src="../dist/img/user2-160x160.jpg" class="img-circle" width="25" alt="User Image"></td>
-                  <td>Jean Dupont</td>
-                  <td>+33 6 12 34 56 78</td>
-                  <td>Tribu A</td>
-                  <td>Département X</td>
-                  <td>01/06/2025</td>
-                  <td><span class="label label-success">Actif</span></td>
-                  <td class="text-center">
-                    <a href="#" class="btn btn-info btn-xs"><i class="fa fa-eye"></i></a>
-                    <a href="#" class="btn btn-warning btn-xs"><i class="fa fa-edit"></i></a>
-                    <a href="#" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></a>
-                  </td>
-                </tr>
+                {% for cheminant in cheminant_session %}
+                    <tr>
+                      <td class="d-none"></td>
+                      <td><img src="{{cheminant.photo.url|default_if_none:''}}" class="img-circle" width="35" alt="{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}"></td>
+                      <td>{{ cheminant.numero_utilisateur|default_if_none:'' }}</td>
+                      <td>{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}</td>
+                      <td>{{ cheminant.tribu.libelle|default_if_none:'' }}</td>
+                      <td>{{ cheminant.departement.libelle|default_if_none:'' }}</td>
+                      <td>{{ cheminant.date_joined|date:'d/m/Y' }}</td>
+                      <td><span class="badge badge-{{ cheminant.statut_compte|lower|slugify }}">{{ cheminant.statut_compte }}</span></td>
+                      <td class="text-center">
+                        <a href="{% url 'detail_session_cheminant' cheminant.id %}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i></a>
+                        <span class="btn_modifier_cheminant btn btn-warning btn-xs" data-cheminant_id="{{cheminant.id}}" data-model_name="cheminant" data-modal_title="Modifier le cheminant" data-href="{% url 'update_session_cheminants' cheminant.id %}"><i class="fa fa-edit"></i></span>
+                        <span class="btn_supprimer_cheminant btn btn-danger btn-xs" data-cheminant_id="{{cheminant.id}}"><i class="fa fa-trash"></i></span>
+                      </td>
+                    </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>

@@ -5,7 +5,7 @@ from django.db import models
 import datetime
 
 from parametre.models import Departement, Tribu, Quartier
-from shared.enum import SituationMatrimoniale, UserCompteStatut
+from shared.enum import SituationMatrimoniale, UserCompteStatut, Genre
 
 
 def upload_photo(instance, filename):
@@ -18,20 +18,30 @@ def upload_photo(instance, filename):
 
 class Utilisateur(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    first_name = models.CharField(max_length=20, blank=True, null=True)
+    last_name = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+
+    numero_utilisateur = models.CharField(max_length=20, blank=True, null=True, unique=True)
     nom = models.CharField(max_length=20, blank=True, default=None, null=True)
     prenoms = models.CharField(max_length=80, blank=True, default=None, null=True)
     telephone = models.CharField(max_length=20, blank=True, null=True)
     autre_telephone = models.CharField(max_length=20, blank=True, null=True)
-    date_naissance = models.CharField(max_length=20, blank=True, null=True)
+    indicatif_telephonique = models.CharField(max_length=20, blank=True, null=True, default='+225')
+    date_naissance = models.DateField(max_length=20, blank=True, null=True)
     situation_matrimoniale = models.fields.CharField(choices=SituationMatrimoniale.choices, default=SituationMatrimoniale.CELIBATAIRE, max_length=20, null=True)
+    sexe = models.fields.CharField(choices=Genre.choices, default=None, max_length=20, null=True)
     tribu = models.ForeignKey(Tribu, null=True, on_delete=models.RESTRICT)
     departement = models.ForeignKey(Departement, null=True, on_delete=models.RESTRICT)
     quartier = models.ForeignKey(Quartier, null=True, on_delete=models.RESTRICT)
+    certificat = models.ForeignKey("session.Certificat", null=True, on_delete=models.RESTRICT)
+    session = models.ForeignKey("session.Session", null=True, on_delete=models.RESTRICT)
     photo = models.ImageField(upload_to=upload_photo, null=True, blank=True)
     statut_compte = models.fields.CharField(choices=UserCompteStatut.choices, default=UserCompteStatut.ACTIVE, max_length=20, null=True)
 
     class Meta:
-        db_table = 'utilisateur'
+        db_table = 'utilisateurs'
         verbose_name = "Utilisateurs"
         verbose_name_plural = "Utilisateurs"
 

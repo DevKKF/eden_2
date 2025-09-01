@@ -1,3 +1,4 @@
+{% load static %}
 <div class="modal fade" id="modal-deatil_cours" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -5,25 +6,82 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-          <h4 class="modal-title f-bold"><i class="fa fa-hourglass-2"></i> DETAIL DU COURS <span class="text-white">{{ cours.id }}</span></h4>
+          <h4 class="modal-title f-bold"><i class="fa fa-hourglass-2"></i> DETAIL DU COURS <span class="text-vert_vh">{{ cours.numero_cours }}</span> <span class="badge badge-success pull-right mr-10">Fichier</span></h4>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
           <div class="row">
+            <div class="col-md-12 mb-10">
+              <div class="col-md-12" style="border:1px solid #ccc">
+                  <div class="row invoice-info">
+                    <div class="col-md-4 invoice-col">
+                      <p class="f-bold">Numero cours </p>
+                      <p class="f-bold">Titre</p>
+                      <p class="f-bold">Sous-titre</p>
+                      <p class="f-bold">Type cours</p>
+                      <p class="f-bold">Date publication</p>
+                      <p class="f-bold">Statut</p>
+                      <p class="f-bold">Date dernière modification</p>
+                    </div>
+                    <div class="col-md-8 invoice-col">
+                      <p>: <span class="badge badge-success">{{ cours.numero_cours|default_if_none:'' }}</span></p>
+                      <p>: {{ cours.titre|default_if_none:'' }}</p>
+                      <p>: {{ cours.sous_titre|default_if_none:'' }}</p>
+                      <p>: {{ cours.type_cours.libelle|default_if_none:'' }}</p>
+                      <p>: {{ cours.date_publication|date:'d/m/Y' }}</p>
+                      <p>: <span class="badge badge-{{ cours.statut_cours|lower|slugify }}">{{ cours.statut_cours }}</span></p>
+                      <p>: {{ cours.updated_at|date:'d/m/Y H:m:s' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <textarea cols="10" rows="10" class="form-control mb-10" readonly>{{ cours.description|default_if_none:'' }}</textarea>
+                    </div>
+                  </div>
+              </div>
+            </div>
+            <hr style="border:1px solid #006C68;">
             <div class="col-md-12">
+                <h4 class="f-bold"><i class="fa fa-comments-o"></i> Questions</h4>
                 <table id="cours_sessions_datatables" class="table table-bordered table-striped">
                   <thead>
                     <tr>
                       <th class="d-none"></th>
-                      <th>Numéro cours</th>
-                      <th>Titre</th>
-                      <th>Type de cours</th>
-                      <th>Q&R</th>
-                      <th>Date publication</th>
-                      <th>Statut</th>
-                      <th class="text-center button_action">Actions</th>
+                      <th>Question</th>
+                      <th>Date création</th>
+                      <th class="text-center" width="5%">Réponses</th>
                     </tr>
                   </thead>
                   <tbody>
+                    <tr>
+                        <td class="d-none"></td>
+                        <td>Quel était le verset principal de la prédication du cours ?</td>
+                        <td>01/06/2025</td>
+                        <td class="text-center"><span class="btn btn-info btn-xs"><i class="fa fa-eye"></i></span></td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+            <hr style="border:1px solid #006C68;">
+            <div class="col-md-12">
+                <h4 class="f-bold"><i class="fa fa-users"></i> Cheminants ayant suivi la formation</h4>
+                <table id="cheminant_sessions_datatables" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th class="d-none"></th>
+                      <th></th>
+                      <th>Nom & Prénoms</th>
+                      <th>Téléphone</th>
+                      <th>Date inscription</th>
+                      <th>Nombre de point</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="d-none"></td>
+                      <td><img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle" width="25" alt="User Image"></td>
+                      <td>Jean Dupont</td>
+                      <td>+33 6 12 34 56 78</td>
+                      <td>01/06/2025</td>
+                      <td class="text-center">15/20</td>
+                    </tr>
                   </tbody>
                 </table>
             </div>

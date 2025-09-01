@@ -1,0 +1,113 @@
+<div class="modal fade" id="modal-modification_cheminant" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title f-bold"><i class="fa fa-user-circle"></i> MODIFICATION DU CHEMINANT</h4>
+        </div>
+          <form action="{% url 'update_session_cheminants' cheminant.id %}" method="post" enctype="multipart/form-data" id="form_update_cheminant">
+            {% csrf_token %}
+            <input type="hidden" name="cheminant_id" id="cheminant_id" value="{{ cheminant.id }}">
+            <input type="hidden" name="session_id" id="session_id" value="{{ cheminant.session_id }}">
+            <div class="modal-body">
+                <div class="alert alert-danger alert-dismissible hidden" style="background-color: #FFF1F2 !important; border-color: #FAD4D6 !important; color: #000 !important;">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <h4><i class="icon fa fa-ban"></i> Erreur !</h4>
+                    <span class="message"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Certificat <span class="required">*</span></label>
+                        <input type="hidden" name="certificat_id" id="certificat_id" class="form-control" value="{{ cheminant.certificat.id }}" readonly>
+                        <input type="text" id="edit_certificat_id" class="form-control" value="{{ cheminant.certificat.numero_certificat|default_if_none:'' }}" readonly>
+                      </div>
+                      <div class="form-group">
+                        <label>Nom <span class="required">*</span></label>
+                        <input type="text" name="nom" id="edit_nom" class="form-control" value="{{ cheminant.nom|default_if_none:'' }}">
+                      </div>
+                      <div class="form-group">
+                        <label>Téléphone <span class="required">*</span></label>
+                        <input type="text" name="telephone" id="edit_telephone" class="form-control" value="{{ cheminant.telephone|default_if_none:'' }}">
+                      </div>
+                      <div class="form-group">
+                        <label>Situation matrimoniale <span class="required">*</span></label>
+                        <select class="form-control" name="situation_matrimoniale" id="edit_situation_matrimoniale">
+                            <option value="">Choisir</option>
+                            <option value="{{ situation_matrimoniale.CELIBATAIRE }}" {% if situation_matrimoniale.CELIBATAIRE == cheminant.situation_matrimoniale %} selected {% endif %}>{{ situation_matrimoniale.CELIBATAIRE }}</option>
+                            <option value="{{ situation_matrimoniale.FIANCE }}" {% if situation_matrimoniale.FIANCE == cheminant.situation_matrimoniale %} selected {% endif %}>{{ situation_matrimoniale.FIANCE }}</option>
+                            <option value="{{ situation_matrimoniale.CONCUBINAGE }}" {% if situation_matrimoniale.CONCUBINAGE == cheminant.situation_matrimoniale %} selected {% endif %}>{{ situation_matrimoniale.CONCUBINAGE }}</option>
+                            <option value="{{ situation_matrimoniale.DIVORCE }}" {% if situation_matrimoniale.DIVORCE == cheminant.situation_matrimoniale %} selected {% endif %}>{{ situation_matrimoniale.DIVORCE }}</option>
+                            <option value="{{ situation_matrimoniale.MARIE }}" {% if situation_matrimoniale.MARIE == cheminant.situation_matrimoniale %} selected {% endif %}>{{ situation_matrimoniale.MARIE }}</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label>Département <span class="required">*</span></label>
+                        <select class="form-control select2" style="width: 100%;" name="departement_id" id="edit_departement_id">
+                            <option value="">Choisir</option>
+                            {% for dp in departements %}
+                              <option value="{{ dp.id }}" {% if dp.id == cheminant.departement_id %} selected {% endif %}>{{ dp.libelle }}</option>
+                            {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label>Date de naissance <span class="required">*</span></label>
+                        <input type="date" name="date_naissance" id="edit_date_naissance" class="form-control" value="{{ cheminant.date_naissance|date:'Y-m-d' }}">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Sexe <span class="required">*</span></label>
+                        <select class="form-control" name="sexe" id="edit_sexe">
+                            <option value="">Choisir</option>
+                            <option value="{{ genre.FEMME }}" {% if genre.FEMME == cheminant.sexe %} selected {% endif %}>{{ genre.FEMME }}</option>
+                            <option value="{{ genre.HOMME }}" {% if genre.HOMME == cheminant.sexe %} selected {% endif %}>{{ genre.HOMME }}</option>
+                        </select>
+                      </div>
+                      <div class="form-group d-none">
+                        <label>Date atribution</label>
+                        <input type="date" name="date_utilisation" id="edit_date_utilisation" class="form-control" value="{{ cheminant.certificat.date_utilisation|date:'Y-m-d' }}" readonly>
+                      </div>
+                      <div class="form-group">
+                        <label>Prénoms <span class="required">*</span></label>
+                        <input type="text" name="prenoms" id="edit_prenoms" class="form-control" value="{{ cheminant.prenoms|default_if_none:'' }}">
+                      </div>
+                      <div class="form-group">
+                        <label>Autre téléphone</label>
+                        <input type="text" name="autre_telephone" id="edit_autre_telephone" class="form-control" value="{{ cheminant.autre_telephone|default_if_none:'' }}">
+                      </div>
+                      <div class="form-group">
+                        <label>Tribu <span class="required">*</span></label>
+                        <select class="form-control select2" style="width: 100%;" name="tribu_id" id="edit_tribu_id">
+                          <option value="">Choisir</option>
+                          {% for tb in tribus %}
+                            <option value="{{ tb.id }}" {% if tb.id == cheminant.tribu_id %} selected {% endif %}>{{ tb.libelle }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label>Quartier <span class="required">*</span></label>
+                        <select class="form-control select2" style="width: 100%;" name="quartier_id" id="edit_quartier_id">
+                          <option value="">Choisir</option>
+                          {% for qt in quartiers %}
+                            <option value="{{ qt.id }}" {% if qt.id == cheminant.quartier_id %} selected {% endif %}>{{ qt.libelle }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label>Photo</label>
+                        <input type="file" class="form-control" name="photo" id="edit_photo" accept=".png, .jpg, .jpeg">
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger pull-left" data-dismiss="modal"><i class="fa fa-remove"></i> Fermer</button>
+              <button type="button" class="btn btn-success" id="btn_save_modification_cheminant"><i class="fa fa-check-circle"></i> Enregistrer</button>
+            </div>
+          </form>
+      </div>
+    </div>
+  </div>

@@ -34,6 +34,14 @@
     margin-bottom: 10px;
 }
 
+.mb-15{
+    margin-bottom: 15px;
+}
+
+.mb-20{
+    margin-bottom: 20px;
+}
+
 .mr-2{
     margin-right: 2px;
 }
@@ -176,7 +184,7 @@ p, textarea {
     background-color: #17a2b8;
 }
 
-.badge-success, .badge-terminé {
+.badge-success, .badge-terminé, .badge-disponible {
     background-color: #28a745;
 }
 
@@ -185,9 +193,10 @@ p, textarea {
     color: #fff;
 }
 
-.badge-danger {
+.badge-danger, .badge-non-disponible {
     background-color: #dc3545;
 }
+
 
 .badge-secondary, .badge-en-attente {
     background-color: #6c757d;
@@ -268,4 +277,12 @@ body.loading-cursor::before {
 
 .text-white{
     color: white !important;
+}
+
+.pull-left{
+    float: left !important;
+}
+
+.text-vert_vh{
+    color: #006C68 !important;
 }

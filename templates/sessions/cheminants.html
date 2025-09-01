@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    {{ session.nom }} - Cours
+    {{ session.nom }} - Cheminants
 {% endblock %}
 
 {% block content %}
@@ -38,39 +38,40 @@
               <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_certificat"><i class="fa fa-graduation-cap"></i> Générer un certificat</span>
               <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_cours"><i class="fa fa-hourglass-2"></i> Créer un cours</span>
               <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_question_reponse"><i class="fa fa-comments-o"></i> Créer des QCM</span>
-              <span class="btn btn-warning mb-3" data-toggle="modal" data-target="#modal-extraction_cours"><i class="fa fa-file-excel-o"></i> Extraire des cours</span>
+              <span class="btn btn-warning mb-3" data-toggle="modal" data-target="#modal-extraction_cheminants"><i class="fa fa-file-excel-o"></i> Extraire des cheminants</span>
              </div>
             </div>
           <div class="col-md-12 table-responsive">
             <br>
-            <table id="cours_sessions_datatables" class="table table-bordered table-striped">
+            <table id="cheminant_sessions_datatables" class="table table-bordered table-striped">
               <thead>
                 <tr>
                   <th class="d-none"></th>
-                  <th>Numéro cours</th>
-                  <th>Titre</th>
-                  <th>Type de cours</th>
-                  <th>Date publication</th>
+                  <th></th>
+                  <th>Numero</th>
+                  <th>Nom & Prénoms</th>
+                  <th>Tribu</th>
+                  <th>Département</th>
+                  <th>Date inscription</th>
                   <th>Statut</th>
                   <th class="text-center button_action">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {% for cours in cours_session %}
+                {% for cheminant in cheminant_session %}
                     <tr>
-                      <tb class="d-none"></tb>
-                      <td>{{ cours.numero_cours|default_if_none:'' }}</td>
-                      <td>{{ cours.titre|default_if_none:'' }}</td>
-                      <td>{{ cours.type_cours.libelle|default_if_none:'' }}</td>
-                      <td>{{ cours.date_publication|date:'d/m/Y' }}</td>
-                      <td><span class="badge badge-{{ cours.statut_cours|lower|slugify }}">{{ cours.statut_cours }}</span></td>
-                      <td class="text-center button_action">
-                          <span class="btn_detail_cours btn btn-info btn-xs" data-cours_id="{{cours.id}}" data-model_name="cours" data-modal_title="Détail du cours" data-href="{% url 'detail_session_cours' cours.id %}"><i class="fa fa-eye"></i></span>
-                          <span class="btn_modifier_cours btn btn-warning btn-xs" data-cours_id="{{cours.id}}" data-model_name="cours" data-modal_title="Modifier le cours" data-href="{% url 'update_session_cours' cours.id %}"><i class="fa fa-edit"></i></span>
-                          {% if cours.date_activation is none %}
-                            <span class="btn_activer_cours btn btn-success btn-xs" data-cours_id="{{cours.id}}"><i class="fa fa-check"></i></span>
-                          {% endif %}
-                          <span class="btn_supprimer_cours btn btn-danger btn-xs" data-cours_id="{{cours.id}}"><i class="fa fa-trash"></i></span>
+                      <td class="d-none"></td>
+                      <td><img src="{{cheminant.photo.url|default_if_none:''}}" class="img-circle" width="35" alt="{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}"></td>
+                      <td>{{ cheminant.numero_utilisateur|default_if_none:'' }}</td>
+                      <td>{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}</td>
+                      <td>{{ cheminant.tribu.libelle|default_if_none:'' }}</td>
+                      <td>{{ cheminant.departement.libelle|default_if_none:'' }}</td>
+                      <td>{{ cheminant.date_joined|date:'d/m/Y' }}</td>
+                      <td><span class="badge badge-{{ cheminant.statut_compte|lower|slugify }}">{{ cheminant.statut_compte }}</span></td>
+                      <td class="text-center">
+                        <a href="{% url 'detail_session_cheminant' cheminant.id %}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i></a>
+                        <span class="btn_modifier_cheminant btn btn-warning btn-xs" data-cheminant_id="{{cheminant.id}}" data-model_name="cheminant" data-modal_title="Modifier le cheminant" data-href="{% url 'update_session_cheminants' cheminant.id %}"><i class="fa fa-edit"></i></span>
+                        <span class="btn_supprimer_cheminant btn btn-danger btn-xs" data-cheminant_id="{{cheminant.id}}"><i class="fa fa-trash"></i></span>
                       </td>
                     </tr>
                 {% endfor %}

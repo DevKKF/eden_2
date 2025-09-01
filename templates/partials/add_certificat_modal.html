@@ -11,28 +11,28 @@
             {% csrf_token %}
             <input type="hidden" name="session_id" id="session_id" value="{{ session.id }}">
             <div class="modal-body">
-                <div class="alert alert-danger alert-dismissible hidden" style="background-color: #FFF1F2 !important; border-color: #FAD4D6 !important; color: #000 !important;">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <h4><i class="icon fa fa-ban"></i> Erreur !</h4>
-                    <span class="message"></span>
-                </div>
+              <div class="alert alert-danger alert-dismissible hidden" style="background-color: #FFF1F2 !important; border-color: #FAD4D6 !important; color: #000 !important;">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4><i class="icon fa fa-ban"></i> Erreur !</h4>
+                <span class="message"></span>
+              </div>
               <div class="row">
-                  <div class="col-md-12 mb-10">
+                  <div class="col-md-12">
                     <div class="form-group">
                         <label>Nombre de certificat à générer <span class="required">*</span></label>
-                        <input type="text" name="nombre" id="nombre" class="form-control pull-right" onkeypress="isInputNumber(event)" oninput="formatQuantite(this)">
+                        <input type="text" name="nombre" id="nombre" class="form-control" onkeypress="isInputNumber(event)" oninput="formatQuantite(this)">
                     </div>
                 </div>
-                <div class="col-md-12 mb-10">
+                <div class="col-md-12">
                     <div class="form-group">
                         <label>Date début validité <span class="required">*</span></label>
-                        <input type="date" name="date_debut_validite" id="date_debut_validite" class="form-control pull-right">
+                        <input type="date" name="date_debut_validite" id="date_debut_validite" class="form-control">
                     </div>
                 </div>
-                <div class="col-md-12 mb-10">
+                <div class="col-md-12">
                     <div class="form-group">
                         <label>Date fin validité <span class="required">*</span></label>
-                        <input type="date" name="date_fin_validite" id="date_fin_validite" class="form-control pull-right">
+                        <input type="date" name="date_fin_validite" id="date_fin_validite" class="form-control">
                     </div>
                 </div>
               </div>

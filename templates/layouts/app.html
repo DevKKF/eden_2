@@ -4,6 +4,7 @@
     <head>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="csrf-token" content="csrf_token">
       <title>{{ NAME_APP }} | {% block title %} {% endblock %}</title>
       <link rel="shortcut icon" href="{% static 'dist/img/logo/vh_favicon.png' %}" type="image/png">
       <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -33,9 +34,8 @@
 
       <!-- jQuery en premier -->
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-      <!-- CSRF Token -->
-      <meta name="csrf-token" content="csrf_token">
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     </head>
     <body class="hold-transition skin-blue sidebar-mini">
         <div class="wrapper">
@@ -380,11 +380,12 @@
         <script src="{% static 'dist/js/noty/layouts/top.js' %}"></script>
         <script src="{% static 'dist/js/noty/layouts/center.js' %}"></script>
         <script src="{% static 'dist/js/noty/themes/default.js' %}"></script>
+        <script src="{% static 'bower_components/chart.js/Chart.js' %}"></script>
+        <script src="{% static 'dist/js/pages/dashboard2.js' %}"></script>
+
         <script>
             function isInputNumber(evt){
-
                 var ch = String.fromCharCode(evt.which);
-
                 if(!(/[0-9]/.test(ch))){
                    evt.preventDefault();
                 }
@@ -392,9 +393,7 @@
 
             function formatQuantite(input) {
                 var quantite = input.value.replace(/\D/g, '');
-
                 quantite = addSpacesForThousands(quantite);
-
                 input.value = quantite;
             }
 

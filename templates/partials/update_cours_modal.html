@@ -17,19 +17,19 @@
                     <span class="message"></span>
                 </div>
               <div class="row">
-                <div class="col-md-12 mb-10">
+                <div class="col-md-12">
                   <div class="form-group">
                       <label>Titre <span class="required">*</span></label>
-                      <input type="text" name="titre" id="edit_titre" class="form-control pull-right" value="{{ cours.titre|default_if_none:'' }}">
+                      <input type="text" name="titre" id="edit_titre" class="form-control" value="{{ cours.titre|default_if_none:'' }}">
                   </div>
                 </div>
-                <div class="col-md-12 mb-10">
+                <div class="col-md-12">
                   <div class="form-group">
                       <label>Sous-titre</label>
-                      <input type="text" name="sous_titre" id="edit_sous_titre" class="form-control pull-right" value="{{ cours.sous_titre|default_if_none:'' }}">
+                      <input type="text" name="sous_titre" id="edit_sous_titre" class="form-control" value="{{ cours.sous_titre|default_if_none:'' }}">
                   </div>
                 </div>
-                <div class="col-md-6 mb-10">
+                <div class="col-md-6">
                   <div class="form-group">
                     <label>Format du cours <span class="required">*</span></label>
                     <select class="form-control" name="type_cours_id" id="edit_type_cours_id">
@@ -40,25 +40,25 @@
                     </select>
                   </div>
                 </div>
-                <div class="col-md-6 mb-10 if_cours_video">
+                <div class="col-md-6 if_cours_video">
                   <div class="form-group">
                     <label>Vidéo <span class="required">*</span></label>
-                    <input type="file" name="cours_video" id="edit_cours_video" class="form-control pull-right" accept="video/*">
+                    <input type="file" name="cours_video" id="edit_cours_video" class="form-control" accept="video/*">
                   </div>
                 </div>
-                <div class="col-md-6 mb-10 if_cours_audio">
+                <div class="col-md-6 if_cours_audio">
                   <div class="form-group">
                     <label>Audio <span class="required">*</span></label>
-                    <input type="file" name="cours_audio" id="edit_cours_audio" class="form-control pull-right" accept="audio/*">
+                    <input type="file" name="cours_audio" id="edit_cours_audio" class="form-control" accept="audio/*">
                   </div>
                 </div>
-                <div class="col-md-6 mb-10 if_cours_texte">
+                <div class="col-md-6 if_cours_texte">
                   <div class="form-group">
                     <label>Texte <span class="required">*</span></label>
-                    <input type="file" name="cours_texte" id="edit_cours_texte" class="form-control pull-right" accept=".docx, .pdf, .ppt">
+                    <input type="file" name="cours_texte" id="edit_cours_texte" class="form-control" accept=".docx, .pdf, .ppt">
                   </div>
                 </div>
-                <div class="col-md-12 mb-10">
+                <div class="col-md-12">
                   <div class="form-group">
                     <label>Description</label>
                     <textarea name="description" class="form-control" id="edit_description" cols="20" rows="5">{{ cours.description|default_if_none:'' }}</textarea>
