@@ -1,0 +1,224 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+
+{% block title %}
+    {{ session.nom }} - QCM
+{% endblock %}
+
+{% block content %}
+<section class="content-header mb-5">
+  <h1 class="f-bold">
+    Vue 360°
+  </h1>
+  <ol class="breadcrumb">
+    <a href="{% url 'sessions' %}" class="btn btn-info"><i class="fa fa-reply"></i> Retour</a>
+  </ol>
+</section>
+
+<section class="content">
+  {% include 'partials/suivi_chiffre_session.html' %}
+  <div class="row">
+    <div class="col-md-3">
+      {% include 'partials/detail_session.html' %}
+      <div class="box box-primary">
+        <div class="box-body">
+          <div class="box_button">
+            {% include 'partials/sous_menu_session.html' %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="box box-success">
+        <div class="box-body">
+          <div class="row">
+            <div class="col-md-12">
+             <div class="box_button">
+              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_cheminant"><i class="fa fa-user-circle"></i> Créer un cheminant</span>
+              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_certificat"><i class="fa fa-graduation-cap"></i> Générer un certificat</span>
+              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_cours"><i class="fa fa-hourglass-2"></i> Créer un cours</span>
+              <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_question_reponse"><i class="fa fa-comments-o"></i> Créer des QCM</span>
+             </div>
+            </div>
+          <div class="col-md-12 table-responsive">
+            <br>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label>Cours</label>
+                        <select class="form-control select2" style="width: 100%;" name="cours_id" id="cours_id">
+                          <option value="">Choisir</option>
+                          {% for cours in cours_qcm %}
+                            <option value="{{ cours.id }}">({{ cours.numero_cours|default_if_none:'' }}) - {{ cours.titre|default_if_none:'' }}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group" style="float: right;">
+                        <label style="margin-top:40px"></label>
+                        <button type="button" class="btn btn-info mr-10" id="btn_search_qcm_cours"><i class="fa fa-search"></i> Rechercher</button>
+                        <a href="{% url 'qcm_cours_session' session.id %}" class="btn btn-success"><i class="fa fa-spinner"></i> Réactualiser</a>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div id="loader" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; margin:auto; text-align: center;">
+                <img src="{% static 'dist/img/coeur-de-chargement.gif' %}" alt="Chargement en cours...">
+            </div>
+            <table id="qcm_cours_sessions_datatables" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>Question</th>
+                  <th>Total point</th>
+                  <th>Réponses</th>
+                  <th>Date publication</th>
+                  <th>Statut</th>
+                  <th width="10%" class="text-center button_action">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% include 'partials/detail_session_modal.html' %}
+{% include 'partials/add_cheminant_modal.html' %}
+{% include 'partials/add_certificat_modal.html' %}
+{% include 'partials/add_cours_modal.html' %}
+{% include 'partials/add_question_reponse_modal.html' %}
+
+<script>
+    $(document).ready(function() {
+        let ajaxTimeout;
+        let countdownInterval;
+
+        const dataTable = $('#qcm_cours_sessions_datatables').DataTable({
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+            },
+            "serverSide": true,
+            "ajax": function(data, callback, settings) {
+                // Vérifier si cours_id existe et n'est pas vide
+                const coursId = $('#cours_id').val();
+                if (!coursId || coursId.trim() === '') {
+                    // Si cours_id n'existe pas ou est vide, renvoyer un tableau vide
+                    callback({
+                        data: [],
+                        recordsTotal: 0,
+                        recordsFiltered: 0
+                    });
+                    return; // Arrêter l'exécution
+                }
+
+                // Afficher le loader avec compteur
+                showLoaderWithCountdown();
+
+                // Préparer les données
+                data.page = data.start / data.length + 1;
+                data.cours_id = coursId;
+
+                // Attendre 1 seconde avant de lancer la requête AJAX
+                ajaxTimeout = setTimeout(function() {
+                    // Arrêter le compteur et afficher "Chargement..."
+                    clearInterval(countdownInterval);
+                    $('#countdown-text').text('Chargement en cours...');
+
+                    $.ajax({
+                        url: "{% url 'ajax_datatable_qcm_cours_session' %}",
+                        type: 'GET',
+                        data: data,
+                        success: function(response) {
+                            hideLoader();
+                            callback(response);
+                        },
+                        error: function(xhr, error, code) {
+                            console.error('Erreur lors du chargement des données:', error);
+                            hideLoader();
+                            callback({
+                                data: [],
+                                recordsTotal: 0,
+                                recordsFiltered: 0
+                            });
+                        }
+                    });
+                }, 1000);
+            },
+            "columns": [
+                {"data": "libelle", "orderable": false},
+                {"data": "total_point", "orderable": false},
+                {"data": "reponses", "orderable": false},
+                {"data": "date_publication", "orderable": false},
+                {"data": "statut", "orderable": false},
+                {"data": "actions", "orderable": false, "searchable": false},
+            ],
+            "order": [[0, "desc"]],
+            "paging": true,
+            "lengthMenu": [[50, 100, 200, 500, 1000, -1], [50, 100, 200, 500, 1000, "Tout"]],
+            "pageLength": 50,
+            "processing": false,
+            "searching": false
+        });
+
+        // Fonction pour afficher le loader avec compteur
+        function showLoaderWithCountdown() {
+            $('#qcm_cours_sessions_datatables').addClass('loading');
+            $('body').addClass('loading-cursor');
+
+            // Ajouter le compteur au loader s'il n'existe pas
+            if ($('#countdown-text').length === 0) {
+                $('#loader').append('<div id="countdown-text" style="text-align: center; margin-top: 10px; font-weight: bold;"></div>');
+            }
+
+            $('#loader').show();
+            $('#countdown-text').text('Chargement en cours...');
+
+            countdownInterval = setInterval(function() {
+                $('#countdown-text').text('Chargement en cours...');
+            }, 1000);
+        }
+
+        // Fonction pour masquer le loader
+        function hideLoader() {
+            $('#loader').hide();
+            $('#qcm_cours_sessions_datatables').removeClass('loading');
+            $('body').removeClass('loading-cursor');
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+        }
+
+        // Rafraîchissement manuel quand on clique sur le bouton
+        $('#btn_search_qcm_cours').on('click', function(e) {
+            e.preventDefault();
+            // Annuler le timeout et compteur précédents
+            if (ajaxTimeout) {
+                clearTimeout(ajaxTimeout);
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            hideLoader();
+            dataTable.ajax.reload();
+        });
+
+        // Fonction globale pour annuler le chargement
+        window.cancelDataTableLoading = function() {
+            if (ajaxTimeout) {
+                clearTimeout(ajaxTimeout);
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            hideLoader();
+            console.log('Chargement annulé');
+        };
+    });
+</script>
+
+{% endblock %}

@@ -15,6 +15,7 @@ urlpatterns = [
 
     path("certificats/delete_certificats", views.delete_certificats, name='delete_certificats'),
     path('certificats/<uuid:session_id>', views.certificats_session, name="certificats_session"),
+    path('certificats/detail/<uuid:certificat_id>', views.detail_session_certificat, name="detail_session_certificat"),
     path('add_session_certificat/<uuid:session_id>', views.add_session_certificat, name="add_session_certificat"),
 
     path('add_session_cours/<uuid:session_id>', views.add_session_cours, name="add_session_cours"),
@@ -31,5 +32,10 @@ urlpatterns = [
     path("cheminants/delete", views.supprimer_cheminant, name='supprimer_cheminant'),
 
     path('add_qcm_cours_session/<uuid:session_id>', views.add_qcm_cours_session, name="add_qcm_cours_session"),
+    path('qcm-cours-session/<uuid:session_id>', views.qcm_cours_session, name="qcm_cours_session"),
+    path('ajax_datatable_qcm_cours_session/', views.ajax_datatable_qcm_cours_session, name="ajax_datatable_qcm_cours_session"),
+    path('qcm-cours-session/detail/<uuid:qcm_id>', views.detail_session_cours_qcm, name="detail_session_cours_qcm"),
+    path('update_session_cours_qcm/<uuid:qcm_id>', views.update_session_cours_qcm, name="update_session_cours_qcm"),
+    path("qcm-cours-session/delete", views.supprimer_qcm_cours_session, name='supprimer_qcm_cours_session'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

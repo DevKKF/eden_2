@@ -1,5 +1,5 @@
 {% load static %}
-<div class="modal fade" id="modal-deatil_cours" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="modal-detail_cours" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -45,17 +45,19 @@
                     <tr>
                       <th class="d-none"></th>
                       <th>Question</th>
-                      <th>Date création</th>
-                      <th class="text-center" width="5%">Réponses</th>
+                      <th width="12%">Date création</th>
+                      <th class="text-center" width="10%">Point total</th>
                     </tr>
                   </thead>
                   <tbody>
+                  {% for question in questions %}
                     <tr>
                         <td class="d-none"></td>
-                        <td>Quel était le verset principal de la prédication du cours ?</td>
-                        <td>01/06/2025</td>
-                        <td class="text-center"><span class="btn btn-info btn-xs"><i class="fa fa-eye"></i></span></td>
+                        <td>{{ question.libelle|default_if_none:"" }}</td>
+                        <td>{{ question.date_publication|date:'d/m/Y' }}</td>
+                        <td class="text-center f-bold">{{ question.point|default_if_none:0 }}</td>
                     </tr>
+                  {% endfor %}
                   </tbody>
                 </table>
             </div>

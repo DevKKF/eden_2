@@ -1,0 +1,70 @@
+<div class="modal fade" id="modal-detail_qcm" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title f-bold"><i class="fa fa-comments-o"></i> DETAIL DE LA QUESTION & DES REPONSES</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 mb-10">
+                  <div class="col-md-12" style="border:1px solid #ccc">
+                      <div class="row invoice-info">
+                        <div class="col-md-4 invoice-col">
+                          <p class="f-bold">Libelle </p>
+                          <p class="f-bold">Points total</p>
+                          <p class="f-bold">Date publication</p>
+                          <p class="f-bold">Date dernière modification</p>
+                        </div>
+                        <div class="col-md-8 invoice-col">
+                          <p>: {{ qcm.libelle|default_if_none:'' }}</p>
+                          <p class="f-bold">: {{ qcm.point|default_if_none:'' }}</p>
+                          <p>: {{ qcm.date_publication|date:'d/m/Y' }}</p>
+                          <p>: {{ qcm.updated_at|date:'d/m/Y H:m:s' }}</p>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+                <hr style="border:1px solid #006C68;">
+                <div class="col-md-12">
+                    <h4 class="f-bold"><i class="fa fa-comments-o"></i> Liste des réponses</h4>
+                    <table id="table_reponses" class="table table-bordered table-striped dataTable_ dtr-inline _table">
+                      <thead>
+                        <tr>
+                          <th>Réponses</th>
+                          <th class="text-center" width="20%">Type réponse</th>
+                          <th class="text-center" width="10%">Points</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                          {% for reponse in reponses %}
+                              <tr>
+                                <td>{{ reponse.libelle }}</td>
+                                <td class="text-center">
+                                  {% if reponse.statut_reponse == "Vrai" %}
+                                    <span class="badge badge-success">Vrai</span>
+                                  {% else %}
+                                    <span class="badge badge-danger">Faux</span>
+                                  {% endif %}
+                                </td>
+                                <td class="text-center f-bold">{{ reponse.point|default_if_none:0 }}</td>
+                              </tr>
+                          {% endfor %}
+                          <tr>
+                              <td></td>
+                              <td class="text-center f-bold" style="background:#006C68; color:#fff">POINT TOTAL</td>
+                              <td class="text-center f-bold" style="background:#006C68; color:#fff">{{ qcm.point|default_if_none:0 }}</td>
+                          </tr>
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger pull-left" data-dismiss="modal"><i class="fa fa-remove"></i> Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>

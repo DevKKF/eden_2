@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.urls import reverse
 from django.contrib import messages
 from django.db.models import Q
@@ -70,8 +71,18 @@ def Home(request):
     user = request.user
     if user is not None:
         login(request, user)
-        departements = Departement.objects.all()
-        return render(request, 'home.html', {'departements': departements})
+
+        now = timezone.now()
+
+        cheminants = Utilisateur.objects.filter(is_superuser=False).order_by('-numero_utilisateur')[:6]
+
+        cheminant_mois_en_cours = Utilisateur.objects.filter(is_superuser=False, date_joined__year = now.year, date_joined__month = now.month).count()
+
+        context = {
+            'cheminants': cheminants,
+            'cheminant_mois_en_cours': cheminant_mois_en_cours,
+        }
+        return render(request, 'home.html', context)
     else:
         return redirect('login')
 

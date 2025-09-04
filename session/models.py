@@ -117,6 +117,10 @@ class Cours(TimeStampedAuditModel):
     def __str__(self):
         return self.titre
 
+    def liste_qcm(self):
+        liste = Question.objects.get()
+        return liste
+
     def nombre_questions(self):
         nombre = Question.objects.count()
         return nombre
@@ -129,7 +133,7 @@ class Cours(TimeStampedAuditModel):
 
 class Question(TimeStampedAuditModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    libelle = models.CharField(max_length=50, blank=True, null=True)
+    libelle = models.TextField(blank=True, null=True)
     date_publication = models.DateField(blank=True, null=True, auto_now=False)
     point = models.IntegerField(null=True)
     cours = models.ForeignKey(Cours, null=True, on_delete=models.RESTRICT, related_name="cours")
@@ -137,6 +141,10 @@ class Question(TimeStampedAuditModel):
     
     def __str__(self):
         return self.libelle
+
+    def liste_reponse(self):
+        liste = Reponse.objects.get()
+        return liste
 
     class Meta:
         db_table = 'questions'
@@ -146,7 +154,8 @@ class Question(TimeStampedAuditModel):
 
 class Reponse(TimeStampedAuditModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    libelle = models.CharField(max_length=50, blank=True, null=True)
+    libelle = models.TextField(blank=True, null=True)
+    point = models.IntegerField(null=True)
     date_publication = models.DateField(blank=True, null=True, auto_now=False)
     question = models.ForeignKey(Question, null=True, on_delete=models.RESTRICT, related_name="questions")
     statut_reponse = models.fields.CharField(choices=ReponseEnum.choices, default=ReponseEnum.VRAI, max_length=20, null=True)

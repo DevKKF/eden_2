@@ -40,49 +40,49 @@
               <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_certificat"><i class="fa fa-graduation-cap"></i> Générer un certificat</span>
               <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_cours"><i class="fa fa-hourglass-2"></i> Créer un cours</span>
               <span class="btn btn-info centre_influence_degrade mb-3" data-toggle="modal" data-target="#modal-add_question_reponse"><i class="fa fa-comments-o"></i> Créer des QCM</span>
-              <span class="btn btn-warning mb-3" data-toggle="modal" data-target="#modal-extraction_certificats"><i class="fa fa-file-excel-o"></i> Extraire des certificats</span>
+              <span class="btn btn-warning mb-3" data-toggle="modal" data-target="#modal-extraction_certificats"><i class="fa fa-database"></i> Extraire des certificats</span>
              </div>
             </div>
-          <div class="col-md-12 table-responsive">
-            <form action="{% url 'delete_certificats' %}" method="post" id="form_delete_certificats">
-                {% csrf_token %}
-                <br>
-                <table id="certificat_sessions_datatables" class="table table-bordered table-striped">
-                  <thead>
-                    <tr>
-                      <th><input type="checkbox" name="certificat_id_all" id="certificat_id_all"></th>
-                      <th>Numéro certificat</th>
-                      <th>Date début validité</th>
-                      <th>Date fin validité</th>
-                      <th>Date utilisation</th>
-                      <th>Statut</th>
-                      <th class="text-center button_action">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for certificat in certificat_session %}
+            <div class="col-md-12 table-responsive">
+                <form action="{% url 'delete_certificats' %}" method="post" id="form_delete_certificats">
+                    {% csrf_token %}
+                    <br>
+                    <table id="certificat_sessions_datatables" class="table table-bordered table-striped">
+                      <thead>
                         <tr>
-                          <td><input type="checkbox" name="certificat_ids[]" value="{{ certificat.id }}" id="certificat_ids"></td>
-                          <td>{{ certificat.numero_certificat }}</td>
-                          <td>{{ certificat.date_debut_validite|date:'d/m/Y' }}</td>
-                          <td>{{ certificat.date_fin_validite|date:'d/m/Y' }}</td>
-                          <td>
-                            {% if certificat.date_utilisation %}
-                              {{ certificat.date_utilisation|date:'d/m/Y' }}
-                            {% else %}
-                              <span class="label label-danger">Non utilisé</span>
-                            {% endif %}
-                          </td>
-                          <td><span class="badge badge-{{ certificat.statut_certificat|lower|slugify }}">{{ certificat.statut_certificat }}</span></td>
-                          <td class="text-center button_action">
-                              <span class="btn btn-info btn-xs"><i class="fa fa-eye"></i></span>
-                          </td>
+                          <th><input type="checkbox" name="certificat_id_all" id="certificat_id_all"></th>
+                          <th>Numéro certificat</th>
+                          <th>Date début validité</th>
+                          <th>Date fin validité</th>
+                          <th>Date utilisation</th>
+                          <th>Statut</th>
+                          <th class="text-center button_action">Actions</th>
                         </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-            </form>
-          </div>
+                      </thead>
+                      <tbody>
+                        {% for certificat in certificat_session %}
+                            <tr>
+                              <td><input type="checkbox" name="certificat_ids[]" value="{{ certificat.id }}" id="certificat_ids"></td>
+                              <td>{{ certificat.numero_certificat }}</td>
+                              <td>{{ certificat.date_debut_validite|date:'d/m/Y' }}</td>
+                              <td>{{ certificat.date_fin_validite|date:'d/m/Y' }}</td>
+                              <td>
+                                {% if certificat.date_utilisation %}
+                                  {{ certificat.date_utilisation|date:'d/m/Y' }}
+                                {% else %}
+                                  <span class="label label-danger">Non utilisé</span>
+                                {% endif %}
+                              </td>
+                              <td><span class="badge badge-{{ certificat.statut_certificat|lower|slugify }}">{{ certificat.statut_certificat }}</span></td>
+                              <td class="text-center button_action">
+                                  <span class="btn_detail_certificat btn btn-info btn-xs" data-certificat_id="{{cours.id}}" data-model_name="certificat" data-modal_title="Détail du certificat" data-href="{% url 'detail_session_certificat' certificat.id %}"><i class="fa fa-eye"></i></span>
+                              </td>
+                            </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                </form>
+            </div>
           </div>
         </div>
       </div>

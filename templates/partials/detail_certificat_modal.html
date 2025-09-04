@@ -1,0 +1,63 @@
+<div class="modal fade" id="modal-detail_certificat" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title f-bold"><i class="fa fa-graduation-cap"></i> DETAIL DU CERTIFICAT</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>Numéro certificat</th>
+                                <td id="detail_certificat_numero_certificat" class="f-bold">{{ certificat.numero_certificat }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date début validité</th>
+                                <td id="detail_certificat_date_debut_validite">{{ certificat.date_debut_validite|date:'d/m/Y' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date fin validité</th>
+                                <td id="detail_certificat_date_fin_validite">{{ certificat.date_fin_validite|date:'d/m/Y' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date utilisation</th>
+                                <td id="detail_certificat_date_utilisation">
+                                    {% if certificat.date_utilisation %}
+                                      {{ certificat.date_utilisation|date:'d/m/Y' }}
+                                    {% else %}
+                                      <span class="label label-danger">Non utilisé</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Statut</th>
+                                <td id="detail_certificat_statut"><span class="badge badge-{{ certificat.statut_certificat|lower|slugify }}">{{ certificat.statut_certificat }}</span></td>
+                            </tr>
+                            <tr>
+                                <th>Cheminant</th>
+                                <td id="detail_certificat_cheminant"><b>{{ cheminant.numero_utilisateur|default_if_none:'' }}</b> - {{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Créé le</th>
+                                <td id="detail_certificat_created_at">{{ certificat.created_at|date:'d/m/Y' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Modifié le</th>
+                                <td id="detail_certificat_updated_at">{{ certificat.updated_at|date:'d/m/Y' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger pull-left" data-dismiss="modal"><i class="fa fa-remove"></i> Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>

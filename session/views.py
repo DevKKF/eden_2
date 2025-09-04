@@ -1,3 +1,4 @@
+import urllib
 from django.core.paginator import Paginator, EmptyPage
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -9,6 +10,9 @@ from django.core.files.storage import default_storage
 import uuid
 import os
 
+#Importer les modules nécessaires
+
+# Importer les modèles et formulaires nécessaires
 from parametre.models import TypeCours, Quartier, Tribu, Departement
 from session.forms import SessionForm, CertificatForm, CoursForm, CheminantForm, InscriptionForm
 from session.models import Session, Certificat, Cours, Inscription, Question, Reponse
@@ -152,6 +156,9 @@ def detail_session(request, session_id):
 
     cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
+    now = timezone.now()
+    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, is_superuser=False, date_joined__year=now.year, date_joined__month=now.month).count()
+
     context = {
         'session': session,
         'classe_css_statut': classe_css_statut,
@@ -167,6 +174,7 @@ def detail_session(request, session_id):
         'today': today,
         'nombre_cheminants': nombre_cheminants,
         'cheminant_session': cheminant_session,
+        'cheminant_mois_en_cours': cheminant_mois_en_cours,
     }
 
     return render(request, 'sessions/detail_session.html', context)
@@ -281,6 +289,9 @@ def certificats_session(request, session_id):
 
     cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
+    now = timezone.now()
+    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, is_superuser=False, date_joined__year=now.year, date_joined__month=now.month).count()
+
     context = {
         'session': session,
         'classe_css_statut': classe_css_statut,
@@ -297,6 +308,7 @@ def certificats_session(request, session_id):
         'today': today,
         'nombre_cheminants': nombre_cheminants,
         'cheminant_session': cheminant_session,
+        'cheminant_mois_en_cours': cheminant_mois_en_cours,
     }
 
     return render(request, 'sessions/certificats.html', context)
@@ -356,6 +368,26 @@ def add_session_certificat(request, session_id):
         })
     else:
         redirect('detail_session', session_id=session_id)
+
+
+@login_required
+def detail_session_certificat(request, certificat_id):
+    certificat = Certificat.objects.get(id=certificat_id)
+
+    if certificat is None:
+        return JsonResponse({
+            'statut': 0,
+            'message': "Certificat non trouvé",
+        })
+
+    cheminant = Utilisateur.objects.get(certificat_id=certificat_id)
+
+    context = {
+        'certificat': certificat,
+        'cheminant': cheminant,
+    }
+
+    return render(request, 'partials/detail_certificat_modal.html', context)
 
 
 @login_required
@@ -440,6 +472,9 @@ def cours_session(request, session_id):
 
     cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
+    now = timezone.now()
+    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, is_superuser=False, date_joined__year=now.year, date_joined__month=now.month).count()
+
     context = {
         'session': session,
         'classe_css_statut': classe_css_statut,
@@ -456,6 +491,7 @@ def cours_session(request, session_id):
         'today': today,
         'nombre_cheminants': nombre_cheminants,
         'cheminant_session': cheminant_session,
+        'cheminant_mois_en_cours': cheminant_mois_en_cours,
     }
 
     return render(request, 'sessions/cours.html', context)
@@ -471,8 +507,11 @@ def detail_session_cours(request, cours_id):
             'message': "Cours non trouvé",
         })
 
+    questions = Question.objects.filter(cours_id=cours_id)
+
     context = {
         'cours': cours,
+        'questions': questions,
     }
 
     return render(request, 'partials/detail_cours_modal.html', context)
@@ -687,6 +726,9 @@ def cheminant_session(request, session_id):
 
     cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
+    now = timezone.now()
+    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, is_superuser=False, date_joined__year=now.year, date_joined__month=now.month).count()
+
     context = {
         'session': session,
         'classe_css_statut': classe_css_statut,
@@ -703,6 +745,7 @@ def cheminant_session(request, session_id):
         'today': today,
         'nombre_cheminants': nombre_cheminants,
         'cheminant_session': cheminant_session,
+        'cheminant_mois_en_cours': cheminant_mois_en_cours,
     }
 
     return render(request, 'sessions/cheminants.html', context)
@@ -831,28 +874,8 @@ def supprimer_cheminant(request):
 
 @login_required
 @transaction.atomic
-def add_qcm_cours_session_0(request, session_id):
-    if request.method == "POST":
-        print(request.POST)
-        form = ''
-
-        if form.is_valid():
-            pass
-
-        # Erreurs de validation → transformer en dict lisible
-        print(form.errors.items())
-        return JsonResponse({
-            "statut": 0,
-            "message": "Erreurs de validation",
-            "errors": form.errors,
-        })
-
-    return redirect("detail_session", session_id=session_id)
-
-@login_required
-@transaction.atomic
 def add_qcm_cours_session(request, session_id):
-    print(request.POST)
+    print('request.POST : ', request.POST)
     if request.method == "POST":
         try:
             cours_id = request.POST.get("cours_id")
@@ -861,26 +884,96 @@ def add_qcm_cours_session(request, session_id):
 
             cours = Cours.objects.get(id=cours_id)
 
-            # Extraire toutes les clés "questions[x]"
-            questions_dict = {
-                key: value[0]  # value est une liste -> on prend le premier élément
-                for key, value in request.POST.lists()
-                if key.startswith("questions[")
-            }
+            # Extraire toutes les questions en gérant l'encodage URL
+            questions_data = {}
 
-            for index, question_libelle in questions_dict.items():
+            # Parcourir tous les éléments POST pour identifier les questions
+            for key, value_list in request.POST.lists():
+                # Décoder l'URL encoding
+                decoded_key = urllib.parse.unquote(key)
+
+                # Vérifier si c'est une question
+                if decoded_key.startswith("questions[") and decoded_key.endswith("]"):
+                    # Extraire l'index de la question
+                    question_index = decoded_key.split("[")[1].split("]")[0]
+
+                    # Initialiser la structure pour cette question si nécessaire
+                    if question_index not in questions_data:
+                        questions_data[question_index] = {
+                            'libelle': '',
+                            'reponses': [],
+                            'types': [],
+                            'points': []
+                        }
+
+                    questions_data[question_index]['libelle'] = value_list[0] if value_list else ''
+
+                # Vérifier si ce sont des réponses
+                elif decoded_key.startswith("reponses[") and "[]" in decoded_key:
+                    # Extraire l'index de la question (format: reponses[X][])
+                    question_index = decoded_key.split("[")[1].split("]")[0]
+
+                    if question_index not in questions_data:
+                        questions_data[question_index] = {
+                            'libelle': '',
+                            'reponses': [],
+                            'types': [],
+                            'points': []
+                        }
+
+                    questions_data[question_index]['reponses'] = value_list
+
+                # Vérifier si ce sont des types de réponses
+                elif decoded_key.startswith("type_reponses[") and "[]" in decoded_key:
+                    question_index = decoded_key.split("[")[1].split("]")[0]
+
+                    if question_index not in questions_data:
+                        questions_data[question_index] = {
+                            'libelle': '',
+                            'reponses': [],
+                            'types': [],
+                            'points': []
+                        }
+
+                    questions_data[question_index]['types'] = value_list
+
+                # Vérifier si ce sont des points
+                elif decoded_key.startswith("points[") and "[]" in decoded_key:
+                    question_index = decoded_key.split("[")[1].split("]")[0]
+
+                    if question_index not in questions_data:
+                        questions_data[question_index] = {
+                            'libelle': '',
+                            'reponses': [],
+                            'types': [],
+                            'points': []
+                        }
+
+                    questions_data[question_index]['points'] = value_list
+
+            # Traitement des questions
+            for question_index, question_data in questions_data.items():
+                question_libelle = question_data['libelle']
+
                 if not question_libelle.strip():
                     continue
 
-                # Récupérer les réponses, types et points pour cette question
-                reponses = request.POST.getlist(f"reponses[{index.split('[')[1][:-1]}][]")
-                types = request.POST.getlist(f"type_reponses[{index.split('[')[1][:-1]}][]")
-                points = request.POST.getlist(f"points[{index.split('[')[1][:-1]}][]")
+                reponses = question_data['reponses']
+                types = question_data['types']
+                points = question_data['points']
+
+                # Vérifier que les listes ont la même longueur
+                max_length = max(len(reponses), len(types), len(points))
+
+                # Étendre les listes si nécessaire
+                reponses.extend([''] * (max_length - len(reponses)))
+                types.extend(['Faux'] * (max_length - len(types)))
+                points.extend(['0'] * (max_length - len(points)))
 
                 # Calcul du total des points de la question (seulement les réponses Vrai)
                 total_points = 0
                 for t, p in zip(types, points):
-                    if t.lower() == "vrai" and p.strip():
+                    if t and t.lower() == "vrai" and p.strip():
                         try:
                             total_points += int(p)
                         except ValueError:
@@ -890,6 +983,8 @@ def add_qcm_cours_session(request, session_id):
                 question = Question.objects.create(
                     libelle=question_libelle.strip(),
                     date_publication=timezone.now(),
+                    created_at = timezone.now(),
+                    created_by = request.user.id,
                     point=total_points,
                     cours=cours,
                 )
@@ -898,9 +993,15 @@ def add_qcm_cours_session(request, session_id):
                 for libelle, statut, point in zip(reponses, types, points):
                     if not libelle.strip():
                         continue
-                    Reponse.objects.create(
+                    if not point.strip():
+                        continue
+
+                    reponse = Reponse.objects.create(
                         libelle=libelle.strip(),
+                        point=point.strip(),
                         date_publication=timezone.now(),
+                        created_at = timezone.now(),
+                        created_by = request.user.id,
                         question=question,
                         statut_reponse=statut or "Faux",
                     )
@@ -908,4 +1009,259 @@ def add_qcm_cours_session(request, session_id):
             return JsonResponse({"statut": 1, "message": "QCM enregistré avec succès !"})
 
         except Exception as e:
+            print(f'Erreur lors de l\'enregistrement: {e}')
             return JsonResponse({"statut": 0, "message": f"Erreur interne : {e}"})
+
+
+@login_required
+def qcm_cours_session(request, session_id):
+    session = Session.objects.get(id=session_id)
+
+    if session is None:
+        return redirect('sessions')
+
+    statut_session = session.statut_session if session.statut_session else "En attente"
+    classe_css_statut = statut_session.lower().replace(' ', '-')
+    type_cours = TypeCours.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    situation_matrimoniale = SituationMatrimoniale
+    genre = Genre
+    reponse = ReponseEnum
+    tribus = Tribu.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    quartiers = Quartier.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    departements = Departement.objects.filter(deleted_at__isnull=True).order_by('libelle')
+
+    cours_session = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).order_by('-numero_cours')
+    certificat_disponible = Certificat.objects.filter(session_id=session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
+    today = timezone.now().date()
+
+    cheminant_session = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).order_by('-numero_utilisateur')
+    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).count()
+
+    cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
+
+    now = timezone.now()
+    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, is_superuser=False, date_joined__year=now.year, date_joined__month=now.month).count()
+
+    context = {
+        'session': session,
+        'classe_css_statut': classe_css_statut,
+        'cours_session': cours_session,
+        'type_cours': type_cours,
+        'situation_matrimoniale': situation_matrimoniale,
+        'genre': genre,
+        'reponse': reponse,
+        'tribus': tribus,
+        'quartiers': quartiers,
+        'departements': departements,
+        'certificat_disponible': certificat_disponible,
+        'cours_qcm': cours_qcm,
+        'today': today,
+        'nombre_cheminants': nombre_cheminants,
+        'cheminant_session': cheminant_session,
+        'cheminant_mois_en_cours': cheminant_mois_en_cours,
+    }
+
+    return render(request, 'sessions/qcm_cours_session.html', context)
+
+
+@login_required
+def ajax_datatable_qcm_cours_session(request):
+    start = int(request.GET.get('start', 0))
+    length = int(request.GET.get('length', 10))
+    draw = int(request.GET.get('draw', 1))
+
+    sort_column_index = int(request.GET.get('order[0][column]', 0))
+    sort_direction = request.GET.get('order[0][dir]', 'asc')
+
+    search_cours = request.GET.get('cours_id', '')
+
+    queryset = Question.objects.filter(deleted_at__isnull=True)
+
+    # Filtres
+    if search_cours:
+        queryset = queryset.filter(cours_id=search_cours)
+
+    # Tri
+    sort_columns = {
+        0: 'libelle',
+        2: 'point',
+        1: 'date_publication',
+        3: 'statut_question',
+        4: 'cours_id',
+    }
+
+    sort_column = sort_columns.get(sort_column_index, 'id')
+    if sort_direction == 'desc':
+        sort_column = '-' + sort_column
+
+    queryset = queryset.order_by(sort_column)
+
+    # Pagination
+    total_records = queryset.count()
+
+    if length == -1:
+        page_queryset = queryset  # pas de pagination
+    else:
+        page_number = start // length + 1
+        paginator = Paginator(queryset, length)
+        try:
+            page_queryset = paginator.page(page_number)
+        except EmptyPage:
+            page_queryset = paginator.page(paginator.num_pages)
+
+        # Formatage des données
+        data = []
+        for qcm in page_queryset:
+            detail_url = reverse('detail_session_cours_qcm', args=[qcm.id])
+            edit_url = reverse('update_session_cours_qcm', args=[qcm.id])
+
+            # Bouton "Détails"
+            actions_html = f'<span class="btn_detail_qcm btn btn-info btn-xs mr-5 text-center" data-qcm_cours_id="{qcm.id}" data-model_name="qcm_cours" data-modal_title="Détail du QCM" data-href="{detail_url}"><i class="fa fa-eye"></i></span>'
+
+            # Bouton "Modifier"
+            if request.user.is_superadmin:
+                actions_html += f'<span class="btn_modifier_qcm_cours btn btn-warning btn-xs mr-5 text-center" data-qcm_cours_id="{qcm.id}" data-model_name="qcm_cours" data-modal_title="Modifier le QCM" data-href="{edit_url}"><i class="fa fa-edit"></i></span>'
+
+            # Bouton "Supprimer"
+            if request.user.is_superadmin:
+                actions_html += f'<span class="btn_supprimer_qcm_cours btn btn-danger btn-xs text-center" data-qcm_cours_id="{qcm.id}"><i class="fa fa-trash-o"></i></span>'
+
+            if qcm.cours_id:
+                statut_html = f'<span class="badge badge-{qcm.statut_question.lower().replace(" ", "-")}">{qcm.statut_question}</span>'
+            else:
+                statut_html = '<span class="badge badge-secondary">En attente</span>'
+
+            reponses = ''
+
+            data.append({
+                "id": qcm.id,
+                "libelle": qcm.libelle if qcm.libelle else "",
+                "total_point": qcm.point if qcm.point else "",
+                "date_publication": qcm.date_publication.strftime("%d/%m/%Y") if qcm.date_publication else "",
+                "reponses": reponses,
+                "statut": statut_html,
+                "actions": actions_html,
+            })
+
+        return JsonResponse({
+            "data": data,
+            "recordsTotal": total_records,
+            "recordsFiltered": total_records,
+            "draw": draw,
+        })
+
+
+@login_required
+def detail_session_cours_qcm(request, qcm_id):
+    qcm = Question.objects.get(id=qcm_id)
+
+    if qcm is None:
+        return JsonResponse({
+            'statut': 0,
+            'message': "QCM non trouvé",
+        })
+
+    reponses = Reponse.objects.filter(question_id=qcm.id)
+
+    context = {
+        'qcm': qcm,
+        'reponses': reponses,
+    }
+
+    return render(request, 'partials/detail_question_reponse_modal.html', context)
+
+
+@login_required
+@transaction.atomic
+def update_session_cours_qcm(request, qcm_id):
+    try:
+        qcm = Question.objects.get(id=qcm_id)
+    except Cours.DoesNotExist:
+        return JsonResponse({'statut': 0, 'message': "Question non trouvée"})
+
+    if request.method == 'POST':
+        cours_id = request.POST.get("cours_id")
+        if not cours_id:
+            return JsonResponse({"statut": 0, "errors": {"cours_id": ["Cours obligatoire"]}})
+
+        cours = Cours.objects.get(id=cours_id)
+
+        # Récupérer les listes
+        reponses = request.POST.getlist("reponses[]")
+        types = request.POST.getlist("type_reponses[]")
+        points = request.POST.getlist("points[]")
+
+        # Mise à jour de la question
+        qcm.cours = cours
+        qcm.libelle = request.POST.get("question")
+        qcm.date_publication = timezone.now()
+
+        # recalcul du total des points
+        qcm.point = sum(int(p) for t, p in zip(types, points) if t == "Vrai" and p.isdigit())
+        qcm.save()
+
+        # Supprimer les anciennes réponses avant de recréer
+        Reponse.objects.filter(question=qcm).delete()
+
+        # Réinsertion des réponses
+        for libelle, statut, point in zip(reponses, types, points):
+            if not libelle.strip():
+                continue
+            if not point.strip():
+                continue
+            Reponse.objects.create(
+                libelle=libelle.strip(),
+                point=point.strip(),
+                date_publication=timezone.now(),
+                created_at = timezone.now(),
+                created_by = request.user.id,
+                question=qcm,
+                statut_reponse=statut or "Faux",
+            )
+
+        return JsonResponse({"statut": 1, "message": "QCM mis à jour avec succès !"})
+
+    # GET : renvoyer le modal
+    reponse = ReponseEnum
+
+    reponses = Reponse.objects.filter(question_id=qcm.id, deleted_at__isnull=True).order_by('created_at')
+
+    context = {
+        "qcm":qcm,
+        "reponse":reponse,
+        "reponses":reponses,
+    }
+    return render(request, 'partials/update_question_reponse_modal.html', context)
+
+
+@login_required
+def supprimer_qcm_cours_session(request):
+    if request.method == "POST":
+        qcm_cours_id = request.POST.get('qcm_cours_id')
+
+        try:
+            qcm = Question.objects.get(id=qcm_cours_id)
+            if qcm.pk is not None:
+                # Supprimer ses réponses
+                reponse = Reponse.objects.filter(question_id=qcm.id)
+                reponse.delete()
+
+                # Supprimer la question
+                qcm.delete()
+
+                response = {
+                    'statut': 1,
+                    'message': "Question supprimée avec succès !",
+                }
+            else:
+                response = {
+                    'statut': 0,
+                    'message': "Question non trouvée !",
+                }
+        except Question.DoesNotExist:
+            response = {
+                'statut': 0,
+                'message': "Question non trouvée !",
+            }
+
+        return JsonResponse(response)

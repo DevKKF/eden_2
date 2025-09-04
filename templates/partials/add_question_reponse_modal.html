@@ -18,7 +18,7 @@
               </div>
               <div class="form-group">
                 <label>Cours <span class="required">*</span></label>
-                <select class="form-control" style="width: 100%;" name="cours_id" id="cours_id">
+                <select class="form-control" style="width: 100%;" name="cours_id" id="add_qcm_cours_id">
                   <option value="">Choisir</option>
                   {% for cours in cours_qcm %}
                     <option value="{{ cours.id }}">({{ cours.numero_cours|default_if_none:'' }}) - {{ cours.titre|default_if_none:'' }}</option>
@@ -37,7 +37,7 @@
                         <div class="input-group-addon">
                           <i class="fa fa-question-circle"></i>
                         </div>
-                        <input type="text" name="questions[0]" class="form-control pull-right questions" id="questions">
+                        <input type="text" name="questions[]" class="form-control pull-right questions" id="questions">
                       </div>
                     </div>
                   </div>
@@ -59,15 +59,15 @@
                       </thead>
                       <tbody id="table_body">
                         <tr>
-                          <td><input type="text" class="form-control reponses" name="reponses[0][]" id="reponses"></td>
+                          <td><input type="text" class="form-control reponses" name="reponses[]" id="reponses"></td>
                           <td>
-                            <select class="form-control type_reponses" name="type_reponses[0][]" id="type_reponses">
+                            <select class="form-control type_reponses" name="type_reponses[]" id="type_reponses">
                               <option value="">Choisir</option>
                               <option value="{{ reponse.VRAI }}">{{ reponse.VRAI }}</option>
                               <option value="{{ reponse.FAUX }}">{{ reponse.FAUX }}</option>
                             </select>
                           </td>
-                          <td><input type="text" class="form-control points" name="points[0][]" max="20" id="points"></td>
+                          <td><input type="text" class="form-control points" name="points[]" max="20" id="points"></td>
                           <td>
                             <div class="action_container">
                               <button type="button" class="btn btn-sm btn-danger" onclick="remove_tr(this)">

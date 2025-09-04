@@ -562,6 +562,24 @@ $(document).ready(function () {
     // Initialisation DataTable
     let table = $('#certificat_sessions_datatables').DataTable();
 
+    $(document).on('click', '.btn_detail_certificat', function () {
+        let model_name = $(this).attr('data-model_name');
+        let modal_title = $(this).attr('data-modal_title');
+        let href = $(this).attr('data-href');
+
+        $('#eden_std_dialog_box').load(href, function () {
+
+            $('#modal-detail_certificat').attr('data-backdrop', 'static').attr('data-keyboard', false);
+
+            $('#modal-detail_certificat').find('#btn_valider').attr({ 'data-model_name': model_name, 'data-href': href });
+            $('#modal-detail_certificat').find('.modal-dialog');
+
+            //
+            $('#modal-detail_certificat').modal();
+
+        });
+    });
+
     // Fonction qui active/désactive le bouton
     function updateButtonState() {
         let anyChecked = $('input[name="certificat_ids[]"]:checked').length > 0;
@@ -992,13 +1010,13 @@ $(document).ready(function () {
 
         $('#eden_std_dialog_box').load(href, function () {
 
-            $('#modal-deatil_cours').attr('data-backdrop', 'static').attr('data-keyboard', false);
+            $('#modal-detail_cours').attr('data-backdrop', 'static').attr('data-keyboard', false);
 
-            $('#modal-deatil_cours').find('#btn_valider').attr({ 'data-model_name': model_name, 'data-href': href });
-            $('#modal-deatil_cours').find('.modal-dialog');
+            $('#modal-detail_cours').find('#btn_valider').attr({ 'data-model_name': model_name, 'data-href': href });
+            $('#modal-detail_cours').find('.modal-dialog');
 
             //
-            $('#modal-deatil_cours').modal();
+            $('#modal-detail_cours').modal();
 
         });
     });
@@ -1439,11 +1457,8 @@ $(document).ready(function () {
     /* TODO CHEMINANTS DE LA SESSION DE FORMATION FIN */
 
     /* TODO QCM DU COURS DEBUT */
-    let questionCounter = 0; // Compteur global pour les questions
+    let questionCounter = 0;
 
-    /**
-     * Ajouter une nouvelle question
-     */
     function addQuestion(containerId) {
         let container = document.getElementById(containerId);
         let firstBlock = container.querySelector(".question_block");
@@ -1483,9 +1498,6 @@ $(document).ready(function () {
         container.appendChild(qcmClone);
     }
 
-    /**
-     * Ajouter une réponse dans un tbody donné
-     */
     function addReponse(tbody) {
         let firstTr = tbody.querySelector("tr");
         if (!firstTr) return;
@@ -1499,9 +1511,6 @@ $(document).ready(function () {
         tbody.appendChild(trClone);
     }
 
-    /**
-     * Supprimer une réponse
-     */
     function removeReponse(btn) {
         let tbody = btn.closest("tbody");
         if (tbody && tbody.childElementCount > 1) {
@@ -1511,9 +1520,6 @@ $(document).ready(function () {
         }
     }
 
-    /**
-     * Supprimer une question
-     */
     function removeQuestion(btn) {
         let container = document.getElementById("questions_reponses");
         if (container.querySelectorAll(".question_block").length > 1) {
@@ -1523,9 +1529,6 @@ $(document).ready(function () {
         }
     }
 
-    /* =======================
-       GESTION DES ÉVÉNEMENTS
-    ======================= */
     $(document).on("click", ".btn_add_question", function () {
         addQuestion("questions_reponses");
     });
@@ -1543,9 +1546,6 @@ $(document).ready(function () {
         removeReponse(this);
     });
 
-    /* =======================
-       VALIDATION RÉPONSE : Faux => 0 et max 20
-    ======================= */
     $(document).on("change", ".type_reponses", function () {
         let tr = $(this).closest("tr");
         let pointsInput = tr.find(".points");
@@ -1568,21 +1568,17 @@ $(document).ready(function () {
         let formulaire = $('#form_add_question_reponse');
         let href = formulaire.attr('action');
 
-        // Déclaration de formData au niveau de la portée de la fonction
         let formData = new FormData();
 
-        // Validation manuelle des champs requis
-        let cours_id = $('#cours_id').val().trim();
+        let add_qcm_cours_id = $('#add_qcm_cours_id').val().trim();
 
-        // Variable pour vérifier si tout est valide
         let is_valid = true;
 
-        // Masquer toutes les erreurs et enlever les classes d'erreur
         $('.form-group').removeClass('has-error');
         $('.error-text').hide().text('');
 
-        if (cours_id === '') {
-            $('#cours_id').closest('.form-group').addClass('has-error');
+        if (add_qcm_cours_id === '') {
+            $('#add_qcm_cours_id').closest('.form-group').addClass('has-error');
             is_valid = false;
         }
 
@@ -1650,8 +1646,171 @@ $(document).ready(function () {
                 ]
             });
         } else {
-            notifyWarning('Veuillez renseigner correctement le formulaire');
+            notifyWarning('Veuillez renseigner correctement le formulaire avant de continuer');
         }
+    });
+
+    $(document).on('click', '.btn_detail_qcm', function () {
+        let model_name = $(this).attr('data-model_name');
+        let modal_title = $(this).attr('data-modal_title');
+        let href = $(this).attr('data-href');
+
+        $('#eden_std_dialog_box').load(href, function () {
+
+            $('#modal-detail_qcm').attr('data-backdrop', 'static').attr('data-keyboard', false);
+
+            $('#modal-detail_qcm').find('#btn_valider').attr({ 'data-model_name': model_name, 'data-href': href });
+            $('#modal-detail_qcm').find('.modal-dialog');
+
+            //
+            $('#modal-detail_qcm').modal();
+
+        });
+    });
+
+    $(document).on('click', '.btn_modifier_qcm_cours', function () {
+        let model_name = $(this).attr('data-model_name');
+        let modal_title = $(this).attr('data-modal_title');
+        let href = $(this).attr('data-href');
+
+        $('#eden_std_dialog_box').load(href, function () {
+
+            $('#modal-modification_question_reponse').attr('data-backdrop', 'static').attr('data-keyboard', false);
+
+            $('#modal-modification_question_reponse').find('#btn_valider').attr({ 'data-model_name': model_name, 'data-href': href });
+            $('#modal-modification_question_reponse').find('.modal-dialog');
+
+            //
+            $('#modal-modification_question_reponse').modal();
+
+            //gestion du clique sur valider les modifications
+            $("#btn_save_modification_question_reponse").on('click', function () {
+                let formulaire = $('#form_update_question_reponse');
+                let href = formulaire.attr('action');
+
+                // Déclaration de formData au niveau de la portée de la fonction
+                let formData = new FormData();
+
+                let question = $('#question').val().trim();
+
+                let is_valid = true;
+
+                $('.form-group').removeClass('has-error');
+                $('.error-text').hide().text('');
+
+                if (question === '') {
+                    $('#question').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+
+                if (is_valid) {
+                    let n = noty({
+                        text: 'Voulez-vous vraiment modifier cette question ?',
+                        type: 'warning',
+                        dismissQueue: true,
+                        layout: 'center',
+                        theme: 'defaultTheme',
+                        buttons: [
+                            {
+                                addClass: 'btn btn-primary', text: 'Valider', onClick: function ($noty) {
+                                    $noty.close();
+
+                                    // 👉 Correction : on envoie directement tout le formulaire
+                                    let formData = new FormData(formulaire[0]);
+
+                                    $.ajax({
+                                        type: 'post',
+                                        url: href,
+                                        data: formData,
+                                        processData: false,
+                                        contentType: false,
+                                        success: function (response) {
+                                            if (response.statut == 1) {
+                                                resetFields('#' + formulaire.attr('id'));
+                                                notifySuccess(response.message, function () {
+                                                    location.reload();
+                                                });
+                                            }
+                                            if (response.statut == 0) {
+                                                let errors_list_to_display = '';
+
+                                                for (let field in response.errors) {
+                                                    let messages = response.errors[field].join('<br/>');
+                                                    errors_list_to_display += `<br/><i class="fa fa-arrow-circle-right"></i> ${messages}`;
+
+                                                    // Mettre en rouge le champ concerné
+                                                    $('#' + field).addClass('is-invalid');
+                                                }
+
+                                                // Afficher les erreurs dans l'alerte (CORRIGÉ: référence au bon modal)
+                                                $('#modal-modification_question_reponse .alert .message').html(errors_list_to_display);
+                                                $('#modal-modification_question_reponse .alert').removeClass('hidden').show();
+                                                console.log('errors_list_to_display : ', errors_list_to_display);
+                                            }
+                                        },
+                                        error: function (request, status, error) {
+                                            notifyWarning("Erreur lors de l'enregistrement");
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                addClass: 'btn btn-danger', text: 'Annuler', onClick: function ($noty) {
+                                    $noty.close();
+                                }
+                            }
+                        ]
+                    });
+                } else {
+                    notifyWarning('Veuillez renseigner correctement le formulaire');
+                }
+            });
+
+        });
+    });
+
+    $(document).on('click', '.btn_supprimer_qcm_cours', function () {
+        let qcm_cours_id = $(this).data('qcm_cours_id');
+
+        let n = noty({
+            text: 'Voulez-vous vraiment supprimer cette question ?',
+            type: 'warning',
+            dismissQueue: true,
+            layout: 'center',
+            theme: 'defaultTheme',
+            buttons: [
+                {
+                    addClass: 'btn btn-primary', text: 'Supprimer', onClick: function ($noty) {
+                        $noty.close();
+
+                        //effectuer la suppression
+                        $.ajax({
+                            url: '/dashboard/sessions/qcm-cours-session/delete',
+                            type: 'post',
+                            data: { qcm_cours_id: qcm_cours_id },
+                            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                            success: function (response) {
+                                if (response.statut == 1) {
+                                    notifySuccess(response.message, function () {
+                                        location.reload();
+                                    });
+                                }
+                            },
+                            error: function () {
+                                notifyWarning('Erreur lors de la suppression');
+                            }
+                        });
+
+                    }
+                },
+                {
+                    addClass: 'btn btn-danger', text: 'Annuler', onClick: function ($noty) {
+                        //annuler la suppression
+                        $noty.close();
+                    }
+                }
+            ]
+        });
     });
     /* TODO QCM DU COURS FIN */
 
