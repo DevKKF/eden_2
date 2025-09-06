@@ -1,6 +1,5 @@
 from shared.enum import SituationMatrimoniale
 from utilisateur.models import Utilisateur
-from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.apps import apps
 from django.contrib.auth.models import Permission
@@ -15,7 +14,7 @@ def ajouter_permissions_app_au_groupe(nom_app, groupe):
         content_type = ContentType.objects.get_for_model(model)
         permissions = Permission.objects.filter(content_type=content_type)
         groupe.permissions.add(*permissions)
-    print(f"✅  Permissions de l'app '{nom_app}' ajoutées au groupe '{groupe.name}'.")
+    print(f"✅  Permissions de l'app '{nom_app}' ajoutées.")
 
 
 def run_utilisateurs():
@@ -41,15 +40,6 @@ def run_utilisateurs():
     else:
         print("ℹ️  Utilisateur admin déjà existant.")
 
-    # Créer ou récupérer le groupe SUPERADMIN
-    group, _ = Group.objects.get_or_create(name="SUPERADMIN")
-
-    # Ajouter toutes les permissions des apps concernées
-    ajouter_permissions_app_au_groupe("utilisateur", group)
-    ajouter_permissions_app_au_groupe("parametre", group)
-
-    # Lier l'utilisateur au groupe
-    user.groups.add(group)
     print("✅  Utilisateur lié au groupe SUPERADMIN.")
 
     return user

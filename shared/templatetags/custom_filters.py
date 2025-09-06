@@ -12,3 +12,10 @@ def convert_date_format(value):
 @register.filter
 def format_mille(value):
     return format_milles(value)
+
+
+@register.filter
+def in_list(value, arg):
+    """Vérifie si la valeur est dans une liste séparée par des virgules"""
+    return value in [x.strip() for x in arg.split(',')]
+

@@ -10,14 +10,12 @@ from django.core.files.storage import default_storage
 import uuid
 import os
 
-#Importer les modules nécessaires
-
 # Importer les modèles et formulaires nécessaires
 from parametre.models import TypeCours, Quartier, Tribu, Departement
 from session.forms import SessionForm, CertificatForm, CoursForm, CheminantForm, InscriptionForm
 from session.models import Session, Certificat, Cours, Inscription, Question, Reponse
 from shared.enum import SessionStatut, SituationMatrimoniale, Genre, StatutCertificat, ReponseEnum
-from shared.helpers import convert_date_any_format
+from shared.helpers import convert_date_any_format, relation_entre_table
 from utilisateur.models import Utilisateur
 
 
@@ -102,11 +100,11 @@ def ajax_datatable_session(request):
 
             # Bouton "Modifier"
             if request.user.is_superadmin:
-                actions_html += f'<span class="btn_modifier_session btn btn-warning btn-xs mr-5" data-session_id="{sess.id}" data-model_name="session" data-modal_title="Modifier la session" data-href="{edit_url}"><i class="fa fa-edit"></i></span>'
+                actions_html += f'<span class="btn_modifier_session btn btn-warning btn-xs mr-5 mt-3" data-session_id="{sess.id}" data-model_name="session" data-modal_title="Modifier la session" data-href="{edit_url}"><i class="fa fa-edit"></i></span>'
 
             # Bouton "Supprimer"
             if request.user.is_superadmin:
-                actions_html += f'<span class="btn_supprimer_session btn btn-danger btn-xs" data-session_id="{sess.id}"><i class="fa fa-trash-o"></i></span>'
+                actions_html += f'<span class="btn_supprimer_session btn btn-danger btn-xs mt-3" data-session_id="{sess.id}"><i class="fa fa-trash-o"></i></span>'
 
             if sess.statut_session:
                 statut_html = f'<span class="badge badge-{sess.statut_session.lower().replace(" ", "-")}">{sess.statut_session}</span>'
@@ -151,13 +149,13 @@ def detail_session(request, session_id):
     certificat_disponible = Certificat.objects.filter(session_id=session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
     today = timezone.now().date()
 
-    cheminant_session = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).order_by('-numero_utilisateur')
-    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).count()
+    cheminant_session = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True).order_by('-numero_utilisateur')
+    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True).count()
 
     cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
     now = timezone.now()
-    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, is_superuser=False, date_joined__year=now.year, date_joined__month=now.month).count()
+    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True, date_joined__year=now.year, date_joined__month=now.month).count()
 
     context = {
         'session': session,
@@ -246,6 +244,13 @@ def supprimer_session(request):
 
         session = Session.objects.get(id=session_id)
         if session.pk is not None:
+
+            if relation_entre_table(session):
+                return JsonResponse({
+                    'statut': 0,
+                    'message': "Impossible de supprimer : cette session est encore utilisée dans une autre table.",
+                })
+
             session.delete()
             response = {
                 'statut': 1,
@@ -284,13 +289,13 @@ def certificats_session(request, session_id):
     certificat_disponible = Certificat.objects.filter(session_id=session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
     today = timezone.now().date()
 
-    cheminant_session = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).order_by('-numero_utilisateur')
-    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).count()
+    cheminant_session = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True).order_by('-numero_utilisateur')
+    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True).count()
 
     cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
     now = timezone.now()
-    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, is_superuser=False, date_joined__year=now.year, date_joined__month=now.month).count()
+    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True, date_joined__year=now.year, date_joined__month=now.month).count()
 
     context = {
         'session': session,
@@ -380,7 +385,7 @@ def detail_session_certificat(request, certificat_id):
             'message': "Certificat non trouvé",
         })
 
-    cheminant = Utilisateur.objects.get(certificat_id=certificat_id)
+    cheminant = Utilisateur.objects.filter(certificat_id=certificat_id)
 
     context = {
         'certificat': certificat,
@@ -394,16 +399,40 @@ def detail_session_certificat(request, certificat_id):
 def delete_certificats(request):
     if request.method == 'POST':
         certificats_ids = request.POST.getlist('certificats_ids[]')
+
         try:
             certificats = Certificat.objects.filter(id__in=certificats_ids)
-            if certificats.exists():
-                certificats.delete()
-                return JsonResponse({'statut': 1, 'message': 'Certificats supprimés avec succès.'})
-            else:
-                return JsonResponse({'statut': 0, 'message': 'Aucun certificat trouvé.'}, status=400)
+            if not certificats.exists():
+                return JsonResponse({
+                    'statut': 0,
+                    'message': 'Aucun certificat trouvé.'
+                }, status=400)
+
+            supprimes = 0
+            ignores = 0
+
+            for certificat in certificats:
+                if relation_entre_table(certificat):
+                    ignores += 1
+                else:
+                    certificat.delete()
+                    supprimes += 1
+
+            return JsonResponse({
+                'statut': 1,
+                'message': f'{supprimes} certificats supprimés, {ignores} ignorés car encore utilisés.'
+            })
+
         except Exception as e:
-            return JsonResponse({'statut': 0, 'message': 'Erreur lors de la suppression.'}, status=500)
-    return JsonResponse({'statut': 0, 'message': 'Méthode non autorisée.'}, status=405)
+            return JsonResponse({
+                'statut': 0,
+                'message': f'Erreur lors de la suppression : {str(e)}'
+            }, status=500)
+
+    return JsonResponse({
+        'statut': 0,
+        'message': 'Méthode non autorisée.'
+    }, status=405)
 
 
 @login_required
@@ -467,13 +496,13 @@ def cours_session(request, session_id):
     certificat_disponible = Certificat.objects.filter(session_id=session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
     today = timezone.now().date()
 
-    cheminant_session = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).order_by('-numero_utilisateur')
-    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).count()
+    cheminant_session = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True).order_by('-numero_utilisateur')
+    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True).count()
 
     cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
     now = timezone.now()
-    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, is_superuser=False, date_joined__year=now.year, date_joined__month=now.month).count()
+    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True, date_joined__year=now.year, date_joined__month=now.month).count()
 
     context = {
         'session': session,
@@ -574,6 +603,13 @@ def supprimer_cours(request):
 
         cours = Cours.objects.get(id=cours_id)
         if cours.pk is not None:
+
+            if relation_entre_table(cours):
+                return JsonResponse({
+                    'statut': 0,
+                    'message': "Impossible de supprimer : ce cours est encore utilisé dans une autre table.",
+                })
+
             cours.delete()
             response = {
                 'statut': 1,
@@ -721,13 +757,13 @@ def cheminant_session(request, session_id):
     certificat_disponible = Certificat.objects.filter(session_id=session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
     today = timezone.now().date()
 
-    cheminant_session = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).order_by('-numero_utilisateur')
-    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).count()
+    cheminant_session = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True).order_by('-numero_utilisateur')
+    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True).count()
 
     cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
     now = timezone.now()
-    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, is_superuser=False, date_joined__year=now.year, date_joined__month=now.month).count()
+    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True, date_joined__year=now.year, date_joined__month=now.month).count()
 
     context = {
         'session': session,
@@ -835,6 +871,13 @@ def supprimer_cheminant(request):
         try:
             cheminant = Utilisateur.objects.get(id=cheminant_id)
             if cheminant.pk is not None:
+
+                if relation_entre_table(cheminant):
+                    return JsonResponse({
+                        'statut': 0,
+                        'message': "Impossible de supprimer : ce cheminant est encore utilisé dans une autre table.",
+                    })
+
                 # Supprimer la photo si elle existe
                 if cheminant.photo and default_storage.exists(cheminant.photo.path):
                     try:
@@ -1034,13 +1077,13 @@ def qcm_cours_session(request, session_id):
     certificat_disponible = Certificat.objects.filter(session_id=session.id, date_utilisation__isnull=True, deleted_at__isnull=True).order_by('numero_certificat')
     today = timezone.now().date()
 
-    cheminant_session = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).order_by('-numero_utilisateur')
-    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, is_superuser=False).count()
+    cheminant_session = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True).order_by('-numero_utilisateur')
+    nombre_cheminants = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True).count()
 
     cours_qcm = Cours.objects.filter(session_id=session.id, deleted_at__isnull=True).exclude(statut_cours=SessionStatut.TERMINE).order_by('-numero_cours')
 
     now = timezone.now()
-    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, is_superuser=False, date_joined__year=now.year, date_joined__month=now.month).count()
+    cheminant_mois_en_cours = Utilisateur.objects.filter(session_id=session.id, user_etudiant=True, date_joined__year=now.year, date_joined__month=now.month).count()
 
     context = {
         'session': session,
@@ -1242,6 +1285,13 @@ def supprimer_qcm_cours_session(request):
         try:
             qcm = Question.objects.get(id=qcm_cours_id)
             if qcm.pk is not None:
+
+                if relation_entre_table(qcm):
+                    return JsonResponse({
+                        'statut': 0,
+                        'message': "Impossible de supprimer : ce QCM est encore utilisé dans une autre table.",
+                    })
+
                 # Supprimer ses réponses
                 reponse = Reponse.objects.filter(question_id=qcm.id)
                 reponse.delete()

@@ -40,6 +40,9 @@ class Utilisateur(AbstractUser):
     photo = models.ImageField(upload_to=upload_photo, null=True, blank=True)
     statut_compte = models.fields.CharField(choices=UserCompteStatut.choices, default=UserCompteStatut.ACTIVE, max_length=20, null=True)
 
+    user_admin = models.BooleanField(default=False)
+    user_etudiant = models.BooleanField(default=False)
+
     class Meta:
         db_table = 'utilisateurs'
         verbose_name = "Utilisateurs"
@@ -47,22 +50,18 @@ class Utilisateur(AbstractUser):
 
     @property
     def is_superadmin(self):
-        if self.groups.filter(name__contains='SUPERADMIN').first() is not None:
-            return True
-        return False
+        # utilise directement le champ is_superuser hérité d’AbstractUser
+        return self.is_superuser
 
     @property
     def is_admin(self):
-        if self.groups.filter(name__contains='ADMIN').first() is not None:
-            return True
-        return False
+        return self.user_admin
 
     @property
-    def is_utilisateur(self):
-        if self.groups.filter(name__contains='UTILISATEUR').first() is not None:
-            return True
-        return False
+    def is_etudiant(self):
+        return self.user_etudiant
 
     def __str__(self):
         return f'{self.nom} {self.prenoms}'
+
 

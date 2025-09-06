@@ -43,39 +43,41 @@
             </div>
           <div class="col-md-12 table-responsive">
             <br>
-            <table id="cours_sessions_datatables" class="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th class="d-none"></th>
-                  <th>Numéro cours</th>
-                  <th>Titre</th>
-                  <th>Type de cours</th>
-                  <th>Date publication</th>
-                  <th>Statut</th>
-                  <th class="text-center button_action">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for cours in cours_session %}
+            <div class="table-responsive">
+                <table id="cours_sessions_datatables" class="table table-bordered table-striped">
+                  <thead>
                     <tr>
-                      <tb class="d-none"></tb>
-                      <td>{{ cours.numero_cours|default_if_none:'' }}</td>
-                      <td>{{ cours.titre|default_if_none:'' }}</td>
-                      <td>{{ cours.type_cours.libelle|default_if_none:'' }}</td>
-                      <td>{{ cours.date_publication|date:'d/m/Y' }}</td>
-                      <td><span class="badge badge-{{ cours.statut_cours|lower|slugify }}">{{ cours.statut_cours }}</span></td>
-                      <td class="text-center button_action">
-                          <span class="btn_detail_cours btn btn-info btn-xs" data-cours_id="{{cours.id}}" data-model_name="cours" data-modal_title="Détail du cours" data-href="{% url 'detail_session_cours' cours.id %}"><i class="fa fa-eye"></i></span>
-                          <span class="btn_modifier_cours btn btn-warning btn-xs" data-cours_id="{{cours.id}}" data-model_name="cours" data-modal_title="Modifier le cours" data-href="{% url 'update_session_cours' cours.id %}"><i class="fa fa-edit"></i></span>
-                          {% if cours.date_activation is none %}
-                            <span class="btn_activer_cours btn btn-success btn-xs" data-cours_id="{{cours.id}}"><i class="fa fa-check"></i></span>
-                          {% endif %}
-                          <span class="btn_supprimer_cours btn btn-danger btn-xs" data-cours_id="{{cours.id}}"><i class="fa fa-trash"></i></span>
-                      </td>
+                      <th class="d-none"></th>
+                      <th>Numéro cours</th>
+                      <th>Titre</th>
+                      <th>Type de cours</th>
+                      <th>Date publication</th>
+                      <th>Statut</th>
+                      <th class="text-center button_action">Actions</th>
                     </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    {% for cours in cours_session %}
+                        <tr>
+                          <tb class="d-none"></tb>
+                          <td>{{ cours.numero_cours|default_if_none:'' }}</td>
+                          <td>{{ cours.titre|default_if_none:'' }}</td>
+                          <td>{{ cours.type_cours.libelle|default_if_none:'' }}</td>
+                          <td>{{ cours.date_publication|date:'d/m/Y' }}</td>
+                          <td><span class="badge badge-{{ cours.statut_cours|lower|slugify }}">{{ cours.statut_cours }}</span></td>
+                          <td class="text-center button_action">
+                              <span class="btn_detail_cours btn btn-info btn-xs" data-cours_id="{{cours.id}}" data-model_name="cours" data-modal_title="Détail du cours" data-href="{% url 'detail_session_cours' cours.id %}"><i class="fa fa-eye"></i></span>
+                              <span class="btn_modifier_cours btn btn-warning btn-xs" data-cours_id="{{cours.id}}" data-model_name="cours" data-modal_title="Modifier le cours" data-href="{% url 'update_session_cours' cours.id %}"><i class="fa fa-edit"></i></span>
+                              {% if cours.date_activation is none %}
+                                <span class="btn_activer_cours btn btn-success btn-xs" data-cours_id="{{cours.id}}"><i class="fa fa-check"></i></span>
+                              {% endif %}
+                              <span class="btn_supprimer_cours btn btn-danger btn-xs" data-cours_id="{{cours.id}}"><i class="fa fa-trash"></i></span>
+                          </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
           </div>
           </div>
         </div>

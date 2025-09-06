@@ -1,0 +1,70 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+    Groupes d'utilisateurs
+{% endblock %}
+
+{% block content %}
+<section class="content-header">
+  <h1 class="f-bold">
+    Liste des utilisateurs
+  </h1>
+  <ol class="breadcrumb">
+    <li><span class="btn btn-info centre_influence_degrade" data-toggle="modal" data-target="#modal-add_utilisateur"><i class="fa fa-plus-circle"></i> Nouveau utilisateur</span></li>
+  </ol>
+</section>
+<section class="content mt-5">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-success">
+        <div class="box-header with-border">
+          <h3 class="box-title"><i class="fa fa-list"></i> Liste des utilisateurs</h3>
+        </div>
+        <div class="box-body table-responsive">
+          <table id="utilisateur_datatables" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th class="d-none"></th>
+              <th>#</th>
+              <th>Nom & Prénoms</th>
+              <th>Téléphone</th>
+              <th>Login</th>
+              <th>Date inscription</th>
+              <th class="text-center button_action">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for utilisateur in utilisateurs %}
+                    {% if utilisateur.id != request.user.id %}
+                        <tr>
+                          <td class="d-none"></td>
+                          <td>
+                              {% if utilisateur.photo %}
+                                  <img src="{{utilisateur.photo.url|default_if_none:''}}" class="img-circle" width="35" alt="{{ utilisateur.nom|default_if_none:'' }} {{ utilisateur.prenoms|default_if_none:'' }}">
+                              {% else %}
+                                  <img src="{% static 'dist/img/avatar.png' %}" class="img-circle" width="35" alt="">
+                              {% endif %}
+                          </td>
+                          <td>{{ utilisateur.nom|default_if_none:'' }} {{ utilisateur.prenoms|default_if_none:'' }}</td>
+                          <td>{{ utilisateur.telephone|default_if_none:'' }}</td>
+                          <td>{{ utilisateur.username|default_if_none:'' }}</td>
+                          <td>{{ utilisateur.date_joined|date:'d/m/Y' }}</td>
+                          <td class="text-center">
+                            <span class="btn_detail_utilisateur btn btn-info btn-xs" data-utilisateur_id="{{utilisateur.id}}" data-model_name="utilisateur" data-modal_title="Détail l'utilisateur" data-href="{% url 'detail_utilisateur' utilisateur.id %}"><i class="fa fa-eye"></i></span>
+                            <span class="btn_modifier_utilisateur btn btn-warning btn-xs" data-utilisateur_id="{{utilisateur.id}}" data-model_name="utilisateur" data-modal_title="Modifier l'utilisateur" data-href="{% url 'update_utilisateur' utilisateur.id %}"><i class="fa fa-edit"></i></span>
+                            <span class="btn_supprimer_utilisateur btn btn-danger btn-xs" data-utilisateur_id="{{utilisateur.id}}"><i class="fa fa-trash"></i></span>
+                          </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% include 'partials/add_utilisateur_modal.html' %}
+{% endblock %}

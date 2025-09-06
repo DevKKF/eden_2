@@ -426,6 +426,12 @@ $(document).ready(function () {
                                         location.reload();
                                     });
                                 }
+                                if (response.statut == 0) {
+                                    console.log('response : ', response);
+                                    notifyWarning(response.message, function () {
+                                        location.reload();
+                                    });
+                                }
                             },
                             error: function () {
                                 notifyWarning('Erreur lors de la suppression');
@@ -1091,6 +1097,12 @@ $(document).ready(function () {
                                         location.reload();
                                     });
                                 }
+                                if (response.statut == 0) {
+                                    console.log('response : ', response);
+                                    notifyWarning(response.message, function () {
+                                        location.reload();
+                                    });
+                                }
                             },
                             error: function () {
                                 notifyWarning('Erreur lors de la suppression');
@@ -1111,6 +1123,19 @@ $(document).ready(function () {
     /* TODO COURS DE LA SESSION DE FORMATION FIN */
 
     /* TODO CHEMINANTS DE LA SESSION DE FORMATION DEBUT */
+    function calculerAge(dateNaissance) {
+        let aujourdHui = new Date();
+        let dateN = new Date(dateNaissance);
+
+        let age = aujourdHui.getFullYear() - dateN.getFullYear();
+        let mois = aujourdHui.getMonth() - dateN.getMonth();
+
+        if (mois < 0 || (mois === 0 && aujourdHui.getDate() < dateN.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
     $(document).on('click', "#btn_save_cheminant", function () {
         let formulaire = $('#form_add_cheminant');
         let href = formulaire.attr('action');
@@ -1174,6 +1199,13 @@ $(document).ready(function () {
         if (date_naissance === '') {
             $('#date_naissance').closest('.form-group').addClass('has-error');
             is_valid = false;
+        } else {
+            let age = calculerAge(date_naissance);
+            if (age < 16) {
+                $('#date_naissance').closest('.form-group').addClass('has-error');
+                notifyWarning("L'âge minimum requis est de 16 ans");
+                is_valid = false;
+            }
         }
         if (tribu_id === '') {
             $('#tribu_id').closest('.form-group').addClass('has-error');
@@ -1323,6 +1355,13 @@ $(document).ready(function () {
                 if (date_naissance === '') {
                     $('#edit_date_naissance').closest('.form-group').addClass('has-error');
                     is_valid = false;
+                } else {
+                    let age = calculerAge(edit_date_naissance);
+                    if (age < 16) {
+                        $('#edit_date_naissance').closest('.form-group').addClass('has-error');
+                        notifyWarning("L'âge minimum requis est de 16 ans");
+                        is_valid = false;
+                    }
                 }
                 if (tribu_id === '') {
                     $('#edit_tribu_id').closest('.form-group').addClass('has-error');
@@ -1434,6 +1473,12 @@ $(document).ready(function () {
                             success: function (response) {
                                 if (response.statut == 1) {
                                     notifySuccess(response.message, function () {
+                                        location.reload();
+                                    });
+                                }
+                                if (response.statut == 0) {
+                                    console.log('response : ', response);
+                                    notifyWarning(response.message, function () {
                                         location.reload();
                                     });
                                 }
@@ -1795,6 +1840,12 @@ $(document).ready(function () {
                                         location.reload();
                                     });
                                 }
+                                if (response.statut == 0) {
+                                    console.log('response : ', response);
+                                    notifyWarning(response.message, function () {
+                                        location.reload();
+                                    });
+                                }
                             },
                             error: function () {
                                 notifyWarning('Erreur lors de la suppression');
@@ -1813,6 +1864,378 @@ $(document).ready(function () {
         });
     });
     /* TODO QCM DU COURS FIN */
+
+    /* TODO UTILISATEURS DEBUT */
+    $(document).on('click', "#btn_save_utilisateur", function () {
+        let formulaire = $('#form_add_utilisateur');
+        let href = formulaire.attr('action');
+
+        // Déclaration de formData au niveau de la portée de la fonction
+        let formData = new FormData();
+
+        let UtilisateurFichierInput = $('#form_add_utilisateur #photo');
+
+        let files = [];
+        if (UtilisateurFichierInput.length > 0) {
+            files = UtilisateurFichierInput[0].files;
+        }
+
+        // Validation manuelle des champs requis
+        let nom = $('#nom').val().trim();
+        let prenoms = $('#prenoms').val().trim();
+        let telephone = $('#telephone').val().trim();
+        let username = $('#username').val().trim();
+        let niveau_access = $('#niveau_access').val().trim();
+        let situation_matrimoniale = $('#situation_matrimoniale').val().trim();
+        let password1 = $('#password1').val().trim();
+        let password2 = $('#password2').val().trim();
+
+        // Variable pour vérifier si tout est valide
+        let is_valid = true;
+
+        // Masquer toutes les erreurs et enlever les classes d'erreur
+        $('.form-group').removeClass('has-error');
+
+        if (nom === '') {
+            $('#nom').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (prenoms === '') {
+            $('#prenoms').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (telephone === '') {
+            $('#telephone').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (username === '') {
+            $('#username').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (niveau_access === '') {
+            $('#niveau_access').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (situation_matrimoniale === '') {
+            $('#situation_matrimoniale').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (password1 === '') {
+            $('#password1').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (password1 !== '' && password1.length < 6) {
+            $('#password1').closest('.form-group').addClass('has-error');
+            is_valid = false;
+            notifyWarning('Le mot de passe doit contenir au moins 6 caractères');
+        }
+        if (password2 === '') {
+            $('#password2').closest('.form-group').addClass('has-error');
+            is_valid = false;
+        }
+        if (password1 !== '' && password2 !== '' && password1 !== password2) {
+            $('#password1').closest('.form-group').addClass('has-error');
+            $('#password2').closest('.form-group').addClass('has-error');
+            is_valid = false;
+            notifyWarning('Les mots de passe ne correspondent pas conforme');
+        }
+
+        // Si tout est valide, afficher la modale de confirmation
+
+        if (is_valid) {
+            let n = noty({
+                text: 'Voulez-vous vraiment enregistrer cet utilisateur ?',
+                type: 'warning',
+                dismissQueue: true,
+                layout: 'center',
+                theme: 'defaultTheme',
+                buttons: [
+                    {
+                        addClass: 'btn btn-primary', text: 'Valider', onClick: function ($noty) {
+                            $noty.close();
+
+                            // Use serializeArray() which is more reliable
+                            let form_data_array = formulaire.serializeArray();
+                            $.each(form_data_array, function (index, obj) {
+                                formData.append(obj.name, obj.value);
+                            });
+
+                            // Ajout du fichier correctement
+                            if (files.length > 0) {
+                                formData.append(UtilisateurFichierInput.attr('name'), files[0]);
+                            }
+
+                            $.ajax({
+                                type: 'post',
+                                url: href,
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                success: function (response) {
+                                    if (response.statut == 1) {
+                                        resetFields('#' + formulaire.attr('id'));
+                                        notifySuccess(response.message, function () {
+                                            location.reload();
+                                        });
+                                    }
+                                    if (response.statut == 0) {
+                                        let errors_list_to_display = '';
+
+                                        for (let field in response.errors) {
+                                            let messages = response.errors[field].join('<br/>');
+                                            errors_list_to_display += `<br/><i class="fa fa-arrow-circle-right"></i> ${messages}`;
+
+                                            // Mettre en rouge le champ concerné
+                                            $('#' + field).addClass('is-invalid');
+                                        }
+
+                                        // Afficher les erreurs dans l'alerte
+                                        $('#modal-add_utilisateur .alert .message').html(errors_list_to_display);
+                                        $('#modal-add_utilisateur .alert').removeClass('hidden').show();
+                                        console.log('errors_list_to_display : ', errors_list_to_display);
+                                    }
+                                },
+                                error: function (request, status, error) {
+                                    notifyWarning("Erreur lors de l'enregistrement");
+                                }
+                            });
+                        }
+                    },
+                    {
+                        addClass: 'btn btn-danger', text: 'Annuler', onClick: function ($noty) {
+                            $noty.close();
+                        }
+                    }
+                ]
+            });
+        } else {
+            notifyWarning('Veuillez renseigner correctement le formulaire');
+        }
+    });
+
+    $(document).on('click', '.btn_detail_utilisateur', function () {
+        let model_name = $(this).attr('data-model_name');
+        let modal_title = $(this).attr('data-modal_title');
+        let href = $(this).attr('data-href');
+
+        $('#eden_std_dialog_box').load(href, function () {
+
+            $('#modal-detail_utilisateur').attr('data-backdrop', 'static').attr('data-keyboard', false);
+
+            $('#modal-detail_utilisateur').find('#btn_valider').attr({ 'data-model_name': model_name, 'data-href': href });
+            $('#modal-detail_utilisateur').find('.modal-dialog');
+
+            //
+            $('#modal-detail_utilisateur').modal();
+
+        });
+    });
+
+    $(document).on('click', '.btn_modifier_utilisateur', function () {
+        let model_name = $(this).attr('data-model_name');
+        let modal_title = $(this).attr('data-modal_title');
+        let href = $(this).attr('data-href');
+
+        $('#eden_std_dialog_box').load(href, function () {
+
+            manage_update_type_cours_change()
+
+            $('#modal-modification_utilisateur').attr('data-backdrop', 'static').attr('data-keyboard', false);
+
+            $('#modal-modification_utilisateur').find('#btn_valider').attr({ 'data-model_name': model_name, 'data-href': href });
+            $('#modal-modification_utilisateur').find('.modal-dialog');
+
+            //
+            $('#modal-modification_utilisateur').modal();
+
+            //gestion du clique sur valider les modifications
+            $("#btn_save_modification_utilisateur").on('click', function () {
+                let formulaire = $('#form_update_utilisateur');
+                let href = formulaire.attr('action');
+
+                // Déclaration de formData au niveau de la portée de la fonction
+                let formData = new FormData();
+
+                // Validation manuelle des champs requis
+                let nom = $('#edit_nom').val().trim();
+                let prenoms = $('#edit_prenoms').val().trim();
+                let telephone = $('#edit_telephone').val().trim();
+                let username = $('#edit_username').val().trim();
+                let niveau_access = $('#edit_niveau_access').val().trim();
+                let situation_matrimoniale = $('#edit_situation_matrimoniale').val().trim();
+                let password1 = $('#edit_password1').val().trim();
+                let password2 = $('#edit_password2').val().trim();
+
+                // Variable pour vérifier si tout est valide
+                let is_valid = true;
+
+                // Masquer toutes les erreurs et enlever les classes d'erreur
+                $('.form-group').removeClass('has-error');
+
+                if (nom === '') {
+                    $('#edit_nom').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (prenoms === '') {
+                    $('#edit_prenoms').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (telephone === '') {
+                    $('#edit_telephone').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (username === '') {
+                    $('#edit_username').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (niveau_access === '') {
+                    $('#edit_niveau_access').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (situation_matrimoniale === '') {
+                    $('#edit_situation_matrimoniale').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                }
+                if (password1 !== '' && password1.length < 6) {
+                    $('#edit_password1').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                    notifyWarning('Le mot de passe doit contenir au moins 6 caractères');
+                }
+                if (password1 !== '' && password2 !== '' && password1 !== password2) {
+                    $('#edit_password1').closest('.form-group').addClass('has-error');
+                    $('#edit_password2').closest('.form-group').addClass('has-error');
+                    is_valid = false;
+                    notifyWarning('Les mots de passe ne correspondent pas conforme');
+                }
+
+                // Récupérer le bon input file en fonction du type choisi
+                let UtilisateurFichierInput = $('#form_update_utilisateur #edit_photo');
+
+                let files = [];
+                if (UtilisateurFichierInput.length > 0) {
+                    files = UtilisateurFichierInput[0].files;
+                }
+
+                if (is_valid) {
+                    let n = noty({
+                        text: 'Voulez-vous vraiment enregistrer modifier ce cheminant ?',
+                        type: 'warning',
+                        dismissQueue: true,
+                        layout: 'center',
+                        theme: 'defaultTheme',
+                        buttons: [
+                            {
+                                addClass: 'btn btn-primary', text: 'Valider', onClick: function ($noty) {
+                                    $noty.close();
+
+                                    // Use serializeArray() which is more reliable
+                                    let form_data_array = formulaire.serializeArray();
+                                    $.each(form_data_array, function (index, obj) {
+                                        formData.append(obj.name, obj.value);
+                                    });
+
+                                    // Ajout du fichier correctement
+                                    if (files.length > 0) {
+                                        formData.append(UtilisateurFichierInput.attr('name'), files[0]);
+                                    }
+
+                                    $.ajax({
+                                        type: 'post',
+                                        url: href,
+                                        data: formData,
+                                        processData: false,
+                                        contentType: false,
+                                        success: function (response) {
+                                            if (response.statut == 1) {
+                                                resetFields('#' + formulaire.attr('id'));
+                                                notifySuccess(response.message, function () {
+                                                    location.reload();
+                                                });
+                                            }
+                                            if (response.statut == 0) {
+                                                let errors_list_to_display = '';
+
+                                                for (let field in response.errors) {
+                                                    let messages = response.errors[field].join('<br/>');
+                                                    errors_list_to_display += `<br/><i class="fa fa-arrow-circle-right"></i> ${messages}`;
+                                                    $('#' + field).addClass('is-invalid');
+                                                }
+
+                                                $('#modal-modification_utilisateur .alert .message').html(errors_list_to_display);
+                                                $('#modal-modification_utilisateur .alert').removeClass('hidden').show();
+                                            }
+                                        },
+                                        error: function (request, status, error) {
+                                            notifyWarning("Erreur lors de l'enregistrement");
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                addClass: 'btn btn-danger', text: 'Annuler', onClick: function ($noty) {
+                                    $noty.close();
+                                }
+                            }
+                        ]
+                    });
+                } else {
+                    notifyWarning('Veuillez renseigner correctement le formulaire');
+                }
+            });
+
+        });
+    });
+
+    $(document).on('click', '.btn_supprimer_utilisateur', function () {
+        let utilisateur_id = $(this).data('utilisateur_id');
+
+        let n = noty({
+            text: 'Voulez-vous vraiment supprimer cet utilisateur ?',
+            type: 'warning',
+            dismissQueue: true,
+            layout: 'center',
+            theme: 'defaultTheme',
+            buttons: [
+                {
+                    addClass: 'btn btn-primary', text: 'Supprimer', onClick: function ($noty) {
+                        $noty.close();
+
+                        //effectuer la suppression
+                        $.ajax({
+                            url: '/dashboard/utilisateur/delete',
+                            type: 'post',
+                            data: { utilisateur_id: utilisateur_id },
+                            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                            success: function (response) {
+                                if (response.statut == 1) {
+                                    notifySuccess(response.message, function () {
+                                        location.reload();
+                                    });
+                                }
+                                if (response.statut == 0) {
+                                    console.log('response : ', response);
+                                    notifyWarning(response.message, function () {
+                                        location.reload();
+                                    });
+                                }
+                            },
+                            error: function () {
+                                notifyWarning('Erreur lors de la suppression');
+                            }
+                        });
+
+                    }
+                },
+                {
+                    addClass: 'btn btn-danger', text: 'Annuler', onClick: function ($noty) {
+                        //annuler la suppression
+                        $noty.close();
+                    }
+                }
+            ]
+        });
+    });
+    /* TODO UTILISATEURS FIN */
 
 
     // Écouteur d'événement pour retirer la bordure rouge et le message d'erreur, dès que l'utilisateur commence à taper dans le champ.

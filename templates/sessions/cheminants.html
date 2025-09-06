@@ -43,40 +43,48 @@
             </div>
           <div class="col-md-12 table-responsive">
             <br>
-            <table id="cheminant_sessions_datatables" class="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th class="d-none"></th>
-                  <th>#</th>
-                  <th>Numero</th>
-                  <th>Nom & Prénoms</th>
-                  <th>Tribu</th>
-                  <th>Département</th>
-                  <th>Date inscription</th>
-                  <th>Statut</th>
-                  <th class="text-center button_action">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for cheminant in cheminant_session %}
+            <div class="table-responsive">
+                <table id="cheminant_sessions_datatables" class="table table-bordered table-striped">
+                  <thead>
                     <tr>
-                      <td class="d-none"></td>
-                      <td><img src="{{cheminant.photo.url|default_if_none:''}}" class="img-circle" width="35" alt="{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}"></td>
-                      <td>{{ cheminant.numero_utilisateur|default_if_none:'' }}</td>
-                      <td>{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}</td>
-                      <td>{{ cheminant.tribu.libelle|default_if_none:'' }}</td>
-                      <td>{{ cheminant.departement.libelle|default_if_none:'' }}</td>
-                      <td>{{ cheminant.date_joined|date:'d/m/Y' }}</td>
-                      <td><span class="badge badge-{{ cheminant.statut_compte|lower|slugify }}">{{ cheminant.statut_compte }}</span></td>
-                      <td class="text-center">
-                        <a href="{% url 'detail_session_cheminant' cheminant.id %}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i></a>
-                        <span class="btn_modifier_cheminant btn btn-warning btn-xs" data-cheminant_id="{{cheminant.id}}" data-model_name="cheminant" data-modal_title="Modifier le cheminant" data-href="{% url 'update_session_cheminants' cheminant.id %}"><i class="fa fa-edit"></i></span>
-                        <span class="btn_supprimer_cheminant btn btn-danger btn-xs" data-cheminant_id="{{cheminant.id}}"><i class="fa fa-trash"></i></span>
-                      </td>
+                      <th class="d-none"></th>
+                      <th>#</th>
+                      <th>Numero</th>
+                      <th>Nom & Prénoms</th>
+                      <th>Tribu</th>
+                      <th>Département</th>
+                      <th>Date inscription</th>
+                      <th>Statut</th>
+                      <th class="text-center button_action">Actions</th>
                     </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    {% for cheminant in cheminant_session %}
+                        <tr>
+                          <td class="d-none"></td>
+                          <td>
+                              {% if cheminant.photo %}
+                                  <img src="{{cheminant.photo.url|default_if_none:''}}" class="img-circle" width="35" alt="{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}">
+                              {% else %}
+                                  <img src="{% static 'dist/img/avatar.png' %}" class="img-circle" width="35" alt="">
+                              {% endif %}
+                          </td>
+                          <td>{{ cheminant.numero_utilisateur|default_if_none:'' }}</td>
+                          <td>{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}</td>
+                          <td>{{ cheminant.tribu.libelle|default_if_none:'' }}</td>
+                          <td>{{ cheminant.departement.libelle|default_if_none:'' }}</td>
+                          <td>{{ cheminant.date_joined|date:'d/m/Y' }}</td>
+                          <td><span class="badge badge-{{ cheminant.statut_compte|lower|slugify }}">{{ cheminant.statut_compte }}</span></td>
+                          <td class="text-center">
+                            <a href="{% url 'detail_session_cheminant' cheminant.id %}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i></a>
+                            <span class="btn_modifier_cheminant btn btn-warning btn-xs" data-cheminant_id="{{cheminant.id}}" data-model_name="cheminant" data-modal_title="Modifier le cheminant" data-href="{% url 'update_session_cheminants' cheminant.id %}"><i class="fa fa-edit"></i></span>
+                            <span class="btn_supprimer_cheminant btn btn-danger btn-xs" data-cheminant_id="{{cheminant.id}}"><i class="fa fa-trash"></i></span>
+                          </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
           </div>
           </div>
         </div>

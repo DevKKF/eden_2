@@ -259,7 +259,7 @@ class CheminantForm(forms.ModelForm):
 
     def clean_telephone(self):
         telephone = self.cleaned_data.get("telephone")
-        # Skip uniqueness check for the current instance during update
+        # Sauter la vérification de l'unicité pour l'instance actuelle lors de la mise à jour
         if self.instance and self.instance.pk and self.instance.telephone == telephone:
             return telephone
 
@@ -327,6 +327,7 @@ class CheminantForm(forms.ModelForm):
         utilisateur.first_name = self.cleaned_data["nom"]
         utilisateur.last_name = self.cleaned_data["prenoms"]
         utilisateur.is_superuser = False
+        utilisateur.user_etudiant = True
         utilisateur.is_staff = True
         utilisateur.is_active = True
 

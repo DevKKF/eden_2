@@ -20,10 +20,10 @@
       <div class="small-box bg-aqua">
         <div class="inner">
           <h3>{{ cheminant_mois_en_cours|format_mille }}</h3>
-          <p>Cheminants du mois en cours</p>
+          <p>Cheminants : mois en cours</p>
         </div>
         <div class="icon">
-          <i class="ion ion-bag"></i>
+          <i class="fa fa-male"></i><i class="fa fa-female" style="margin-left:-12px"></i>
         </div>
         <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
       </div>
@@ -32,10 +32,10 @@
       <div class="small-box bg-green">
         <div class="inner">
           <h3>53<sup style="font-size: 20px">%</sup></h3>
-          <p>Cheminements ayant abouti</p>
+          <p>Cheminements : abouti</p>
         </div>
         <div class="icon">
-          <i class="ion ion-stats-bars"></i>
+          <i class="fa fa-male"></i><i class="fa fa-female" style="margin-left:-12px"></i>
         </div>
         <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
       </div>
@@ -44,10 +44,10 @@
       <div class="small-box bg-yellow">
         <div class="inner">
           <h3>44</h3>
-          <p>Cheminements interrompu</p>
+          <p>Cheminements : interrompu</p>
         </div>
         <div class="icon">
-          <i class="ion ion-person-add"></i>
+          <i class="fa fa-male mr-5"></i><i class="fa fa-female"></i>
         </div>
         <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
       </div>
@@ -56,10 +56,10 @@
       <div class="small-box bg-red">
         <div class="inner">
           <h3>65</h3>
-          <p>Cheminements abandonnés</p>
+          <p>Cheminements : abandonnés</p>
         </div>
         <div class="icon">
-          <i class="ion ion-pie-graph"></i>
+          <i class="fa fa-male mr-5"></i><i class="fa fa-female"></i>
         </div>
         <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
       </div>
@@ -98,7 +98,13 @@
                 {% for cheminant in cheminants %}
                     <tr>
                       <td class="d-none"></td>
-                      <td><img src="{{cheminant.photo.url|default_if_none:''}}" class="img-circle" width="35" alt="{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}"></td>
+                      <td>
+                          {% if cheminant.photo %}
+                            <img src="{{cheminant.photo.url|default_if_none:''}}" class="img-circle" width="35" alt="{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}">
+                          {% else %}
+                            <img src="{% static 'dist/img/avatar.png' %}" class="img-circle" width="35" alt="{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}">
+                          {% endif %}
+                      </td>
                       <td>{{ cheminant.numero_utilisateur|default_if_none:'' }}</td>
                       <td>{{ cheminant.nom|default_if_none:'' }} {{ cheminant.prenoms|default_if_none:'' }}</td>
                       <td>{{ cheminant.tribu.libelle|default_if_none:'' }}</td>
