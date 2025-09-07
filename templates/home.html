@@ -25,7 +25,7 @@
         <div class="icon">
           <i class="fa fa-male"></i><i class="fa fa-female" style="margin-left:-12px"></i>
         </div>
-        <a href="#" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
+        <a href="{% url 'cheminant_mois_en_cours' %}" class="small-box-footer">Voir plus... <i class="fa fa-arrow-circle-right"></i></a>
       </div>
     </div>
     <div class="col-lg-3 col-xs-6 animate__animated animate__backInLeft">
@@ -177,16 +177,4 @@
     </div>
   </div>
 </section>
-<script>
-$(document).ready(function () {
-    $("#table_search").on("keyup", function () {
-        let value = $(this).val().toLowerCase().trim();
-
-        $("table.table tbody tr").filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-        });
-    });
-});
-</script>
-
 {% endblock %}

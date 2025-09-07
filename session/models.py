@@ -135,7 +135,6 @@ class Question(TimeStampedAuditModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     libelle = models.TextField(blank=True, null=True)
     date_publication = models.DateField(blank=True, null=True, auto_now=False)
-    point = models.IntegerField(null=True)
     cours = models.ForeignKey(Cours, null=True, on_delete=models.RESTRICT, related_name="cours")
     statut_question = models.fields.CharField(choices=StatutGeneral.choices, default=StatutGeneral.VALIDE, max_length=20, null=True)
     
@@ -155,7 +154,6 @@ class Question(TimeStampedAuditModel):
 class Reponse(TimeStampedAuditModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     libelle = models.TextField(blank=True, null=True)
-    point = models.IntegerField(null=True)
     date_publication = models.DateField(blank=True, null=True, auto_now=False)
     question = models.ForeignKey(Question, null=True, on_delete=models.RESTRICT, related_name="questions")
     statut_reponse = models.fields.CharField(choices=ReponseEnum.choices, default=ReponseEnum.VRAI, max_length=20, null=True)
@@ -204,7 +202,6 @@ class ReponseUtilisateur(TimeStampedAuditModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_heure_debut = models.DateTimeField(blank=True, null=True, auto_now=False)
     date_heure_fin = models.DateTimeField(blank=True, null=True, auto_now=False)
-    point_acquis = models.IntegerField(null=True)
     utilisateur = models.ForeignKey("utilisateur.Utilisateur", null=True, on_delete=models.RESTRICT, related_name="reponse_utilisateurs")
     question = models.ForeignKey(Question, null=True, on_delete=models.RESTRICT, related_name="question_reponses")
     reponse = models.ForeignKey(Reponse, null=True, on_delete=models.RESTRICT, related_name="reponse_questions")

@@ -35,7 +35,6 @@
                         <tr>
                           <th>Réponses</th>
                           <th class="text-center" width="20%">Type réponse</th>
-                          <th class="text-center" width="10%">Points</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -49,14 +48,8 @@
                                     <span class="badge badge-danger">Faux</span>
                                   {% endif %}
                                 </td>
-                                <td class="text-center f-bold">{{ reponse.point|default_if_none:0 }}</td>
                               </tr>
                           {% endfor %}
-                          <tr>
-                              <td></td>
-                              <td class="text-center f-bold" style="background:#006C68; color:#fff">POINT TOTAL</td>
-                              <td class="text-center f-bold" style="background:#006C68; color:#fff">{{ qcm.point|default_if_none:0 }}</td>
-                          </tr>
                       </tbody>
                     </table>
                 </div>

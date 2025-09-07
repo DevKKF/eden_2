@@ -47,7 +47,6 @@
                         <tr>
                           <th>Réponses</th>
                           <th class="text-center" width="20%">Type réponse</th>
-                          <th class="text-center" width="10%">Points</th>
                           <th width="50px">
                             <div class="action_container">
                               <button type="button" class="btn btn-sm btn-success" onclick="create_tr('table_body')">
@@ -67,7 +66,6 @@
                               <option value="{{ reponse.FAUX }}">{{ reponse.FAUX }}</option>
                             </select>
                           </td>
-                          <td><input type="text" class="form-control points" name="points[]" max="20" id="points"></td>
                           <td>
                             <div class="action_container">
                               <button type="button" class="btn btn-sm btn-danger" onclick="remove_tr(this)">

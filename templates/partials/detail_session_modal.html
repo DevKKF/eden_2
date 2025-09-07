@@ -9,27 +9,42 @@
         </div>
         <div class="modal-body">
           <div class="row invoice-info">
-            <div class="col-md-4 invoice-col">
-              <p class="f-bold">Nom serssion </p>
-              <p class="f-bold">Date publication</p>
-              <p class="f-bold">Date début</p>
-              <p class="f-bold">Date fin</p>
-              <p class="f-bold">Nombre cheminents</p>
-              <p class="f-bold">Statut</p>
-              <p class="f-bold">Date dernière modification</p>
-            </div>
-            <div class="col-md-8 invoice-col">
-              <p>: {{ session.nom }}</p>
-              <p>: {{ session.date_publication|date:'d/m/Y' }}</p>
-              <p>: {{ session.date_debut|date:'d/m/Y' }}</p>
-              <p>: {{ session.date_fin|date:'d/m/Y' }}</p>
-              <p>: <span class="label label-success">{{ nombre_cheminants }}</span> </p>
-              <p>: <span class="badge badge-{{ classe_css_statut }}">{{ session.statut_session }}</span></p>
-              <p>: {{ session.updated_at|date:'d/m/Y H:m:s' }}</p>
-            </div>
-            <div class="col-md-12">
-              <textarea cols="10" rows="10" class="form-control">{{ session.description }}</textarea>
-            </div>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Nom serssion</th>
+                        <td>{{ session.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date publication</th>
+                        <td>{{ session.date_publication|date:'d/m/Y' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date début</th>
+                        <td>{{ session.date_debut|date:'d/m/Y' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date fin</th>
+                        <td>{{ session.date_fin|date:'d/m/Y' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombre cheminents</th>
+                        <td><span class="badge badge-success">{{ nombre_cheminants }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Statut</th>
+                        <td><span class="badge badge-{{ classe_css_statut }}">{{ session.statut_session }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Date dernière modification</th>
+                        <td>{{ session.updated_at|date:'d/m/Y' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ session.description }}</td>
+                    </tr>
+                </tbody>
+            </table>
           </div>
         </div>
         <div class="modal-footer">

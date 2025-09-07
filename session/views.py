@@ -10,7 +10,6 @@ from django.core.files.storage import default_storage
 import uuid
 import os
 
-# Importer les modèles et formulaires nécessaires
 from parametre.models import TypeCours, Quartier, Tribu, Departement
 from session.forms import SessionForm, CertificatForm, CoursForm, CheminantForm, InscriptionForm
 from session.models import Session, Certificat, Cours, Inscription, Question, Reponse
@@ -98,11 +97,10 @@ def ajax_datatable_session(request):
             # Bouton "Détails"
             actions_html = f'<a href="{detail_url}"><span class="btn btn-info btn-xs mr-5"><i class="fa fa-eye"></i></span></a>'
 
-            # Bouton "Modifier"
-            if request.user.is_superadmin:
+            # Bouton "Modifier" et "Supprimer"
+            if request.user.is_superadmin or request.user.is_admin:
                 actions_html += f'<span class="btn_modifier_session btn btn-warning btn-xs mr-5 mt-3" data-session_id="{sess.id}" data-model_name="session" data-modal_title="Modifier la session" data-href="{edit_url}"><i class="fa fa-edit"></i></span>'
 
-            # Bouton "Supprimer"
             if request.user.is_superadmin:
                 actions_html += f'<span class="btn_supprimer_session btn btn-danger btn-xs mt-3" data-session_id="{sess.id}"><i class="fa fa-trash-o"></i></span>'
 
@@ -945,8 +943,7 @@ def add_qcm_cours_session(request, session_id):
                         questions_data[question_index] = {
                             'libelle': '',
                             'reponses': [],
-                            'types': [],
-                            'points': []
+                            'types': []
                         }
 
                     questions_data[question_index]['libelle'] = value_list[0] if value_list else ''
@@ -960,8 +957,7 @@ def add_qcm_cours_session(request, session_id):
                         questions_data[question_index] = {
                             'libelle': '',
                             'reponses': [],
-                            'types': [],
-                            'points': []
+                            'types': []
                         }
 
                     questions_data[question_index]['reponses'] = value_list
@@ -974,25 +970,10 @@ def add_qcm_cours_session(request, session_id):
                         questions_data[question_index] = {
                             'libelle': '',
                             'reponses': [],
-                            'types': [],
-                            'points': []
+                            'types': []
                         }
 
                     questions_data[question_index]['types'] = value_list
-
-                # Vérifier si ce sont des points
-                elif decoded_key.startswith("points[") and "[]" in decoded_key:
-                    question_index = decoded_key.split("[")[1].split("]")[0]
-
-                    if question_index not in questions_data:
-                        questions_data[question_index] = {
-                            'libelle': '',
-                            'reponses': [],
-                            'types': [],
-                            'points': []
-                        }
-
-                    questions_data[question_index]['points'] = value_list
 
             # Traitement des questions
             for question_index, question_data in questions_data.items():
@@ -1003,24 +984,13 @@ def add_qcm_cours_session(request, session_id):
 
                 reponses = question_data['reponses']
                 types = question_data['types']
-                points = question_data['points']
 
                 # Vérifier que les listes ont la même longueur
-                max_length = max(len(reponses), len(types), len(points))
+                max_length = max(len(reponses), len(types))
 
                 # Étendre les listes si nécessaire
                 reponses.extend([''] * (max_length - len(reponses)))
                 types.extend(['Faux'] * (max_length - len(types)))
-                points.extend(['0'] * (max_length - len(points)))
-
-                # Calcul du total des points de la question (seulement les réponses Vrai)
-                total_points = 0
-                for t, p in zip(types, points):
-                    if t and t.lower() == "vrai" and p.strip():
-                        try:
-                            total_points += int(p)
-                        except ValueError:
-                            pass
 
                 # Création de la question
                 question = Question.objects.create(
@@ -1028,20 +998,16 @@ def add_qcm_cours_session(request, session_id):
                     date_publication=timezone.now(),
                     created_at = timezone.now(),
                     created_by = request.user.id,
-                    point=total_points,
                     cours=cours,
                 )
 
                 # Création des réponses liées
-                for libelle, statut, point in zip(reponses, types, points):
+                for libelle, statut in zip(reponses, types):
                     if not libelle.strip():
-                        continue
-                    if not point.strip():
                         continue
 
                     reponse = Reponse.objects.create(
                         libelle=libelle.strip(),
-                        point=point.strip(),
                         date_publication=timezone.now(),
                         created_at = timezone.now(),
                         created_by = request.user.id,

@@ -284,9 +284,9 @@
                 <div class="input-group">
                   <input type="text" name="q" class="form-control" placeholder="Rerchercher...">
                   <span class="input-group-btn">
-                        <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                        </button>
-                      </span>
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                    </button>
+                  </span>
                 </div>
               </form>
 
@@ -301,7 +301,7 @@
                     <i class="fa fa-users"></i> <span>Sessions de cours</span>
                   </a>
                 </li>
-                <li class="treeview">
+                <li class="{% if request.resolver_match.url_name == 'cheminant_mois_en_cours' or request.resolver_match.url_name == 'detail_cheminant_encours' %}active{% endif %} treeview">
                   <a href="#">
                     <i class="fa fa-male"></i><i class="fa fa-female" style="margin-left:-12px"></i> <span>Cheminants</span>
                     <span class="pull-right-container">
@@ -309,17 +309,19 @@
                     </span>
                   </a>
                   <ul class="treeview-menu">
-                    <li><a href=""><i class="fa fa-circle-o"></i> Cheminants : mois en cours</a></li>
+                    <li class="{% if request.resolver_match.url_name == 'cheminant_mois_en_cours' or request.resolver_match.url_name == 'detail_cheminant_encours' %}active{% endif %}"><a href="{% url 'cheminant_mois_en_cours' %}"><i class="fa fa-circle-o"></i> Cheminants : mois en cours</a></li>
                     <li><a href=""><i class="fa fa-circle-o"></i> Cheminements : abouti</a></li>
                     <li><a href=""><i class="fa fa-circle-o"></i> Cheminements : interrompu</a></li>
                     <li><a href=""><i class="fa fa-circle-o"></i> Cheminements : abandonnés</a></li>
                   </ul>
                 </li>
-                <li class="{% if request.resolver_match.url_name == 'utilisateurs' %}active{% endif %} animate__animated animate__bounceIn">
-                  <a href="{% url 'utilisateurs' %}">
-                    <i class="fa fa-user-plus"></i> <span>Utilisateurs</span>
-                  </a>
-                </li>
+                {% if request.user.is_superadmin %}
+                    <li class="{% if request.resolver_match.url_name == 'utilisateurs' %}active{% endif %} animate__animated animate__bounceIn">
+                      <a href="{% url 'utilisateurs' %}">
+                        <i class="fa fa-user-plus"></i> <span>Utilisateurs</span>
+                      </a>
+                    </li>
+                {% endif %}
               </ul>
             </section>
           </aside>
@@ -398,7 +400,34 @@
             function addSpacesForThousands(x) {
                 return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
             }
+
+            $(document).ready(function () {
+                // Quand on tape dans l'input de recherche
+                $(".sidebar-form input[name='q']").on("keyup", function () {
+                    let value = $(this).val().toLowerCase().trim();
+
+                    // Parcours de tous les <li> dans le menu
+                    $(".sidebar-menu li").filter(function () {
+                        let text = $(this).text().toLowerCase();
+                        let match = text.indexOf(value) > -1;
+
+                        // Si correspondance → on affiche, sinon on cache
+                        $(this).toggle(match);
+
+                        // Si c'est un sous-menu (treeview-menu), on affiche le parent si un enfant correspond
+                        if ($(this).parents(".treeview-menu").length && match) {
+                            $(this).parents("li.treeview").show();
+                        }
+                    });
+                });
+
+                // Bloquer l'envoi du formulaire quand on clique sur le bouton loupe
+                $(".sidebar-form").on("submit", function (e) {
+                    e.preventDefault();
+                });
+            });
         </script>
+
         <input type="hidden" id="eco_base_url" name="eco_base_url" value="{% if request.is_secure %} https://{{ request.get_host }}/ {% else %} http://{{ request.get_host }}/ {% endif %}">
     </body>
 </html>

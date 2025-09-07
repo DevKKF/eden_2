@@ -6,36 +6,59 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-          <h4 class="modal-title f-bold"><i class="fa fa-hourglass-2"></i> DETAIL DU COURS <span class="text-vert_vh">{{ cours.numero_cours }}</span> <span class="badge badge-success pull-right mr-10">Fichier</span></h4>
+          <h4 class="modal-title f-bold"><i class="fa fa-hourglass-2"></i> DETAIL DU COURS</h4>
         </div>
         <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
           <div class="row">
             <div class="col-md-12 mb-10">
-              <div class="col-md-12" style="border:1px solid #ccc">
-                  <div class="row invoice-info">
-                    <div class="col-md-4 invoice-col">
-                      <p class="f-bold">Numero cours </p>
-                      <p class="f-bold">Titre</p>
-                      <p class="f-bold">Sous-titre</p>
-                      <p class="f-bold">Type cours</p>
-                      <p class="f-bold">Date publication</p>
-                      <p class="f-bold">Statut</p>
-                      <p class="f-bold">Date dernière modification</p>
-                    </div>
-                    <div class="col-md-8 invoice-col">
-                      <p>: <span class="badge badge-success">{{ cours.numero_cours|default_if_none:'' }}</span></p>
-                      <p>: {{ cours.titre|default_if_none:'' }}</p>
-                      <p>: {{ cours.sous_titre|default_if_none:'' }}</p>
-                      <p>: {{ cours.type_cours.libelle|default_if_none:'' }}</p>
-                      <p>: {{ cours.date_publication|date:'d/m/Y' }}</p>
-                      <p>: <span class="badge badge-{{ cours.statut_cours|lower|slugify }}">{{ cours.statut_cours }}</span></p>
-                      <p>: {{ cours.updated_at|date:'d/m/Y H:m:s' }}</p>
-                    </div>
-                    <div class="col-md-12">
-                        <textarea cols="10" rows="10" class="form-control mb-10" readonly>{{ cours.description|default_if_none:'' }}</textarea>
-                    </div>
-                  </div>
-              </div>
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th>Numéro cours</th>
+                            <td class="f-bold"><span class="badge badge-success">{{ cours.numero_cours|default_if_none:'' }}</span></p></td>
+                        </tr>
+                        <tr>
+                            <th>Titre</th>
+                            <td>{{ cours.titre }}</td>
+                        </tr>
+                        <tr>
+                            <th>Sous-titre</th>
+                            <td>{{ cours.sous_titre }}</td>
+                        </tr>
+                        <tr>
+                            <th>Type cours</th>
+                            <td>{{ cours.type_cours.libelle|default_if_none:'' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Statut</th>
+                            <td><span class="badge badge-{{ cours.statut_cours|lower|slugify }}">{{ cours.statut_cours }}</span></td>
+                        </tr>
+                        <tr>
+                            <th>Créé le</th>
+                            <td>{{ cours.created_at|date:'d/m/Y' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Modifié le</th>
+                            <td>{{ cours.updated_at|date:'d/m/Y' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Description</th>
+                            <td>{{ cours.description|default_if_none:'' }}</td>
+                        </tr>
+                        <tr>
+                            <th>{{ cours.type_cours.libelle }}</th>
+                            <td>
+                                {% if cours.type_cours.code == "VIDEOS" %}
+                                    <a href="{{ cours.cours_video.url|default_if_none:'' }}" target="_blank">Cliquez ici pour voir la vidéo</a>
+                                {% elif cours.type_cours.code == "AUDIOS" %}
+                                    <a href="{{ cours.cours_audio.url|default_if_none:'' }}" target="_blank">Cliquez ici pour voir l'audio</a>
+                                {% elif cours.type_cours.code == "TEXTES" %}
+                                    <a href="{{ cours.cours_texte.url|default_if_none:'' }}" target="_blank">Cliquez ici pour voir le texte</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <hr style="border:1px solid #006C68;">
             <div class="col-md-12">
@@ -46,7 +69,6 @@
                       <th class="d-none"></th>
                       <th>Question</th>
                       <th width="12%">Date création</th>
-                      <th class="text-center" width="10%">Point total</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -55,7 +77,6 @@
                         <td class="d-none"></td>
                         <td>{{ question.libelle|default_if_none:"" }}</td>
                         <td>{{ question.date_publication|date:'d/m/Y' }}</td>
-                        <td class="text-center f-bold">{{ question.point|default_if_none:0 }}</td>
                     </tr>
                   {% endfor %}
                   </tbody>
@@ -72,17 +93,51 @@
                       <th>Nom & Prénoms</th>
                       <th>Téléphone</th>
                       <th>Date inscription</th>
-                      <th>Nombre de point</th>
+                      <th>Progression</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td class="d-none"></td>
-                      <td><img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle" width="25" alt="User Image"></td>
+                      <td><img src="{% static 'dist/img/graduated_1.png' %}" class="img-circle" width="25" alt="User Image"></td>
                       <td>Jean Dupont</td>
                       <td>+33 6 12 34 56 78</td>
                       <td>01/06/2025</td>
-                      <td class="text-center">15/20</td>
+                      <td class="text-center">
+                          <div class="progress progress-sm active">
+                            <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+                              <span class="sr-only">90% Complete</span>
+                            </div>
+                          </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="d-none"></td>
+                      <td><img src="{% static 'dist/img/graduate.png' %}" class="img-circle" width="25" alt="User Image"></td>
+                      <td>Paul Park</td>
+                      <td>+33 7 12 00 56 70</td>
+                      <td>31/12/2000</td>
+                      <td class="text-center">
+                          <div class="progress progress-sm active">
+                            <div class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 10%">
+                              <span class="sr-only">10% Complete</span>
+                            </div>
+                          </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="d-none"></td>
+                      <td><img src="{% static 'dist/img/graduated.png' %}" class="img-circle" width="25" alt="User Image"></td>
+                      <td>Moraless Appatti</td>
+                      <td>+33 7 12 33 22 70</td>
+                      <td>11/10/2001</td>
+                      <td class="text-center">
+                          <div class="progress progress-sm active">
+                            <div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                              <span class="sr-only">40% Complete</span>
+                            </div>
+                          </div>
+                      </td>
                     </tr>
                   </tbody>
                 </table>

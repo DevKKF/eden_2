@@ -78,9 +78,9 @@ def Home(request):
 
         now = timezone.now()
 
-        cheminants = Utilisateur.objects.filter(is_superuser=False).order_by('-numero_utilisateur')[:6]
+        cheminants = Utilisateur.objects.filter(user_etudiant=True).order_by('-numero_utilisateur')[:6]
 
-        cheminant_mois_en_cours = Utilisateur.objects.filter(is_superuser=False, date_joined__year = now.year, date_joined__month = now.month).count()
+        cheminant_mois_en_cours = Utilisateur.objects.filter(user_etudiant=True, date_joined__year = now.year, date_joined__month = now.month).count()
 
         context = {
             'cheminants': cheminants,

@@ -5,6 +5,7 @@ $(document).ready(function () {
     $('#cheminant_sessions_datatables').DataTable();
     $('#table_reponses').DataTable();
     $('#utilisateur_datatables').DataTable();
+    $('#cheminant_datatables').DataTable();
     $('#example2').DataTable({
         'paging': true,
         'lengthChange': false,

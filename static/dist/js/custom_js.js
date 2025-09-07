@@ -2260,4 +2260,37 @@ $(document).ready(function () {
         $field.closest('.form-group').find('.error-text').hide().text('');
     });
 
+    /* TODO BLOC RECHERCHE DEBUT */
+    // Quand on tape dans l'input de recherche
+    $(".sidebar-form input[name='q']").on("keyup", function () {
+        let value = $(this).val().toLowerCase().trim();
+
+        // Parcours de tous les <li> dans le menu
+        $(".sidebar-menu li").filter(function () {
+            let text = $(this).text().toLowerCase();
+            let match = text.indexOf(value) > -1;
+
+            // Si correspondance → on affiche, sinon on cache
+            $(this).toggle(match);
+
+            // Si c'est un sous-menu (treeview-menu), on affiche le parent si un enfant correspond
+            if ($(this).parents(".treeview-menu").length && match) {
+                $(this).parents("li.treeview").show();
+            }
+        });
+    });
+
+    // Bloquer l'envoi du formulaire quand on clique sur le bouton loupe
+    $(".sidebar-form").on("submit", function (e) {
+        e.preventDefault();
+    });
+
+    $("#table_search").on("keyup", function () {
+        let value = $(this).val().toLowerCase().trim();
+
+        $("table.table tbody tr").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    });
+    /* TODO BLOC RECHERCHE FIN */
 });
