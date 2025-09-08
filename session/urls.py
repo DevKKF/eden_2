@@ -29,6 +29,9 @@ urlpatterns = [
     path('cheminants/<uuid:session_id>', views.cheminant_session, name="cheminant_session"),
     path('cheminants/detail/<uuid:utilisateur_id>', views.detail_session_cheminant, name="detail_session_cheminant"),
     path('update_session_cheminants/<uuid:utilisateur_id>', views.update_session_cheminants, name="update_session_cheminants"),
+    path('export-excel-cheminants/<uuid:session_id>', views.export_excel_cheminant_session, name="export_excel_cheminant_session"),
+    path('export-pdf-cheminants/<uuid:session_id>', views.export_pdf_cheminant_session, name="export_pdf_cheminant_session"),
+    path('import-exemple-cheminants/<uuid:session_id>', views.import_exemple_cheminant_session, name="import_exemple_cheminant_session"),
     path("cheminants/delete", views.supprimer_cheminant, name='supprimer_cheminant'),
 
     path('add_qcm_cours_session/<uuid:session_id>', views.add_qcm_cours_session, name="add_qcm_cours_session"),

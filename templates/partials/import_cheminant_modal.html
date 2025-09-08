@@ -1,0 +1,114 @@
+{% load static %}
+<style>
+input[type=text] {
+		background-color: transparent;
+		width: 100%;
+		font-size: 80%;
+		text-align: center;
+		/*text-transform: uppercase;*/
+
+		padding: 1rem 2rem;
+		border: 0;
+}
+
+label.file {
+		position: relative;
+		display: block;
+		width: 100%;
+		font-size: 80%;
+		text-align: center;
+		text-transform: uppercase;
+		border: 2px dashed #ccc;
+		margin: 3rem 0;
+		padding: 3rem;
+}
+
+label.file:hover {
+		background-color: rgba(255, 255, 255, 0.3);
+}
+
+label.file:active,
+label.file.focus {
+		border-color: #09f;
+}
+
+input[type=file] {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		opacity: 0;
+		outline: 0;
+		border: 1px solid red;
+}
+
+    .sml {
+		display: inline-block;
+		color: #eee;
+		background-color: rgba(0, 200, 0, 0.67);
+		border-radius: 1rem;
+		font-size: smaller;
+		margin: 1rem 0 0 0;
+		padding: 0.67rem 1rem;
+}
+</style>
+<div class="modal fade" id="modal-import_cheminants" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title f-bold"><i class="fa fa-database"></i> IMPORT DES CHEMINANTS</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                  <a href="{% url 'import_exemple_cheminant_session' session.id %}" class="btn btn-app f-bold" style="background:#fff !important; font-size: 18px; border: 2px dashed #ccc !important; width:100%; margin-left:-1px">
+                    <span style="margin-bottom:10px"><img src="{% static 'dist/img/excel.png' %}" alt="" width="20"> TELECHARGER LE FICHIER D'IMPORT</span>
+                  </a>
+                </div>
+                <div class="col-md-12">
+                    <label class="file">
+                        Déposez un fichier ou cliquez pour en sélectionner un
+                        <input type="file" name="import_cheminant_file" id="import_cheminant_file" multiple>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger pull-left" data-dismiss="modal"><i class="fa fa-remove"></i> Fermer</button>
+          <button type="button" class="btn btn-success" id="btn_save_import_cheminant"><i class="fa fa-check-circle"></i> Enregistrer</button>
+        </div>
+      </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+		$('input[type=file]').change(function() {
+				//console.log(this.files);
+				var f = this.files;
+				var el = $(this).parent();
+				if (f.length > 1) {
+						console.log(this.files, 1);
+						el.text('Sorry, multiple files are not allowed');
+						return;
+				}
+				// el.removeClass('focus');
+				el.html(f[0].name + '<br>' +
+						'<span class="sml">' +
+						'type: ' + f[0].type + ', ' +
+						Math.round(f[0].size / 1024) + ' KB</span>');
+		});
+
+		$('input[type=file]').on('focus', function() {
+				$(this).parent().addClass('focus');
+		});
+
+		$('input[type=file]').on('blur', function() {
+				$(this).parent().removeClass('focus');
+		});
+
+});
+</script>

@@ -1,14 +1,18 @@
+import openpyxl
 import urllib
+import uuid
+import os
+from openpyxl.styles import Font, Border, Side, Alignment
+from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.datavalidation import DataValidation
 from django.core.paginator import Paginator, EmptyPage
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.urls import reverse
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.core.files.storage import default_storage
-import uuid
-import os
 
 from parametre.models import TypeCours, Quartier, Tribu, Departement
 from session.forms import SessionForm, CertificatForm, CoursForm, CheminantForm, InscriptionForm
@@ -859,6 +863,186 @@ def update_session_cheminants(request, utilisateur_id):
         'certificat_disponible': certificat_disponible,
     }
     return render(request, 'partials/update_cheminant_modal.html',context)
+
+
+@login_required
+def export_excel_cheminant_session(request, session_id):
+    session = Session.objects.filter(id=session_id).first()
+    if not session:
+        return redirect('sessions')
+
+    today = timezone.now().date()
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "CHEMINANTS"
+
+    headers = [
+        "NUMERO", "NOM", "PRENOMS", "TELEPHONE", "AUTRE TELEPHONE",
+        "SITUATION MATRIMONIALE", "TRIBU", "DEPARTEMENT", "QUARTIER"
+    ]
+
+    # Styles
+    bold_font = Font(bold=True)
+    thin_border = Border(
+        left=Side(style="thin"), right=Side(style="thin"),
+        top=Side(style="thin"), bottom=Side(style="thin"),
+    )
+    bottom_border = Border(bottom=Side(style="thin"))
+    center_align = Alignment(horizontal="center", vertical="center")
+
+    # Ligne de titre fusionnée (ligne 1)
+    title = f"LISTE DES CHEMINANTS – SESSION {getattr(session, 'nom', session.id)}"
+    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(headers))
+    title_cell = ws.cell(row=1, column=1, value=title)
+    title_cell.font = Font(bold=True, size=14)
+    title_cell.alignment = center_align
+    title_cell.border = bottom_border
+
+    # En-têtes (ligne 2)
+    ws.append(headers)
+    for col_idx in range(1, len(headers) + 1):
+        c = ws.cell(row=2, column=col_idx)
+        c.font = bold_font
+        c.border = thin_border
+        c.alignment = center_align
+
+    # Données (à partir de la ligne 3)
+    cheminants = Utilisateur.objects.order_by("-numero_utilisateur")
+    for row_num, ch in enumerate(cheminants, start=3):
+        ws.append([
+            ch.numero_utilisateur,
+            ch.nom, ch.prenoms,  ch.telephone,
+            ch.autre_telephone, ch.situation_matrimoniale,
+            ch.tribu.libelle if getattr(ch, "tribu", None) else "",
+            ch.departement.libelle if getattr(ch, "departement", None) else "",
+            ch.quartier.libelle if getattr(ch, "quartier", None) else "",
+        ])
+        # Bordures fines
+        for col_idx in range(1, len(headers) + 1):
+            ws.cell(row=row_num, column=col_idx).border = thin_border
+
+    # Ajuster largeur colonnes automatiquement
+    for col_idx in range(1, ws.max_column + 1):
+        max_len = 0
+        for row_idx in range(1, ws.max_row + 1):
+            val = ws.cell(row=row_idx, column=col_idx).value
+            if val is not None:
+                max_len = max(max_len, len(str(val)))
+        ws.column_dimensions[get_column_letter(col_idx)].width = max(10, min(max_len + 2, 60))
+
+    # Figer les en-têtes (scroll)
+    ws.freeze_panes = "A3"
+
+    # Export
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = f'attachment; filename="cheminants-session-{today}.xlsx"'
+    wb.save(response)
+    return response
+
+
+@login_required
+def export_pdf_cheminant_session(request, session_id):
+    session = Session.objects.get(id=session_id)
+
+    if session is None:
+        return redirect('sessions')
+
+    pass
+
+
+@login_required
+def import_exemple_cheminant_session(request, session_id):
+    session = Session.objects.filter(id=session_id).first()
+    if not session:
+        return redirect('sessions')
+
+    # Création du fichier Excel
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "EXEMPLE_IMPORT"
+
+    headers = [
+        "NOM", "PRENOMS", "TELEPHONE", "AUTRE TELEPHONE",
+        "SITUATION MATRIMONIALE", "TRIBU", "DEPARTEMENT", "QUARTIER"
+    ]
+    ws.append(headers)
+
+    # Styles
+    bold_font = Font(bold=True)
+    thin_border = Border(
+        left=Side(style="thin"), right=Side(style="thin"),
+        top=Side(style="thin"), bottom=Side(style="thin"),
+    )
+    center_align = Alignment(horizontal="center", vertical="center")
+
+    # Appliquer style au header
+    for col_idx in range(1, len(headers) + 1):
+        c = ws.cell(row=1, column=col_idx)
+        c.font = bold_font
+        c.alignment = center_align
+        c.border = thin_border
+
+    # Récupération des valeurs
+    tribus = Tribu.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    quartiers = Quartier.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    departements = Departement.objects.filter(deleted_at__isnull=True).order_by('libelle')
+    situations = [s.value for s in SituationMatrimoniale]
+
+    # Onglet caché "LISTES" pour stocker les valeurs des dropdowns
+    ws_lists = wb.create_sheet("LISTES")
+
+    # Remplir les colonnes dans "LISTES"
+    for i, val in enumerate(situations, start=1):
+        ws_lists.cell(row=i, column=1, value=val)
+    for i, val in enumerate([t.libelle for t in tribus], start=1):
+        ws_lists.cell(row=i, column=2, value=val)
+    for i, val in enumerate([d.libelle for d in departements], start=1):
+        ws_lists.cell(row=i, column=3, value=val)
+    for i, val in enumerate([q.libelle for q in quartiers], start=1):
+        ws_lists.cell(row=i, column=4, value=val)
+
+    # Noms de plages
+    ws_lists.title = "LISTES"
+    wb.create_named_range("Situations", ws_lists, f"$A$1:$A${len(situations)}")
+    wb.create_named_range("Tribus", ws_lists, f"$B$1:$B${len(tribus)}")
+    wb.create_named_range("Departements", ws_lists, f"$C$1:$C${len(departements)}")
+    wb.create_named_range("Quartiers", ws_lists, f"$D$1:$D${len(quartiers)}")
+
+    # Data Validations (listes déroulantes)
+    dv_situation = DataValidation(type="list", formula1="=Situations", allow_blank=True)
+    dv_tribu = DataValidation(type="list", formula1="=Tribus", allow_blank=True)
+    dv_departement = DataValidation(type="list", formula1="=Departements", allow_blank=True)
+    dv_quartier = DataValidation(type="list", formula1="=Quartiers", allow_blank=True)
+
+    ws.add_data_validation(dv_situation)
+    ws.add_data_validation(dv_tribu)
+    ws.add_data_validation(dv_departement)
+    ws.add_data_validation(dv_quartier)
+
+    # Appliquer validations aux colonnes correspondantes (lignes 2 à 500 par ex.)
+    dv_situation.add(f"E2:E1000")
+    dv_tribu.add(f"F2:F1000")
+    dv_departement.add(f"G2:G1000")
+    dv_quartier.add(f"H2:H1000")
+
+    # Ajuster largeur colonnes
+    for col_idx in range(1, len(headers) + 1):
+        max_len = len(headers[col_idx-1]) + 2
+        ws.column_dimensions[get_column_letter(col_idx)].width = max_len
+
+    # Masquer la feuille LISTES
+    ws_lists.sheet_state = "hidden"
+
+    # Export
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = f'attachment; filename="exemple-import-cheminants.xlsx"'
+    wb.save(response)
+    return response
 
 
 @login_required

@@ -1523,7 +1523,7 @@ $(document).ready(function () {
         let tbody = qcmClone.querySelector("tbody");
         tbody.id = `table_body_${questionCounter}`;
         let table = qcmClone.querySelector("table");
-        table.id = `table_reponses_${questionCounter}`;
+        table.id = `question_table_reponses_${questionCounter}`;
 
         tbody.querySelectorAll("tr").forEach((tr) => {
             tr.querySelectorAll("input, select").forEach((input) => {

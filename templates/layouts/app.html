@@ -298,7 +298,7 @@
                 </li>
                 <li class="{% if request.resolver_match.url_name == 'sessions' or request.resolver_match.url_name == 'detail_session' or request.resolver_match.url_name == 'certificats_session' or request.resolver_match.url_name == 'cours_session' or request.resolver_match.url_name == 'cheminant_session' or request.resolver_match.url_name == 'qcm_cours_session' or request.resolver_match.url_name == 'detail_session_cheminant' %}active{% endif %} animate__animated animate__bounceIn">
                   <a href="{% url 'sessions' %}">
-                    <i class="fa fa-users"></i> <span>Sessions de cours</span>
+                    <i class="fa fa-cubes"></i> <span>Sessions de cours</span>
                   </a>
                 </li>
                 <li class="{% if request.resolver_match.url_name == 'cheminant_mois_en_cours' or request.resolver_match.url_name == 'detail_cheminant_encours' %}active{% endif %} treeview">

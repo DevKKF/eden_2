@@ -1,0 +1,28 @@
+{% load static %}
+<div class="modal fade" id="modal-export_cheminants" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title f-bold"><i class="fa fa-database"></i> EXPORT DES CHEMINANTS</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12" style="margin:auto; text-align: center;">
+                  <a class="btn btn-app f-bold" style="background:#fff !important; padding-left: 50px; padding-right: 50px; font-size: 18px; border: 2px dashed #ccc !important;">
+                    <span style="margin-bottom:10px"><img src="{% static 'dist/img/pdf.png' %}" alt="" width="20"> EXPORT EN PDF</span>
+                  </a>
+                  <a href="{% url 'export_excel_cheminant_session' session.id %}" class="btn btn-app f-bold" style="background:#fff !important; padding-left: 50px; padding-right: 50px; font-size: 18px; border: 2px dashed #ccc !important;">
+                    <span style="margin-bottom:10px"><img src="{% static 'dist/img/excel.png' %}" alt="" width="20"> EXPORT EN EXCEL</span>
+                  </a>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger pull-left" data-dismiss="modal"><i class="fa fa-remove"></i> Fermer</button>
+        </div>
+      </div>
+    </div>
+</div>
